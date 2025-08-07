@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="OrderApp.View.Clients"
+             xmlns:model="clr-namespace:OrderApp.Model"
+             xmlns:viewmodel="clr-namespace:OrderApp.ViewModel"
+             x:DataType="viewmodel:ClientsViewModel"
+             Title="Clients">
+    <Grid RowDefinitions="Auto, *, Auto" ColumnDefinitions="*, *" Padding="10,10,10,10" BackgroundColor="{DynamicResource BackgroundColor}">
+        <Label 
+           Text="Page"
+           VerticalOptions="Center" 
+           HorizontalOptions="Center" />
+        <CollectionView 
+               BackgroundColor="Transparent" 
+               Grid.ColumnSpan="2"
+               ItemsSource="{Binding Clients}"
+               SelectionMode="None"
+               Grid.Row="1">
+            <CollectionView.ItemTemplate>
+                <DataTemplate x:DataType="model:Client">
+                    <Grid Padding="10" Grid.ColumnSpan="2">
+                        <Border HeightRequest="125" BackgroundColor="White">
+                            <Border.StrokeShape>
+                                <RoundRectangle CornerRadius="16" />
+                            </Border.StrokeShape>
+                            <Border.GestureRecognizers>
+                                <TapGestureRecognizer CommandParameter="{Binding .}" 
+                                                Command="{Binding x:DataType='viewmodel:ClientsViewModel',Source={RelativeSource AncestorType={x:Type viewmodel:ClientsViewModel}}, Path=GoToClientDetailsCommand}"/>
+                            </Border.GestureRecognizers>
+
+                            <Grid Padding="10" ColumnDefinitions="125, *">
+                                <Image Source="client" Grid.Column="0" WidthRequest="115" HeightRequest="115"  Aspect="AspectFill"/>
+                                <VerticalStackLayout Grid.Column="1" VerticalOptions="Center" Padding="10">
+                                    <Label Text="{Binding Name}" FontSize="20"/>
+                                    <Label Text="{Binding Details}" FontSize="12"/>
+                                </VerticalStackLayout>
+                            </Grid>
+                        </Border>
+                    </Grid>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+
+        </CollectionView>
+        <Button Grid.Row="2" Grid.Column="0" Text="Add new Client" Command="{Binding AddClientCommand }"/>
+    </Grid>
+</ContentPage>

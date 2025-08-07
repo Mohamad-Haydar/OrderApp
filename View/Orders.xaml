@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="OrderApp.View.Orders"
+             xmlns:model="clr-namespace:OrderApp.Model"
+             xmlns:viewmodel="clr-namespace:OrderApp.ViewModel"
+             x:DataType="viewmodel:OrdersViewModel"             
+             Title="Orders">
+
+    <!--<Grid RowDefinitions="Auto, *, Auto" ColumnDefinitions="*, Auto" Padding="10,10,10,10" BackgroundColor="{Binding BackgroundColor}">-->
+      <Grid RowDefinitions="Auto, *, Auto" ColumnDefinitions="*, Auto" Padding="10,10,10,10" BackgroundColor="{DynamicResource BackgroundColor}">
+        <Label 
+       Text="{Binding Localization[OrdersPageTitle]}"
+       VerticalOptions="Center" 
+       HorizontalOptions="Center" 
+            Grid.ColumnSpan="2" TextColor="{DynamicResource TextColor}"/>
+        <CollectionView 
+           BackgroundColor="Transparent" 
+           Grid.ColumnSpan="2"
+           ItemsSource="{Binding Orders}"
+           SelectionMode="None"
+           Grid.Row="1">
+            <CollectionView.ItemTemplate>
+                <DataTemplate x:DataType="model:Order">
+                    <Grid Padding="10" >
+                        <Border  BackgroundColor="White">
+                            <Border.StrokeShape>
+                                <RoundRectangle CornerRadius="16" />
+                            </Border.StrokeShape>
+                            <Grid Padding="10" ColumnDefinitions="*,*">
+                                
+                                <VerticalStackLayout Grid.Column="0" VerticalOptions="Center" HorizontalOptions="Start" Padding="10">
+                                    <HorizontalStackLayout>
+                                        <Label Text="{Binding Source={RelativeSource AncestorType={x:Type viewmodel:OrdersViewModel}}, Path=Localization[OrderId]}" FontSize="12"/>
+                                        <Label Text="{Binding Id}" FontSize="12"/>
+                                        </HorizontalStackLayout>
+                                     <HorizontalStackLayout WidthRequest="100" HorizontalOptions="Start">
+                                        <Label Text="{Binding Source={RelativeSource AncestorType={x:Type viewmodel:OrdersViewModel}}, Path=Localization[ClientName]}" FontSize="12"/>
+                                            <Label Text="{Binding ClientName}" LineBreakMode="TailTruncation" FontSize="12"/>
+                                      </HorizontalStackLayout>
+                                      <HorizontalStackLayout>
+                                        <Label Text="{Binding Source={RelativeSource AncestorType={x:Type viewmodel:OrdersViewModel}}, Path=Localization[TotalPrice]}" FontSize="12"/>
+                                            <Label Text="{Binding Total} " FontSize="12"/>
+                                            <Label Text=" $" FontSize="12"/>
+                                       </HorizontalStackLayout>
+                                    <HorizontalStackLayout WidthRequest="10" HorizontalOptions="Start" >
+                                        <Label Text="{Binding Source={RelativeSource AncestorType={x:Type viewmodel:OrdersViewModel}}, Path=Localization[DateToPick]}" FontSize="12"/>
+                                            <Label Text="{Binding DateToPick.Month}" FontSize="12"/>
+                                            <Label Text="/" FontSize="12"/>
+                                            <Label Text="{Binding DateToPick.Day}" FontSize="12"/>
+                                            <Label Text="/" FontSize="12"/>
+                                            <Label Text="{Binding DateToPick.Year}" FontSize="12"/>
+                                       </HorizontalStackLayout>
+                                    </VerticalStackLayout>
+                                    
+                                    <VerticalStackLayout Grid.Column="1" VerticalOptions="Center" Spacing="10">
+                                        <Button BackgroundColor="Red" WidthRequest="100" 
+                                                Text="{Binding Source={RelativeSource AncestorType={x:Type viewmodel:OrdersViewModel}}, Path=Localization[Delete]}" 
+                                        TextColor="White" CommandParameter="{Binding .}"
+                                        Command="{Binding x:DataType='viewmodel:OrdersViewModel',Source={RelativeSource AncestorType={x:Type viewmodel:OrdersViewModel}}, Path=DeleteOrderCommand}"/>
+
+                                        <Button  WidthRequest="100" 
+                                                 Text="{Binding Source={RelativeSource AncestorType={x:Type viewmodel:OrdersViewModel}}, Path=Localization[Details]}" TextColor="White"
+                                        CommandParameter="{Binding .}"
+                                        Command="{Binding x:DataType='viewmodel:OrdersViewModel',Source={RelativeSource AncestorType={x:Type viewmodel:OrdersViewModel}}, Path=GoToOrderDetailsCommand}"/>
+                                    </VerticalStackLayout>
+                               
+                            </Grid>
+                        </Border>
+                    </Grid>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+
+        </CollectionView>
+
+
+
+        <Button Text="+"
+                Grid.Row="1" 
+                FontSize="30"
+                 WidthRequest="60"
+                 HeightRequest="60"
+                 CornerRadius="30"
+                 Margin="0,0,20,20"
+                 VerticalOptions="End"
+                 HorizontalOptions="End"
+                Command="{Binding AddOrderCommand}"/>
+    </Grid>
+
+</ContentPage>

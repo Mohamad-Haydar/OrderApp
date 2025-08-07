@@ -1,0 +1,184 @@
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
+using Microsoft.Data.Sqlite;
+using OrderApp.Helper;
+using OrderApp.Model;
+using OrderApp.Services;
+using Plugin.Fingerprint;
+using Plugin.Fingerprint.Abstractions;
+
+namespace OrderApp.ViewModel
+{
+    public partial class LoginViewModel : BaseViewModel
+    {
+        [ObservableProperty]
+        User user;
+
+        [ObservableProperty]
+        public bool enableBiometrics;
+
+        public LocalizationService _localization;
+        public ThemeService _themeService;
+        public LoginServices _loginServices;
+
+        public Helpers _helper;
+
+        SqliteConnection connection;
+        public readonly IFingerprint _fingerprint;
+
+
+        public LoginViewModel(IFingerprint fingerprint, Helpers helper, LocalizationService localization, ThemeService themeService, LoginServices loginServices) : base(localization, themeService)
+        {
+            connection = AdoDatabaseService.GetConnection();
+            user = new();
+            _fingerprint = fingerprint;
+            _helper = helper;
+            EnableBiometrics = Preferences.Get("BiometricEnabled", false);
+            _localization = localization;
+            _themeService = themeService;
+            _loginServices = loginServices;
+        }
+
+        [RelayCommand]
+        async Task RegisterAdminAsync()
+        {
+            const string adminUsername = "admin";
+            const string adminEmail = "admin@gmail.com";
+            const string plainPassword = "1234";
+            string hashedPassword = _helper.ComputeSha256Hash(plainPassword);
+
+            try
+            {
+                connection.Open();
+                // Check User if already present in the database
+                using var checkCommand = connection.CreateCommand();
+                checkCommand.CommandText = @"
+                    SELECT COUNT(*) 
+                    FROM Users 
+                    WHERE Username = $username OR Email = $email";
+
+                checkCommand.Parameters.AddWithValue("$username", adminUsername);
+                checkCommand.Parameters.AddWithValue("$email", adminEmail);
+
+                var exists = (long)checkCommand.ExecuteScalar();
+                // if the user already exists show an error
+                if (exists > 0)
+                {
+                    await Shell.Current.DisplayAlert("Info", "Admin user already exists.", "OK");
+                    return;
+                }
+                // when the user is not present in the database, create new user
+                using var insertCommand = connection.CreateCommand();
+                insertCommand.CommandText = @"INSERT INTO Users (Username, Email, Password)
+                    VALUES ($username, $email, $password)";
+
+                insertCommand.Parameters.AddWithValue("$username", adminUsername);
+                insertCommand.Parameters.AddWithValue("$email", adminEmail);
+                insertCommand.Parameters.AddWithValue("$password", hashedPassword);
+
+                var rows = insertCommand.ExecuteNonQuery();
+
+                await Shell.Current.DisplayAlert("Success", "Admin user created successfully.", "OK");
+            }
+            catch (Exception ex)
+            {
+                await Shell.Current.DisplayAlert("Error", "Failed to register admin: " + ex.Message, "OK");
+            }
+            finally
+            {
+                connection.Close();
+            }
+        }
+
+        [RelayCommand]
+        async Task LoginAsync()
+        {
+            // try to login with biometric
+            var res = await TryAutoLoginWithBiometricsAsync();
+            if(res)
+            {
+                Application.Current.MainPage = new AppShell(new ShellViewModel(_localization, Language, _themeService));
+                return;
+            }
+
+            // in case biometric don't work or is not enable normal login
+            if (string.IsNullOrWhiteSpace(User?.UserName) ||
+                   string.IsNullOrWhiteSpace(User?.Email) ||
+                   string.IsNullOrWhiteSpace(User?.Password))
+            {
+                if (EnableBiometrics)
+                {
+                    await Shell.Current.DisplayAlert("Error", "Please fill all fields At Least once before using biometrics login", "OK");
+                }
+                else
+                {
+                    await Shell.Current.DisplayAlert("Error", "Please fill all fields", "OK");
+                }
+                return;
+            }
+
+            IsBusy = true;
+            bool LoginResult = false;
+
+            try
+            {
+                Preferences.Set("BiometricEnabled", EnableBiometrics);
+                LoginResult = await _loginServices.Login(User);
+            }
+            catch (Exception ex)
+            {
+                await Shell.Current.DisplayAlert("Error", "Database error: " + ex.Message, "OK");
+                IsBusy = false;
+                return;
+            }
+            finally
+            {
+                //await SecureStorage.SetAsync("SavedEmail", User.Email);
+                //await SecureStorage.SetAsync("SavedPassword", User.Password);
+
+                IsBusy = false;
+
+                // Navigate to MainPage
+                if (LoginResult)
+                {
+                    Application.Current.MainPage = new AppShell(new ShellViewModel(_localization, Language, _themeService));
+                }
+            }
+        }
+
+        [RelayCommand]
+        async Task SwitchLanguageAsync()
+        {
+            await base.SwitchLanguageAsync();
+        }
+
+        public async Task<bool> TryAutoLoginWithBiometricsAsync()
+        {
+            if (!EnableBiometrics)
+                return false;
+
+            var username = Preferences.Get("Username", null);
+            //var userId = Preferences.Get("UserId", null);
+            var email = await SecureStorage.GetAsync("SavedEmail");
+            var password = await SecureStorage.GetAsync("SavedPassword");
+
+            if (string.IsNullOrWhiteSpace(username)  || string.IsNullOrWhiteSpace(email) || string.IsNullOrWhiteSpace(password))
+                return false;
+
+            var success = await AuthenticateWithBiometricsAsync("Authenticate to login");
+            if (success)
+            {
+                return true;
+            }
+            return false;
+        }
+
+        public async Task<bool> AuthenticateWithBiometricsAsync(string reason)
+        {
+            var result = await CrossFingerprint.Current.AuthenticateAsync(new AuthenticationRequestConfiguration("Login", reason));
+            return result.Authenticated;
+        }
+
+
+    }
+}

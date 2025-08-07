@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="OrderApp.View.OrderDetails"
+             xmlns:model="clr-namespace:OrderApp.Model"
+             xmlns:viewmodel="clr-namespace:OrderApp.ViewModel"
+             x:DataType="viewmodel:OrderDetailsViewModel"
+             Title="{Binding Title}">
+    <Grid RowDefinitions="Auto, Auto, *, Auto" ColumnDefinitions="*, *"  Padding="10,10,10,10" BackgroundColor="{Binding BackgroundColor}">
+        <Label 
+       Text="List Of Products"
+       VerticalOptions="Center" 
+       HorizontalOptions="Center" 
+        Grid.ColumnSpan="2"/>
+        <CollectionView BackgroundColor="Transparent" 
+           Grid.ColumnSpan="2"
+           ItemsSource="{Binding ProductsInOrders}"
+           SelectionMode="None"
+           Grid.Row="1">
+            <CollectionView.ItemTemplate>
+                <DataTemplate x:DataType="model:ProductsInOrders">
+                    <Grid Padding="10" Grid.ColumnSpan="2">
+                        <Border  BackgroundColor="White">
+                            <Border.StrokeShape>
+                                <RoundRectangle CornerRadius="16" />
+                            </Border.StrokeShape>
+                            <Grid Padding="10">
+                                <HorizontalStackLayout HorizontalOptions="Center">
+                                    <VerticalStackLayout  VerticalOptions="Center" Padding="10" HorizontalOptions="Start">
+                                        <Label Text="{Binding Product.Name}" FontSize="22"/>
+                                        <Label Text="{Binding Product.Description}" FontSize="12" WidthRequest="130" LineBreakMode="TailTruncation"/>
+                                        <HorizontalStackLayout>
+                                            <Label Text="Product Price: " FontSize="12"/>
+                                            <Label Text="{Binding Product.Price}" FontSize="12"/>
+                                            <Label Text="$" FontSize="12"/>
+                                        </HorizontalStackLayout>
+                                        <HorizontalStackLayout>
+                                            <Label Text="Quantity In Stock: " FontSize="12"/>
+                                            <Label Text="{Binding Product.Quantity}" FontSize="12"/>
+                                        </HorizontalStackLayout>
+                                    </VerticalStackLayout>
+                                    <HorizontalStackLayout>
+                                        <Button Text="-"  HeightRequest="10"
+                                                Command="{Binding x:DataType='viewmodel:OrderDetailsViewModel', Source={RelativeSource AncestorType={x:Type viewmodel:OrderDetailsViewModel}}, Path=DecrementQuantityCommand}" 
+                                            CommandParameter="{Binding .}" />
+                                        <Label Text="{Binding Quantity}" 
+                                           WidthRequest="40"
+                                           HorizontalTextAlignment="Center"
+                                           VerticalTextAlignment="Center"
+                                           FontSize="16"
+                                           />
+                                        <Button Text="+" HeightRequest="10"
+                                            Command="{Binding x:DataType='viewmodel:OrderDetailsViewModel', Source={RelativeSource AncestorType={x:Type viewmodel:OrderDetailsViewModel}}, Path=IncrementQuantityCommand}" 
+                                            CommandParameter="{Binding .}" />
+                                    </HorizontalStackLayout>
+                                </HorizontalStackLayout>
+                            </Grid>
+                        </Border>
+                    </Grid>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+
+        </CollectionView>
+
+        
+
+        <HorizontalStackLayout HorizontalOptions="End" Grid.Row="2" Grid.Column="1" Margin="0,0,10,0">
+            <Label Text="Total: " FontSize="22" TextColor="{Binding TextColor}"/>
+            <Label Text="{Binding Total}"  FontSize="22" TextColor="{Binding TextColor}"/>
+        </HorizontalStackLayout>
+
+        <Button Text="Update" Grid.Row="3" Grid.Column="0" WidthRequest="150" HorizontalOptions="Center"
+                FontSize="15" Command="{Binding UpdateOrderCommand}" />
+
+        <Button Text="+"
+            Grid.Row="3" 
+            Grid.Column="1"
+            Margin="0,0,20,0"
+            WidthRequest="60"
+            HeightRequest="60"
+            CornerRadius="30"
+            FontSize="24"
+            BackgroundColor="#FF4081"
+            TextColor="White"
+                HorizontalOptions="End"
+            Command="{Binding AddProductToOrderCommand}"/>
+    </Grid>
+</ContentPage>

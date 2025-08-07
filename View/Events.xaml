@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:scheduler="clr-namespace:Syncfusion.Maui.Scheduler;assembly=Syncfusion.Maui.Scheduler"
+             x:Class="OrderApp.View.Events"
+             xmlns:model="clr-namespace:OrderApp.Model"
+             xmlns:viewmodel="clr-namespace:OrderApp.ViewModel"
+             x:DataType="viewmodel:EventsViewModel"  
+             Title="Events">
+
+    <Grid RowDefinitions="400,Auto, *">
+        <scheduler:SfScheduler x:Name="scheduler" 
+                       AppointmentsSource="{Binding EventsOfDay}"
+                       View="Month"
+                       Tapped="OnSchedulerTapped">
+            
+
+
+            <scheduler:SfScheduler.AppointmentMapping >
+                <scheduler:SchedulerAppointmentMapping
+                Subject = "EventName"
+                StartTime = "From"
+                EndTime = "To"
+                Background = "Background"
+                TextColorMapping = "TextColor"
+                IsAllDay = "IsAllDay"
+                Id = "Id"/>
+            </scheduler:SfScheduler.AppointmentMapping>
+
+            <scheduler:SfScheduler.MonthView>
+                <scheduler:SchedulerMonthView 
+                       AppointmentDisplayMode="Indicator"
+                    AppointmentIndicatorCount="4"/>
+            </scheduler:SfScheduler.MonthView>
+
+
+        </scheduler:SfScheduler>
+
+        <Label Grid.Row="1" HorizontalOptions="Center" FontSize="22" Padding="0,10" Text="{Binding Title}"/>
+
+        <CollectionView BackgroundColor="Transparent"  Grid.Row="2"
+           ItemsSource="{Binding EventsOfDay}"
+           SelectionMode="None" >
+            <CollectionView.ItemTemplate>
+                <DataTemplate x:DataType="model:EventModel">
+                    <Grid Padding="10">
+                        <Border  BackgroundColor="White">
+                            <Border.StrokeShape>
+                                <RoundRectangle CornerRadius="16" />
+                            </Border.StrokeShape>
+                            <Grid Padding="10">
+                                <VerticalStackLayout>
+                                    <HorizontalStackLayout HorizontalOptions="Center" VerticalOptions="Center" >
+                                        <Frame WidthRequest="16"
+                                            HeightRequest="16"
+                                            CornerRadius="8"
+                                            BackgroundColor="{Binding BackgroundStr}"
+                                            HasShadow="False"
+                                            VerticalOptions="Center"
+                                            HorizontalOptions="Start" Margin="0,0,10,0" />
+                                        <Label Text="{Binding EventName}" FontSize="22" Margin="0,0,10,0" VerticalOptions="Center"/>
+                                        <VerticalStackLayout  VerticalOptions="Center" HorizontalOptions="Start">
+                                            <Label Text="{Binding EventType}" FontSize="12" WidthRequest="100" LineBreakMode="TailTruncation"/>
+                                            <!--<Label Text="{Binding Description}" FontSize="12" WidthRequest="100" LineBreakMode="TailTruncation"/>-->
+                                            <Label Text="{Binding x:DataType='viewmodel:EventsViewModel',Source={RelativeSource AncestorType={x:Type viewmodel:EventsViewModel}}, Path=DateUi}"
+                                                   FontSize="12" WidthRequest="100" LineBreakMode="TailTruncation"/>
+                                            <Label Text="{Binding From.TimeOfDay}" FontSize="12" WidthRequest="100" LineBreakMode="TailTruncation"/>
+                                        </VerticalStackLayout>
+                                    </HorizontalStackLayout>
+                                    <HorizontalStackLayout  VerticalOptions="Center" HorizontalOptions="Center" Spacing="20" Margin="0,10,0,10">
+                                        <Button Text="Edit" FontSize="15" WidthRequest="100" HeightRequest="30" LineBreakMode="TailTruncation" 
+                                                TextColor="White"  CommandParameter="{Binding .}"
+                                                Command="{Binding x:DataType='viewmodel:EventsViewModel',Source={RelativeSource AncestorType={x:Type viewmodel:EventsViewModel}}, Path=EditEventCommand}"
+                                                />
+                                        <Button Text="Delete" FontSize="15" WidthRequest="100"  HeightRequest="30"
+                                                LineBreakMode="TailTruncation" BackgroundColor="Red" TextColor="White" 
+                                                CommandParameter="{Binding .}"
+                                                Command="{Binding x:DataType='viewmodel:EventsViewModel',Source={RelativeSource AncestorType={x:Type viewmodel:EventsViewModel}}, Path=DeleteEventCommand}"
+                                                />
+                                    </HorizontalStackLayout>
+                                </VerticalStackLayout>
+                            </Grid>
+                        </Border>
+                    </Grid>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+
+        </CollectionView>
+
+        <Button Grid.Row="2" Text="+"
+            FontSize="30"
+            WidthRequest="60"
+            HeightRequest="60"
+            CornerRadius="30"
+            Margin="0,0,20,20"
+            VerticalOptions="End"
+            HorizontalOptions="End"
+            Command="{Binding AddEventCommand}"/>
+
+    </Grid>
+</ContentPage>

@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="OrderApp.View.Login"
+             xmlns:model="clr-namespace:OrderApp.Model"
+             xmlns:viewmodel="clr-namespace:OrderApp.ViewModel"
+             x:DataType="viewmodel:LoginViewModel"
+             Background="{DynamicResource BackgroundColor}"
+             FlowDirection="{Binding AppFlowDirection}"
+             Title="{Binding Title}" >
+    <Grid RowDefinitions="Auto, *, Auto, Auto,Auto" ColumnDefinitions="*,*" Padding="40" >
+        <Label  Text="{Binding Localization[EnterCredential]}" FontSize="30" WidthRequest="160" VerticalOptions="Center" TextColor="{DynamicResource TextColor}"/>
+
+        <ScrollView Grid.Row="1" Grid.ColumnSpan="2">
+            <StackLayout Padding="10">
+                <Label Text="{Binding Localization[UserName]}" TextColor="{DynamicResource TextColor}"/>
+                <Entry Text="{Binding User.UserName}" PlaceholderColor="{DynamicResource NotSelectedColor}"  Placeholder="{Binding Localization[UserName]}" TextColor="{DynamicResource TextColor}"/>
+
+                <Label Text="{Binding Localization[Email]}" Margin="0,10,0,0" TextColor="{DynamicResource TextColor}"/>
+                <Entry Text="{Binding User.Email}"  PlaceholderColor="{DynamicResource NotSelectedColor}"  Placeholder="{Binding Localization[Email]}" TextColor="{DynamicResource TextColor}"/>
+
+                <Label Text="{Binding Localization[Password]}" Margin="0,10,0,0" TextColor="{DynamicResource TextColor}"/>
+                <Entry Text="{Binding User.Password}"  PlaceholderColor="{DynamicResource NotSelectedColor}"  Placeholder="{Binding Localization[Password]}" TextColor="{DynamicResource TextColor}"/>
+
+
+            </StackLayout>
+        </ScrollView>
+
+        <HorizontalStackLayout Grid.Row="3" Grid.ColumnSpan="2" HorizontalOptions="Center" >
+            <Label Text="{Binding Localization[SwitchBiometric]}" VerticalOptions="Center" TextColor="{DynamicResource TextColor}"/>
+            <Switch x:Name="BiometricSwitch" 
+                    IsToggled="{Binding EnableBiometrics}" 
+                    VerticalOptions="Center"/>
+        </HorizontalStackLayout>
+
+        <!--<Button Margin="20"  Text="Register Admin" Grid.Row="3" Grid.Column="0" Command="{Binding RegisterAdminCommand}"/>-->
+        <Button Grid.Row="4" Grid.ColumnSpan="2" Text="{Binding Localization[LanguageButtonText]}"
+             Command="{Binding SwitchLanguageCommand}" BackgroundColor="{DynamicResource ButtonColor}" TextColor="{DynamicResource ButtonTextColor}"
+             HorizontalOptions="Center" />
+        <Button Margin="20"  Text="{Binding Localization[Login]}" Grid.Row="2" Grid.ColumnSpan="2" 
+                WidthRequest="200" HorizontalOptions="Center" BackgroundColor="{DynamicResource ButtonColor}" TextColor="{DynamicResource ButtonTextColor}" 
+                Command="{Binding LoginCommand}" />
+
+        <ActivityIndicator IsRunning="{Binding IsBusy}"
+                   IsVisible="{Binding IsBusy}"
+                   Grid.RowSpan="2"
+                   Grid.ColumnSpan="2"
+                   WidthRequest="150"
+                   HeightRequest="150"
+                   />
+    </Grid>
+</ContentPage>

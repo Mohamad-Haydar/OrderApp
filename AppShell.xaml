@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<Shell
+    x:Class="OrderApp.AppShell"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:local="clr-namespace:OrderApp"
+    xmlns:view="clr-namespace:OrderApp.View"
+    xmlns:viewmodel="clr-namespace:OrderApp.ViewModel"
+    x:DataType="viewmodel:ShellViewModel"
+    Shell.BackgroundColor="{DynamicResource BackgroundColor}"
+    Shell.TitleColor="{DynamicResource TextColor}"
+    Shell.TabBarBackgroundColor="{DynamicResource BackgroundColor}"
+    Shell.TabBarTitleColor="{DynamicResource TextColor}"
+    Shell.TabBarUnselectedColor="{DynamicResource TextColor}"
+    Shell.ForegroundColor="{DynamicResource TextColor}"
+    FlowDirection="{Binding AppFlowDirection}"
+    Title="OrderApp">
+
+    <FlyoutItem FlyoutDisplayOptions="AsMultipleItems">
+
+        <ShellContent Title="{Binding Localization[Orders]}"
+                  Icon="monkey.png"
+                  ContentTemplate="{DataTemplate view:Orders}" />
+        <ShellContent Title="{Binding Localization[Clients]}"
+                  Icon="elephant.png"
+                  ContentTemplate="{DataTemplate view:Clients}" />
+        <ShellContent Title="{Binding Localization[Products]}"
+                  Icon="elephant.png"
+                  ContentTemplate="{DataTemplate view:Products}" />
+        <ShellContent Title="{Binding Localization[Events]}"
+                      Icon="elephant.png"
+                      ContentTemplate="{DataTemplate view:Events}" />
+    </FlyoutItem>
+
+    <Shell.FlyoutFooter>
+        <Grid Padding="10" RowDefinitions="Auto, Auto, Auto">
+
+            <Button Grid.Row="0" Text="{Binding Localization[SwitchTheme]}"
+                Command="{Binding SwitchThemeCommand}" HeightRequest="40"
+                HorizontalOptions="Center" Padding="20,0,20,0" Margin="0,0,0,10"/>
+
+            <Button Grid.Row="1"
+            Text="{Binding Localization[LanguageButtonText]}"
+            Command="{Binding SwitchLanguageCommand}" HeightRequest="40"
+            HorizontalOptions="Center" Padding="20,0,20,0" Margin="0,0,0,10"/>
+
+            <Button
+                Grid.Row="2"
+                Text="{Binding Localization[Logout]}"
+                BackgroundColor="Transparent"
+                TextColor="Red"
+                Command="{Binding LogoutCommand}"/>
+        </Grid>
+    </Shell.FlyoutFooter>
+
+</Shell>

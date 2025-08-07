@@ -1,0 +1,122 @@
+﻿using OrderApp.Model;
+using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace OrderApp.Services
+{
+    public class ProductsServices
+    {
+        public async Task<ObservableCollection<Product>> GetProducts()
+        {
+            ObservableCollection<Product> ProductList = [];
+            var connection = AdoDatabaseService.GetConnection();
+            connection.Open();
+
+            var command = connection.CreateCommand();
+            command.CommandText = "SELECT * From Products";
+
+            using var reader = command.ExecuteReader();
+            while (reader.Read())
+            {
+                ProductList.Add(new Product
+                {
+                    Id = reader.GetInt32(0),
+                    Name = reader.GetString(1),
+                    Description = reader.GetString(2),
+                    Price = reader.GetFloat(3),
+                    Quantity = reader.GetInt32(4)
+                });
+            }
+            connection.Close();
+            return ProductList;
+        }
+
+        public async Task<int> GetStuckQuantity(int productId)
+        {
+            var connection = AdoDatabaseService.GetConnection();
+
+            connection.Open();
+            // CHECK the available stock first
+            using var checkStockCommand = connection.CreateCommand();
+            checkStockCommand.CommandText = @"SELECT Quantity FROM Products WHERE Id = $productId";
+            checkStockCommand.Parameters.AddWithValue("$productId", productId);
+            var availableStock = Convert.ToInt32(checkStockCommand.ExecuteScalar());
+
+            connection.Close();
+
+            return availableStock;
+        }
+        public async Task<float> GetProductsInOrders(ObservableCollection<ProductsInOrders> products, Order o)
+        {
+            float t = 0;
+            var connection = AdoDatabaseService.GetConnection();
+            connection.Open();
+
+            var command = connection.CreateCommand();
+            command.CommandText = @"SELECT pio.Id, pio.OrderId, pio.Quantity,
+                p.Id AS ProductId, p.Name, p.Description, p.Price, p.Quantity AS StockQuantity
+                FROM ProductsInOrders pio
+                JOIN Products p ON pio.ProductId = p.Id
+                WHERE pio.OrderId = $orderId;";
+
+            command.Parameters.AddWithValue("$orderId", o.Id);
+
+
+            using var reader = command.ExecuteReader();
+            while (reader.Read())
+            {
+                products.Add(new ProductsInOrders
+                {
+                    Id = reader.GetInt32(0),
+                    OrderId = reader.GetInt32(1),
+                    Quantity = reader.GetInt32(2),
+                    Product = new Product
+                    {
+                        Id = reader.GetInt32(3),
+                        Name = reader.GetString(4),
+                        Description = reader.IsDBNull(5) ? null : reader.GetString(5),
+                        Price = reader.GetFloat(6),
+                        Quantity = reader.GetInt32(7)
+                    }
+                });
+                t += reader.GetInt32(2) * reader.GetFloat(6);
+            }
+            connection.Close();
+            return t;
+        }
+
+        public async Task UpdateProductStock(int difference, int productId)
+        {
+            var connection = AdoDatabaseService.GetConnection();
+            connection.Open();
+            var updateProductCommand = connection.CreateCommand();
+            updateProductCommand.CommandText = @"UPDATE Products SET Quantity = Quantity - $difference WHERE Id = $productId";
+            updateProductCommand.Parameters.AddWithValue("$difference", difference);
+            updateProductCommand.Parameters.AddWithValue("$productId", productId);
+            updateProductCommand.ExecuteNonQuery();
+            connection.Close();
+        }
+
+        public async Task AddProductAsync(string name, string description, float price, int quantity)
+        {
+            var connection = AdoDatabaseService.GetConnection();
+            connection.Open();
+
+            using var command = connection.CreateCommand();
+            command.CommandText = @"INSERT INTO Products (Name, Description, Price, Quantity)
+                VALUES ($name, $description, $price, $quantity);";
+
+            command.Parameters.AddWithValue("$name", name);
+            command.Parameters.AddWithValue("$description", description ?? string.Empty);
+            command.Parameters.AddWithValue("$price", price);
+            command.Parameters.AddWithValue("$quantity", quantity);
+
+            command.ExecuteNonQuery();
+            connection.Close();
+        }
+    }
+}

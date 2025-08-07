@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Shell
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:view="clr-namespace:OrderApp.View"
+    xmlns:viewmodel="clr-namespace:OrderApp.ViewModel"
+    x:DataType="viewmodel:ShellViewModel"
+    Shell.BackgroundColor="{Binding BackgroundColor}"
+    Shell.TitleColor="{Binding TextColor}"
+    Shell.TabBarBackgroundColor="{Binding BackgroundColor}"
+    Shell.TabBarTitleColor="{Binding TextColor}"
+    Shell.TabBarUnselectedColor="{Binding TextColor}"
+    Shell.ForegroundColor="{Binding TextColor}"
+    FlowDirection="{Binding AppFlowDirection}"
+    x:Class="OrderApp.LoginShell"
+    Shell.FlyoutBehavior="Disabled">
+
+    <ShellContent
+        Title="Login"
+        ContentTemplate="{DataTemplate view:Login}"
+        Route="Login" />
+
+</Shell>

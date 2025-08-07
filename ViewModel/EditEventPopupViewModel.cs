@@ -1,0 +1,97 @@
+﻿using CommunityToolkit.Maui.Views;
+using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
+using OrderApp.Model;
+using OrderApp.Services;
+using Plugin.LocalNotification;
+using System.Collections.ObjectModel;
+
+namespace OrderApp.ViewModel
+{
+    public partial class EditEventPopUpViewModel : ObservableObject
+    {
+        [ObservableProperty]
+        public string eventName;
+        [ObservableProperty]
+        public string description;
+        [ObservableProperty]
+        public List<string> eventTypes;
+        [ObservableProperty]
+        public string selectedEventType;
+        [ObservableProperty]
+        public DateTime startDate;
+        [ObservableProperty]
+        public TimeSpan startTime;
+        [ObservableProperty]
+        public DateTime endDate;
+        [ObservableProperty]
+        public TimeSpan endTime;
+        [ObservableProperty]
+        DateTime today = DateTime.Today;
+
+        private readonly int userId;
+
+        private readonly Popup _popup;
+        private EventsServices _eventsServices;
+        private EventModel _oldEvent = new EventModel();
+        public EditEventPopUpViewModel(Popup popup, ObservableCollection<EventModel> events, EventsServices eventsServices, DateOnly dateSelected, EventModel oldEvent)
+        {
+            _popup = popup;
+            userId = Preferences.Get("UserId", 0);
+            _eventsServices = eventsServices;
+            EventTypes = ["Meeting", "Vacation", "Call"];
+            startTime = oldEvent.From.TimeOfDay;// DateTime.Now.TimeOfDay;
+            EndTime = oldEvent.To.TimeOfDay;
+            startDate = oldEvent.From.Date;
+            _oldEvent = oldEvent;
+        }
+
+        [RelayCommand]
+        async Task Close() => await _popup.CloseAsync();
+
+      
+        [RelayCommand]
+        async Task EditEventAsync()
+        {
+            try
+            {
+                var startDateTime = StartDate.Date + StartTime;
+                var endDateTime = EndDate.Date + EndTime;
+
+                LocalNotificationCenter.Current.Cancel(_oldEvent.Id + 1000);
+
+                // Call the service to edit the event
+                var updatedId = await _eventsServices.UpdateEvent(_oldEvent.Id, EventName, Description, SelectedEventType, startDateTime.ToString("yyyy-MM-dd HH:mm:ss"), endDateTime.ToString("yyyy-MM-dd HH:mm:ss"));
+                //int addedId = await _eventsServices.AddEvent(EventName, Description, SelectedEventType, startDateTime.ToString("yyyy-MM-dd HH:mm:ss"), endDateTime.ToString("yyyy-MM-dd HH:mm:ss"));
+
+                var reminderTime = startDateTime.AddSeconds(-15);
+
+                if (reminderTime > DateTime.Now)
+                {
+                    var request = new NotificationRequest
+                    {
+                        NotificationId = updatedId + 1000,
+                        Title = "Upcoming: " + EventName,  // e.g. "Meeting with Alice"
+                        Description = $"Starts at {startDateTime:t}",
+                        Schedule = new NotificationRequestSchedule
+                        {
+                            NotifyTime = reminderTime,
+                        },
+                    };
+
+                    await LocalNotificationCenter.Current.Show(request);
+
+                }
+
+                await Shell.Current.DisplayAlert("Success", "Event added successfully!", "OK");
+                await _popup.CloseAsync();
+            }
+            catch (Exception ex)
+            {
+                await Shell.Current.DisplayAlert("Error", "Event Not added successfully!", "OK");
+            }
+
+        }
+
+    }
+}

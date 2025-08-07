@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<toolkit:Popup xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+                xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+                xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+                xmlns:model="clr-namespace:OrderApp.Model"
+                xmlns:viewmodel="clr-namespace:OrderApp.ViewModel"
+                x:DataType="viewmodel:EditEventPopUpViewModel"
+                x:Class="OrderApp.View.EditEventPopup">
+
+    <VerticalStackLayout Padding="20" Spacing="10">
+        <Label Text="Add Event" FontAttributes="Bold" FontSize="18"/>
+
+        <Entry Placeholder="Event Name" Text="{Binding EventName}" />
+        <Editor Placeholder="Description" AutoSize="TextChanges" Text="{Binding Description}" />
+
+        <Picker Title="Select Event Type" ItemsSource="{Binding EventTypes}" SelectedItem="{Binding SelectedEventType}" />
+
+        <Label Text="Start Time" />
+        <DatePicker Date="{Binding StartDate}"  MinimumDate="{Binding Today}" />
+        <TimePicker Time="{Binding StartTime}" />
+
+        <Label Text="End Time" />
+        <!--<DatePicker Date="{Binding EndDate}" MinimumDate="{Binding StartDate}"/>-->
+        <TimePicker Time="{Binding EndTime}" />
+
+        <HorizontalStackLayout Spacing="20" HorizontalOptions="Center">
+            <Button Text="Add" Command="{Binding EditEventCommand}" />
+            <Button Text="Cancel" Command="{Binding CloseCommand}" />
+        </HorizontalStackLayout>
+    </VerticalStackLayout>
+</toolkit:Popup>
