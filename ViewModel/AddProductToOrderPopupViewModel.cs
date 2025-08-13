@@ -1,6 +1,7 @@
 ﻿using CommunityToolkit.Maui.Views;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using OrderApp.Helper;
 using OrderApp.Model;
 using OrderApp.Services;
 using System.Collections.ObjectModel;
@@ -16,7 +17,6 @@ namespace OrderApp.ViewModel
         [ObservableProperty]
         Product product;
 
-        private readonly Popup _popup;
         private ProductsServices _productsServices;
         private OrderServices _orderServices;
 
@@ -27,19 +27,16 @@ namespace OrderApp.ViewModel
         int quantity;
 
         Order _order;
-        public AddProductToOrderPopupViewModel(ObservableCollection<Product> products, Order order, Popup popup, ProductsServices productsServices, OrderServices orderServices)
+        public AddProductToOrderPopupViewModel(ObservableCollection<Product> products, Order order)
         {
-            _popup = popup;
             product = new();
             _order = order;
             Products = products;
-            _productsServices = productsServices;
-            _orderServices = orderServices;
+            _productsServices = ServiceHelper.Resolve<ProductsServices>();
+            _orderServices = ServiceHelper.Resolve<OrderServices>();
         }
 
-        [RelayCommand]
-        async Task Close() => await _popup.CloseAsync();
-
+        
         [RelayCommand]
         async Task AddProductToOrderAsync()
         {
@@ -58,13 +55,12 @@ namespace OrderApp.ViewModel
                 if (Quantity > availableStock)
                 {
                     // throw exception
-                    throw new Exception("Not enough product in stock");
+                    await Shell.Current.DisplayAlert("Success", "The product is updated successfully", "Ok");
                 }
-
-                await _orderServices.AddProductToOrder(_order, Product, Quantity);
-
-                // close the popup
-                await _popup.CloseAsync();
+                else
+                {
+                    await _orderServices.AddProductToOrder(_order, Product, Quantity);
+                }
             }
             catch (Exception ex)
             {

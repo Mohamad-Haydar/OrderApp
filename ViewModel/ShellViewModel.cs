@@ -1,5 +1,5 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
-using CommunityToolkit.Mvvm.Input;
+﻿using CommunityToolkit.Mvvm.Input;
+using OrderApp.Helper;
 using OrderApp.Services;
 
 namespace OrderApp.ViewModel
@@ -7,8 +7,7 @@ namespace OrderApp.ViewModel
     public partial class ShellViewModel : BaseViewModel
     {
 
-        public ShellViewModel(LocalizationService localizationService, string language, ThemeService themeService)
-        : base(localizationService, themeService)
+        public ShellViewModel(string language)
         {
             Language = language;
         }
@@ -33,6 +32,9 @@ namespace OrderApp.ViewModel
             SecureStorage.Remove("SavedEmail");
             SecureStorage.Remove("SavedPassword");
             Application.Current.Windows[0].Page = new LoginShell();
+
+            var themeService = ServiceHelper.Resolve<ThemeService>();
+            themeService.SetTheme(Preferences.Get("AppTheme", "white"));
         }
 
 

@@ -5,29 +5,29 @@
              xmlns:model="clr-namespace:OrderApp.Model"
              xmlns:viewmodel="clr-namespace:OrderApp.ViewModel"
              x:DataType="viewmodel:LoginViewModel"
-             Background="{DynamicResource BackgroundColor}"
+             
              FlowDirection="{Binding AppFlowDirection}"
              Title="{Binding Title}" >
     <Grid RowDefinitions="Auto, *, Auto, Auto,Auto" ColumnDefinitions="*,*" Padding="40" >
-        <Label  Text="{Binding Localization[EnterCredential]}" FontSize="30" WidthRequest="160" VerticalOptions="Center" TextColor="{DynamicResource TextColor}"/>
+        <Label  Text="{Binding Localization[EnterCredential]}" FontSize="30" WidthRequest="160" VerticalOptions="Center" />
 
         <ScrollView Grid.Row="1" Grid.ColumnSpan="2">
             <StackLayout Padding="10">
-                <Label Text="{Binding Localization[UserName]}" TextColor="{DynamicResource TextColor}"/>
-                <Entry Text="{Binding User.UserName}" PlaceholderColor="{DynamicResource NotSelectedColor}"  Placeholder="{Binding Localization[UserName]}" TextColor="{DynamicResource TextColor}"/>
+                <Label Text="{Binding Localization[UserName]}" />
+                <Entry Text="{Binding User.UserName}" PlaceholderColor="{DynamicResource NotSelectedColor}"  Placeholder="{Binding Localization[UserName]}"/>
 
-                <Label Text="{Binding Localization[Email]}" Margin="0,10,0,0" TextColor="{DynamicResource TextColor}"/>
-                <Entry Text="{Binding User.Email}"  PlaceholderColor="{DynamicResource NotSelectedColor}"  Placeholder="{Binding Localization[Email]}" TextColor="{DynamicResource TextColor}"/>
+                <Label Text="{Binding Localization[Email]}" Margin="0,10,0,0"/>
+                <Entry Text="{Binding User.Email}"  PlaceholderColor="{DynamicResource NotSelectedColor}"  Placeholder="{Binding Localization[Email]}"/>
 
-                <Label Text="{Binding Localization[Password]}" Margin="0,10,0,0" TextColor="{DynamicResource TextColor}"/>
-                <Entry Text="{Binding User.Password}"  PlaceholderColor="{DynamicResource NotSelectedColor}"  Placeholder="{Binding Localization[Password]}" TextColor="{DynamicResource TextColor}"/>
+                <Label Text="{Binding Localization[Password]}" Margin="0,10,0,0"/>
+                <Entry Text="{Binding User.Password}"  PlaceholderColor="{DynamicResource NotSelectedColor}"  Placeholder="{Binding Localization[Password]}"/>
 
 
             </StackLayout>
         </ScrollView>
 
         <HorizontalStackLayout Grid.Row="3" Grid.ColumnSpan="2" HorizontalOptions="Center" >
-            <Label Text="{Binding Localization[SwitchBiometric]}" VerticalOptions="Center" TextColor="{DynamicResource TextColor}"/>
+            <Label Text="{Binding Localization[SwitchBiometric]}" VerticalOptions="Center" />
             <Switch x:Name="BiometricSwitch" 
                     IsToggled="{Binding EnableBiometrics}" 
                     VerticalOptions="Center"/>

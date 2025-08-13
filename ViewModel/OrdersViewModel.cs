@@ -1,9 +1,11 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using OrderApp.Helper;
 using OrderApp.Model;
 using OrderApp.Services;
 using OrderApp.View;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 
 namespace OrderApp.ViewModel
 {
@@ -12,12 +14,16 @@ namespace OrderApp.ViewModel
         private readonly PopupService _popupService;
         private readonly OrderServices _orderServices;
         public ObservableCollection<Order> Orders { get; }
+        public ObservableCollection<Client> SelectedClient { get; set; } = new();
+        // static information for the multy selection
+        public ObservableCollection<Client> Result { get; set; } = new();
 
-        public OrdersViewModel(PopupService popupService, LocalizationService localizationService, ThemeService themeService, OrderServices orderServices) : base(localizationService, themeService)
+        public OrdersViewModel()
         {
             Orders = [];
-            _popupService = popupService;
-            _orderServices = orderServices;
+            _popupService = ServiceHelper.Resolve<PopupService>();
+            _orderServices = ServiceHelper.Resolve<OrderServices>();
+            LoadAsync();
         }
 
 
@@ -26,7 +32,7 @@ namespace OrderApp.ViewModel
         async Task AddOrderAsync()
         {
             // call the popup service to create new popup to add an order
-            await _popupService.ShowAddOrderPopupAsync(Orders);
+            await _popupService.ShowAddOrderPopupAsync();
         }
 
         // To delete an order from the database
@@ -53,7 +59,19 @@ namespace OrderApp.ViewModel
                 {nameof(Order), order},
             });
         }
-        
+
+        [RelayCommand]
+        async Task CountriesChanged()
+        {
+            // Do something with SelectedCountries
+            Debug.WriteLine("Countries changed:");
+            foreach (var c in SelectedClient)
+                Debug.WriteLine($" - {c}");
+        }
+
+        public static Func<Client, string> ClientDisplayProperty => c => c.Name;
+
+
         // Get the orders from the database and update the view
         public async Task LoadOrders()
         {
@@ -78,6 +96,14 @@ namespace OrderApp.ViewModel
 
                 throw;
             }
+        }
+
+        public async void LoadAsync()
+        {
+            Result.Clear();
+            Result.Add(new Client() { Id=1,Name="ali", Details= "client details client 1" });
+            Result.Add(new Client() { Id=2,Name="mohamad", Details= "client details client 2" });
+            Result.Add(new Client() { Id=3,Name="jawad", Details= "client details client 3" });
         }
     }
 }

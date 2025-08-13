@@ -22,8 +22,10 @@
 
         <!-- Buttons -->
         <HorizontalStackLayout Spacing="10" HorizontalOptions="Center">
-            <Button Text="Cancel" Command="{Binding CloseCommand}" WidthRequest="100"/>
-            <Button Text="Add" Command="{Binding AddProductToOrderCommand}" WidthRequest="100"/>
+            <!--<Button Text="Cancel" Command="{Binding CloseCommand}" WidthRequest="100"/>
+            <Button Text="Add" Command="{Binding AddProductToOrderCommand}" WidthRequest="100"/>-->
+            <Button Text="Cancel" Clicked="CancelButton_Clicked" WidthRequest="100"/>
+            <Button Text="Add" Clicked="AddButton_Clicked" WidthRequest="100"/>
         </HorizontalStackLayout>
     </VerticalStackLayout>
 </toolkit:Popup>

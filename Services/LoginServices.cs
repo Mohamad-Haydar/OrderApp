@@ -32,6 +32,7 @@ namespace OrderApp.Services
             command.Parameters.AddWithValue("$password", hashedPassword);
 
             using var reader = command.ExecuteReader();
+            
             if (reader.Read())
             {
                 int userId = reader.GetInt32(0);
@@ -44,10 +45,12 @@ namespace OrderApp.Services
                 Preferences.Set("Username", username);
                 await SecureStorage.SetAsync("SavedEmail", email);
                 await SecureStorage.SetAsync("SavedPassword", password);
+                connection.Close();
                 return true;
             }
             else
             {
+                connection.Close();
                 // No user Is found in the database or credentials are false
                 await Shell.Current.DisplayAlert("Login Failed", "Invalid credentials", "OK");
                 return false;

@@ -11,6 +11,7 @@
         <Label Text="Add New Client" FontAttributes="Bold" FontSize="20" />
         <Entry Placeholder="Name" Text="{Binding Client.Name}"/>
         <Entry Placeholder="Details" Text="{Binding Client.Details}"/>
-        <Button Text="Save" Command="{Binding AddClientCommand}" />
+        <!--<Button Text="Save" Command="{Binding AddClientCommand}" />-->
+        <Button Text="Save" Clicked="SaveButton_Clicked" />
     </VerticalStackLayout>
 </toolkit:Popup>

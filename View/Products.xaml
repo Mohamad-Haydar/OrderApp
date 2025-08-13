@@ -6,7 +6,7 @@
             xmlns:viewmodel="clr-namespace:OrderApp.ViewModel"
             x:DataType="viewmodel:ProductsViewModel"
              Title="Products">
-    <Grid RowDefinitions="Auto, *, Auto" ColumnDefinitions="*, *" Padding="10,10,10,10" Background="{DynamicResource BackgroundColor}">
+    <Grid RowDefinitions="Auto, *, Auto" ColumnDefinitions="*, *" Padding="10,10,10,10" >
         <Label 
        Text="Page"
        VerticalOptions="Center" 
@@ -19,24 +19,33 @@
            Grid.Row="1">
             <CollectionView.ItemTemplate>
                 <DataTemplate x:DataType="model:Product">
-                    <Grid Padding="10" Grid.ColumnSpan="2">
-                        <Border HeightRequest="125" BackgroundColor="White">
+                    <Grid Grid.ColumnSpan="2">
+                        <Border HeightRequest="125" Margin="0,5">
                             <Border.StrokeShape>
                                 <RoundRectangle CornerRadius="16" />
                             </Border.StrokeShape>
-                            <Border.GestureRecognizers>
+                            <!--<Border.GestureRecognizers>
                                 <TapGestureRecognizer CommandParameter="{Binding .}" 
                                             Command="{Binding x:DataType='viewmodel:ProductsViewModel',Source={RelativeSource AncestorType={x:Type viewmodel:ProductsViewModel}}, Path=GoToProductDetailsCommand}"/>
-                            </Border.GestureRecognizers>
+                            </Border.GestureRecognizers>-->
 
-                            <Grid Padding="10" ColumnDefinitions="125, *">
-                                <Image Source="product" Grid.Column="0" WidthRequest="100" HeightRequest="100" Aspect="AspectFill"/>
-                                <VerticalStackLayout Grid.Column="1" VerticalOptions="Center" HorizontalOptions="Start" Padding="10">
-                                    <Label Text="{Binding Name}" FontSize="20"/>
-                                    <Label Text="{Binding Description}" WidthRequest="130" LineBreakMode="TailTruncation"  FontSize="12"/>
+                            <Grid ColumnDefinitions="90, *" >
+                                <Image Source="{Binding ImageUrl}" Grid.Column="0" WidthRequest="70" HeightRequest="70"/>
+                                <VerticalStackLayout Grid.Column="1" VerticalOptions="Center" HorizontalOptions="Start">
+                                    <Label Text="{Binding Name}" HorizontalOptions="Start" WidthRequest="130" FontSize="20"/>
+                                    <Label Text="{Binding Description}"  HorizontalOptions="Start" WidthRequest="130" LineBreakMode="TailTruncation"  FontSize="12"/>
                                     <HorizontalStackLayout>
                                         <Label Text="Quantity" FontSize="12"/>
                                         <Label Text="{Binding Quantity}" FontSize="12"/>
+                                    </HorizontalStackLayout>
+                                    <HorizontalStackLayout Spacing="10">
+                                        <Button Text="Select Image" Margin="0,5"
+                                            Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodel:ProductsViewModel}}, Path=SelectImageCommand}"
+                                            CommandParameter="{Binding .}"/>
+
+                                    <Button Text="Add 100" Margin="0,5"
+                                         Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodel:ProductsViewModel}}, Path=AddProductToStockCommand}"
+                                         CommandParameter="{Binding .}"/>
                                     </HorizontalStackLayout>
                                 </VerticalStackLayout>
                             </Grid>

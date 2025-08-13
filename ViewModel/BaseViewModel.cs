@@ -1,4 +1,5 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
+using OrderApp.Helper;
 using OrderApp.Services;
 
 namespace OrderApp.ViewModel
@@ -9,12 +10,13 @@ namespace OrderApp.ViewModel
         public LocalizationService Localization => _localization;
 
         private readonly ThemeService _themeService;
-        public BaseViewModel(LocalizationService localizationService, ThemeService themeService)
+        public BaseViewModel()
         {
-            _localization = localizationService;
+            _localization = ServiceHelper.Resolve<LocalizationService>();
             Language = Preferences.Get("AppLanguage", "en");
 
-            _themeService = themeService;
+            _themeService = ServiceHelper.Resolve<ThemeService>();
+            _themeService.SetTheme(Preferences.Get("AppTheme", "white"));
         }
 
         [ObservableProperty]

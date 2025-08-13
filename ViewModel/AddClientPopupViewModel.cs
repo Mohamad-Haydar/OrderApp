@@ -1,6 +1,7 @@
 ﻿using CommunityToolkit.Maui.Views;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using OrderApp.Helper;
 using OrderApp.Model;
 using OrderApp.Services;
 using System.Collections.ObjectModel;
@@ -13,15 +14,13 @@ namespace OrderApp.ViewModel
         Client client;
 
         private readonly ObservableCollection<Client> _clients;
-        private readonly Popup _popup;
         private ClientServices _clientServices;
 
-        public AddClientPopupViewModel(ObservableCollection<Client> clients, Popup popup, ClientServices clientServices)
+        public AddClientPopupViewModel(ObservableCollection<Client> clients)
         {
-            _popup = popup;
             client = new();
             _clients = clients;
-            _clientServices = clientServices;
+            _clientServices = ServiceHelper.Resolve<ClientServices>();
         }
 
         [RelayCommand]
@@ -32,8 +31,6 @@ namespace OrderApp.ViewModel
                 await _clientServices.AddClient(Client.Name, Client.Details);
                 _clients.Add(new Client() { Name = Client.Name, Details = Client.Details });
                 Client = new Client();
-
-                await _popup.CloseAsync();
 
                 await Shell.Current.DisplayAlert("Success", "Client added successfully", "OK");
             }

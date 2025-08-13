@@ -1,5 +1,4 @@
 ﻿using Microsoft.Data.Sqlite;
-using Microsoft.Maui.Controls.PlatformConfiguration;
 
 namespace OrderApp.Services
 {
@@ -19,7 +18,7 @@ namespace OrderApp.Services
             string clientTalbeQuery = "CREATE TABLE IF NOT EXISTS Clients (\r\n    Id INTEGER PRIMARY KEY AUTOINCREMENT,\r\n    Name TEXT NOT NULL,\r\n    Details TEXT\r\n);";
             string usersTableQuery = "CREATE TABLE IF NOT EXISTS Users (\r\n    Id INTEGER PRIMARY KEY AUTOINCREMENT,\r\n    Username TEXT NOT NULL UNIQUE,\r\n    Email TEXT NOT NULL UNIQUE,\r\n    Password TEXT NOT NULL\r\n);";
             string ordersTableQUery = "CREATE TABLE IF NOT EXISTS Orders (\r\n    Id INTEGER PRIMARY KEY AUTOINCREMENT,\r\n    ClientId INTEGER NOT NULL,\r\n   UserId INTEGER NOT NULL,\r\n  Total REAL NOT NULL,\r\n    DateToPick TEXT NOT NULL,\r\n FOREIGN KEY (UserId) REFERENCES Users(Id) ON DELETE CASCADE,\r\n   FOREIGN KEY (ClientId) REFERENCES Clients(Id) ON DELETE CASCADE\r\n);";
-            string productsTableQuery = "CREATE TABLE IF NOT EXISTS Products (\r\n    Id INTEGER PRIMARY KEY AUTOINCREMENT,\r\n    Name TEXT NOT NULL,\r\n    Description TEXT,\r\n    Price REAL NOT NULL CHECK (Price >= 0),\r\n    Quantity INTEGER NOT NULL CHECK (Quantity >= 0)\r\n);";
+            string productsTableQuery = "CREATE TABLE IF NOT EXISTS Products (\r\n    Id INTEGER PRIMARY KEY AUTOINCREMENT,\r\n    Name TEXT NOT NULL,\r\n    Description TEXT,\r\n    Price REAL NOT NULL CHECK (Price >= 0),\r\n    Quantity INTEGER NOT NULL CHECK (Quantity >= 0),\r\n  ImageUrl TEXT);";
             string productsInOrdersTableQuery = "CREATE TABLE IF NOT EXISTS ProductsInOrders (\r\n    Id INTEGER PRIMARY KEY AUTOINCREMENT,\r\n    OrderId INTEGER NOT NULL,\r\n    ProductId INTEGER NOT NULL,\r\n    Quantity INTEGER NOT NULL,\r\n    FOREIGN KEY (OrderId) REFERENCES Orders(Id) ON DELETE CASCADE,\r\n    FOREIGN KEY (ProductId) REFERENCES Products(Id) ON DELETE CASCADE\r\n);";
             string eventsTableQuery = @"CREATE TABLE IF NOT EXISTS Events (
                                         Id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -30,15 +29,15 @@ namespace OrderApp.Services
                                         StartTime DateTime NOT NULL,
                                         EndTime DateTime NOT NULL,
                                         FOREIGN KEY (UserId) REFERENCES Users(Id) ON DELETE CASCADE);";
-            
             connection.Open();
 
             
             var command = connection.CreateCommand();
-            command.CommandText = clientTalbeQuery + usersTableQuery + ordersTableQUery + productsTableQuery + productsInOrdersTableQuery + eventsTableQuery ;
+            command.CommandText = clientTalbeQuery + usersTableQuery + ordersTableQUery + productsTableQuery + productsInOrdersTableQuery + eventsTableQuery;
 
             command.ExecuteNonQuery();   
-            
+            connection.Close();
+
 
         }
 
@@ -58,6 +57,7 @@ namespace OrderApp.Services
             insertCmd.Parameters.AddWithValue("$quantity", quantity);
 
             insertCmd.ExecuteNonQuery();
+            connection.Close();
         }
 
         public static List<(int Id, string Name, string Description, float Price, int Quantity)> GetProducts()
@@ -80,7 +80,7 @@ namespace OrderApp.Services
                 var quantity = reader.GetInt16(4);
                 products.Add((id, name, description, price, quantity));
             }
-
+            connection.Close();
             return products;
         }
 

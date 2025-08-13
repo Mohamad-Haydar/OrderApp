@@ -1,6 +1,7 @@
 ﻿using CommunityToolkit.Maui.Views;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using OrderApp.Helper;
 using OrderApp.Model;
 using OrderApp.Services;
 using OrderApp.View;
@@ -22,22 +23,16 @@ namespace OrderApp.ViewModel
         [ObservableProperty]
         DateTime today = DateTime.Today;
 
-        public ObservableCollection<Order> _orders;
-        private readonly Popup _popup;
         private OrderServices _orderServices;
 
-        public AddOrderPopupViewModel(ObservableCollection<Order> orders, ObservableCollection<Client> clients, Popup popup, OrderServices orderServices)
+        public AddOrderPopupViewModel(ObservableCollection<Client> clients)
         {
-            _popup = popup;
             order = new();
-            _orders = orders;
+            _orderServices = ServiceHelper.Resolve<OrderServices>();
             Clients = clients;
-            _orderServices = orderServices;
         }
 
-        [RelayCommand]
-        async Task Close() => await _popup.CloseAsync();
-
+       
         [RelayCommand]
         async Task AddOrder()
         {
@@ -47,19 +42,9 @@ namespace OrderApp.ViewModel
                 await Shell.Current.DisplayAlert("Error", "Please select a client", "OK");
                 return;
             }
-            var connection = AdoDatabaseService.GetConnection();
             try
             {
                 await _orderServices.CreateOrder(Client.Id, Order.DateToPick);
-
-                _orders.Add(new Order()
-                {
-                    ClientId = Client.Id,
-                    Total = 0,
-                    DateToPick = Order.DateToPick
-                });
-                // close the popup after finish the work
-                await _popup.CloseAsync();
             }
             catch (Exception ex)
             {
@@ -67,7 +52,6 @@ namespace OrderApp.ViewModel
             }
             finally
             {
-                connection.Close();
             }
         }
 

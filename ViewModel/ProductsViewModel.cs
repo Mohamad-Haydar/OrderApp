@@ -1,8 +1,10 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using OrderApp.Helper;
 using OrderApp.Model;
 using OrderApp.Services;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 
 namespace OrderApp.ViewModel
 {
@@ -13,11 +15,11 @@ namespace OrderApp.ViewModel
 
         public ObservableCollection<Product> Products { get;  }
 
-        public ProductsViewModel(PopupService popupService, LocalizationService localizationService, ThemeService themeService, ProductsServices productsServices) : base(localizationService, themeService)
+        public ProductsViewModel()
         {
             Products = [];
-            _popupService = popupService;
-            _productsServices = productsServices;
+            _popupService = ServiceHelper.Resolve<PopupService>();
+            _productsServices = ServiceHelper.Resolve<ProductsServices>();
         }
 
         [RelayCommand]
@@ -48,7 +50,8 @@ namespace OrderApp.ViewModel
                             Name = product.Name,
                             Description = product.Description,
                             Price = product.Price,
-                            Quantity = product.Quantity
+                            Quantity = product.Quantity,
+                            ImageUrl = product.ImageUrl
                         });
                     }
                 }
@@ -57,6 +60,58 @@ namespace OrderApp.ViewModel
             {
                 Console.WriteLine($"error: { ex.Message}");
             }
+        }
+
+        [RelayCommand]
+        async Task SelectImageAsync(Product product)
+        {
+            try
+            {
+                // Pick an image
+                var result = await FilePicker.Default.PickAsync(new PickOptions
+                {
+                    FileTypes = FilePickerFileType.Images,
+                    PickerTitle = "Select an image"
+                });
+
+                if (result != null)
+                {
+                    using var stream = await result.OpenReadAsync();
+
+                    var appDataPath = FileSystem.AppDataDirectory;
+                    var imagesFolder = Path.Combine(appDataPath, "images");
+
+                    if (!Directory.Exists(imagesFolder))
+                        Directory.CreateDirectory(imagesFolder);
+
+                    string extension = Path.GetExtension(result.FileName);
+                    string newFileName = $"{product.Id}{extension}";
+                    string filePath = Path.Combine(imagesFolder, newFileName);
+
+                    if (File.Exists(filePath))
+                        File.Delete(filePath);
+
+                    using var newFileStream = File.Create(filePath);
+                    await stream.CopyToAsync(newFileStream);
+
+                    product.ImageUrl = filePath;
+
+                    // Update database with new image URL
+                    await _productsServices.UpdateProductImage(product);
+
+                }
+            }
+            catch (Exception ex)
+            {
+                // Handle exceptions (user canceled, permissions, etc)
+                Debug.WriteLine($"Image pick error: {ex.Message}");
+            }
+        }
+
+        [RelayCommand]
+        async Task AddProductToStockAsync(Product product)
+        {
+            await _productsServices.UpdateProductStock(-95,product.Id);
         }
     }
 }

@@ -4,10 +4,12 @@ namespace OrderApp
 {
     public partial class App : Application
     {
-        public App()
+        public static IServiceProvider Services { get; private set; }
+        public App(IServiceProvider serviceProvider)
         {
             InitializeComponent();
             AdoDatabaseService.Init();
+            Services = serviceProvider;
         }
 
         protected override Window CreateWindow(IActivationState? activationState)

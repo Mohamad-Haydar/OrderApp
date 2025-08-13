@@ -32,10 +32,10 @@ namespace OrderApp.Services
             await _mainPage.ShowPopupAsync(popup);
         }
 
-        public async Task ShowAddOrderPopupAsync(ObservableCollection<Order> orders)
+        public async Task ShowAddOrderPopupAsync()
         {
             var clients = await _clientServices.GetClientsForPopup();
-            var popup = new AddOrderPopup(orders, clients);
+            var popup = new AddOrderPopup(clients);
             await _mainPage.ShowPopupAsync(popup);
         }
 
@@ -46,14 +46,14 @@ namespace OrderApp.Services
             await _mainPage.ShowPopupAsync(popup);
         }
 
-        public async Task ShowAddEventPopupAsync(ObservableCollection<EventModel> EventsOfDay, DateOnly dateSelected)
+        public async Task ShowAddEventPopupAsync()
         {
-            var popup = new AddEventPopUp(EventsOfDay, dateSelected);
+            var popup = new AddEventPopUp();
             await _mainPage.ShowPopupAsync(popup);
         }
-        public async Task ShowEditEventPopupAsync(ObservableCollection<EventModel> EventsOfDay, DateOnly dateSelected, EventModel oldEvent)
+        public async Task ShowEditEventPopupAsync(EventModel oldEvent)
         {
-            var popup = new EditEventPopup(EventsOfDay, dateSelected, oldEvent);
+            var popup = new EditEventPopup( oldEvent);
             await _mainPage.ShowPopupAsync(popup);
         }
 

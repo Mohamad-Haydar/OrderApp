@@ -1,26 +1,33 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using OrderApp.Helper;
 using OrderApp.Model;
 using OrderApp.Services;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 
 namespace OrderApp.ViewModel
 {
     [QueryProperty(nameof(Order), nameof(Order))]
     public partial class OrderDetailsViewModel : BaseViewModel
     {
+        public ObservableCollection<Product> Products { get; set; } = new();
+
         [ObservableProperty]
-        Order order;
+        ObservableCollection<Product> filteredProducts = new();
+
+        [ObservableProperty]
+        string searchText;
 
         [ObservableProperty]
         ObservableCollection<ProductsInOrders> productsInOrders;
 
         [ObservableProperty]
+        Order order;
+        [ObservableProperty]
         float total;
-
         [ObservableProperty]
         string title;
-
         [ObservableProperty]
         string? clientName;
 
@@ -28,16 +35,47 @@ namespace OrderApp.ViewModel
         public ProductsServices _productService;
         public ClientServices _clientServices;
         public OrderServices _orderServices;
-        public OrderDetailsViewModel(PopupService popupService, LocalizationService localizationService, ThemeService themeService, ProductsServices productService, ClientServices clientServices, OrderServices orderServices) : base(localizationService, themeService)
+
+        public OrderDetailsViewModel() 
         {
-            _popupService = popupService;
+            _popupService = ServiceHelper.Resolve<PopupService>();
             ProductsInOrders = [];
             Total = 0;
-            _productService = productService;
-            _clientServices = clientServices;
-            _orderServices = orderServices;
+            _productService = ServiceHelper.Resolve<ProductsServices>();
+            _clientServices = ServiceHelper.Resolve<ClientServices>();
+            _orderServices = ServiceHelper.Resolve<OrderServices>();
         }
 
+        [RelayCommand]
+        async Task AddProductAsync(Product product)
+        {
+            // if the product is already in the list of added product, get the product to the first location in the list of products In order
+            var existingProduct = ProductsInOrders.FirstOrDefault(x => x.Product.Id == product.Id);
+            if (existingProduct != null)
+            {
+                // Remove it from its current position
+                ProductsInOrders.Remove(existingProduct);
+
+                // Insert it at the first position
+                ProductsInOrders.Insert(0,existingProduct);
+                return;
+            }
+
+            var availableStock = await _productService.GetStuckQuantity(product.Id);
+
+            // If not enough stock, stop here
+            if (availableStock > 1)
+            {
+                 // add only 1 item of the product 
+                await _orderServices.AddProductToOrder(Order, product, 1);
+                await LoadProductsOfOrder();
+            }
+            else
+            {
+                // throw exception
+                await Shell.Current.DisplayAlert("Success", "The product is updated successfully", "Ok");
+            }
+        }
 
         [RelayCommand]
         async Task AddProductToOrderAsync()
@@ -45,7 +83,20 @@ namespace OrderApp.ViewModel
             await _popupService.ShowAddProductToOrderPopupAsync(Order);
         }
 
-        public async Task LoadProducts()
+        [RelayCommand]
+        public async Task LoadItems()
+        {
+            IsBusy = true;
+            // Give the UI a moment to update the ActivityIndicator
+            await Task.Yield();
+
+            await LoadCustomer();
+            await LoadProductsOfOrder();
+            await LoadAllProductsAsync();
+            IsBusy = false;
+        }
+
+        public async Task LoadProductsOfOrder()
         {
             Title = "Details of Order: " + Order.Id;
             Total = 0;
@@ -59,7 +110,33 @@ namespace OrderApp.ViewModel
                 Console.WriteLine("something went wrong");
             }
         }
-    
+
+        public async Task LoadAllProductsAsync()
+        {
+            var products = await _productService.GetProducts();
+            Products.Clear();
+            foreach (var product in products)
+                Products.Add(product);
+
+            // Initially show all products
+            FilteredProducts = new ObservableCollection<Product>(Products);
+        }
+
+        [RelayCommand]  
+         async Task SearchAsync()
+        {
+            if (string.IsNullOrWhiteSpace(searchText))
+            {
+                FilteredProducts = new ObservableCollection<Product>(Products);
+            }
+            else
+            {
+                var lower = searchText.ToLower();
+                var results = Products.Where(p => p.Name.ToLower().Contains(lower)).ToList();
+                FilteredProducts = new ObservableCollection<Product>(results);
+            }
+        }
+
         public async Task LoadCustomer()
         {
             try

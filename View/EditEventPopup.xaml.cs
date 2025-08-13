@@ -9,9 +9,9 @@ namespace OrderApp.View;
 
 public partial class EditEventPopup : Popup
 {
-    public EditEventPopup(ObservableCollection<EventModel> events, DateOnly dateSelected, EventModel oldEvent)
+    public EditEventPopup(EventModel oldEvent)
     {
         InitializeComponent();
-        this.BindingContext = new EditEventPopUpViewModel(this, events, new EventsServices(), dateSelected, oldEvent);
+        this.BindingContext = new EditEventPopUpViewModel( oldEvent);
     }
 }

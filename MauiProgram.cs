@@ -1,4 +1,5 @@
 ﻿using CommunityToolkit.Maui;
+using CommunityToolkit.Maui.Views;
 using Microsoft.Extensions.Logging;
 using Microsoft.Maui.LifecycleEvents;
 using OrderApp.Helper;
@@ -6,9 +7,10 @@ using OrderApp.Services;
 using OrderApp.ViewModel;
 using Plugin.Fingerprint;
 using Plugin.Fingerprint.Abstractions;
-using Plugin.LocalNotification;
-using Syncfusion.Maui.Core.Hosting;
 using Plugin.Firebase.CloudMessaging;
+using Plugin.LocalNotification;
+using SkiaSharp.Views.Maui.Controls.Hosting;
+using Syncfusion.Maui.Core.Hosting;
 
 
 
@@ -40,15 +42,19 @@ namespace OrderApp
             return builder;
         }
 
+     
+
         public static MauiApp CreateMauiApp()
         {
             var builder = MauiApp.CreateBuilder();
+
             builder
                 .UseMauiApp<App>()
                 .UseMauiCommunityToolkit()
                 .RegisterFirebaseServices()
                 .UseLocalNotification()
                 .ConfigureSyncfusionCore()
+                .UseSkiaSharp()
                 .ConfigureFonts(fonts =>
                 {
                     fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");
@@ -70,6 +76,7 @@ namespace OrderApp
             builder.Services.AddTransient<AddOrderPopupViewModel>();
             builder.Services.AddTransient<AddEventPopUpViewModel>();
             builder.Services.AddTransient<EventsViewModel>();
+            builder.Services.AddTransient<Popup>();
 
             // services and helpers
             builder.Services.AddSingleton<Helpers>();

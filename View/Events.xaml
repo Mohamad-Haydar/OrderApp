@@ -12,8 +12,9 @@
         <scheduler:SfScheduler x:Name="scheduler" 
                        AppointmentsSource="{Binding EventsOfDay}"
                        View="Month"
+                       BackgroundColor="White"
                        Tapped="OnSchedulerTapped">
-            
+
 
 
             <scheduler:SfScheduler.AppointmentMapping >
@@ -28,9 +29,10 @@
             </scheduler:SfScheduler.AppointmentMapping>
 
             <scheduler:SfScheduler.MonthView>
+
                 <scheduler:SchedulerMonthView 
-                       AppointmentDisplayMode="Indicator"
-                    AppointmentIndicatorCount="4"/>
+                        AppointmentDisplayMode="Indicator"
+                        AppointmentIndicatorCount="4"/>
             </scheduler:SfScheduler.MonthView>
 
 

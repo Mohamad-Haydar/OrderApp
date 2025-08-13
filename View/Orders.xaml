@@ -4,16 +4,17 @@
              x:Class="OrderApp.View.Orders"
              xmlns:model="clr-namespace:OrderApp.Model"
              xmlns:viewmodel="clr-namespace:OrderApp.ViewModel"
+             xmlns:controls="clr-namespace:CraftUI.Library.Maui.Controls;assembly=CraftUI"
              x:DataType="viewmodel:OrdersViewModel"             
              Title="Orders">
 
     <!--<Grid RowDefinitions="Auto, *, Auto" ColumnDefinitions="*, Auto" Padding="10,10,10,10" BackgroundColor="{Binding BackgroundColor}">-->
-      <Grid RowDefinitions="Auto, *, Auto" ColumnDefinitions="*, Auto" Padding="10,10,10,10" BackgroundColor="{DynamicResource BackgroundColor}">
+      <Grid RowDefinitions="Auto, *, Auto" ColumnDefinitions="*, Auto" Padding="10,10,10,10">
         <Label 
        Text="{Binding Localization[OrdersPageTitle]}"
        VerticalOptions="Center" 
        HorizontalOptions="Center" 
-            Grid.ColumnSpan="2" TextColor="{DynamicResource TextColor}"/>
+            Grid.ColumnSpan="2"/>
         <CollectionView 
            BackgroundColor="Transparent" 
            Grid.ColumnSpan="2"
@@ -23,7 +24,7 @@
             <CollectionView.ItemTemplate>
                 <DataTemplate x:DataType="model:Order">
                     <Grid Padding="10" >
-                        <Border  BackgroundColor="White">
+                        <Border>
                             <Border.StrokeShape>
                                 <RoundRectangle CornerRadius="16" />
                             </Border.StrokeShape>
@@ -85,6 +86,12 @@
                  VerticalOptions="End"
                  HorizontalOptions="End"
                 Command="{Binding AddOrderCommand}"/>
+            <controls:CfMultiPickerPopup Label="Contry" Grid.Row="2"
+                    SelectedItems="{Binding SelectedClient, Mode=TwoWay}"
+                    SelectionChangedCommand="{Binding CountriesChangedCommand}"
+                    ItemsSource="{Binding Result}"
+                    ItemDisplay="Details"
+                    />
     </Grid>
 
-</ContentPage>
+</ContentPage>  

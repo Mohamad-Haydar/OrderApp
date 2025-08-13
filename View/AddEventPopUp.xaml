@@ -24,8 +24,11 @@
         <TimePicker Time="{Binding EndTime}" />
 
         <HorizontalStackLayout Spacing="20" HorizontalOptions="Center">
-            <Button Text="Add" Command="{Binding AddEventCommand}"/>
-            <Button Text="Cancel" Command="{Binding CloseCommand}" />
+            <!--<Button Text="Add" Command="{Binding AddEventCommand}"/>
+            <Button Text="Cancel" Command="{Binding CloseCommand}" />-->
+
+            <Button Text="Save" Clicked="SaveButton_Clicked" WidthRequest="90"/>
+            <Button Text="Cancel" Clicked="CloseButton_Clicked" WidthRequest="90"/>
         </HorizontalStackLayout>
     </VerticalStackLayout>
 </toolkit:Popup>

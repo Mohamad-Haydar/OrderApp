@@ -1,10 +1,5 @@
 ﻿using OrderApp.Model;
-using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace OrderApp.Services
 {
@@ -28,7 +23,8 @@ namespace OrderApp.Services
                     Name = reader.GetString(1),
                     Description = reader.GetString(2),
                     Price = reader.GetFloat(3),
-                    Quantity = reader.GetInt32(4)
+                    Quantity = reader.GetInt32(4),
+                    ImageUrl = reader.GetString(5)
                 });
             }
             connection.Close();
@@ -58,10 +54,11 @@ namespace OrderApp.Services
 
             var command = connection.CreateCommand();
             command.CommandText = @"SELECT pio.Id, pio.OrderId, pio.Quantity,
-                p.Id AS ProductId, p.Name, p.Description, p.Price, p.Quantity AS StockQuantity
+                p.Id AS ProductId, p.Name, p.Description, p.Price, p.Quantity AS StockQuantity, p.ImageUrl
                 FROM ProductsInOrders pio
                 JOIN Products p ON pio.ProductId = p.Id
-                WHERE pio.OrderId = $orderId;";
+                WHERE pio.OrderId = $orderId
+                Order BY p.Id DESC;";
 
             command.Parameters.AddWithValue("$orderId", o.Id);
 
@@ -80,7 +77,8 @@ namespace OrderApp.Services
                         Name = reader.GetString(4),
                         Description = reader.IsDBNull(5) ? null : reader.GetString(5),
                         Price = reader.GetFloat(6),
-                        Quantity = reader.GetInt32(7)
+                        Quantity = reader.GetInt32(7),
+                        ImageUrl = reader.GetString(8)
                     }
                 });
                 t += reader.GetInt32(2) * reader.GetFloat(6);
@@ -116,6 +114,18 @@ namespace OrderApp.Services
             command.Parameters.AddWithValue("$quantity", quantity);
 
             command.ExecuteNonQuery();
+            connection.Close();
+        }
+
+        public async Task UpdateProductImage(Product product)
+        {
+            var connection = AdoDatabaseService.GetConnection();
+            connection.Open();
+            var updateProductCommand = connection.CreateCommand();
+            updateProductCommand.CommandText = @"UPDATE Products SET ImageUrl = $image WHERE Id = $productId";
+            updateProductCommand.Parameters.AddWithValue("$image", product.ImageUrl);
+            updateProductCommand.Parameters.AddWithValue("$productId", product.Id);
+            await updateProductCommand.ExecuteNonQueryAsync();
             connection.Close();
         }
     }

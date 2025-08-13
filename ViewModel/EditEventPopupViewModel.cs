@@ -1,6 +1,7 @@
 ﻿using CommunityToolkit.Maui.Views;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using OrderApp.Helper;
 using OrderApp.Model;
 using OrderApp.Services;
 using Plugin.LocalNotification;
@@ -33,14 +34,14 @@ namespace OrderApp.ViewModel
 
         private readonly Popup _popup;
         private EventsServices _eventsServices;
-        private EventModel _oldEvent = new EventModel();
-        public EditEventPopUpViewModel(Popup popup, ObservableCollection<EventModel> events, EventsServices eventsServices, DateOnly dateSelected, EventModel oldEvent)
+        private EventModel _oldEvent = new();
+        public EditEventPopUpViewModel(EventModel oldEvent)
         {
-            _popup = popup;
+            _popup = ServiceHelper.Resolve<Popup>();
             userId = Preferences.Get("UserId", 0);
-            _eventsServices = eventsServices;
+            _eventsServices = ServiceHelper.Resolve<EventsServices>();
             EventTypes = ["Meeting", "Vacation", "Call"];
-            startTime = oldEvent.From.TimeOfDay;// DateTime.Now.TimeOfDay;
+            startTime = oldEvent.From.TimeOfDay;
             EndTime = oldEvent.To.TimeOfDay;
             startDate = oldEvent.From.Date;
             _oldEvent = oldEvent;

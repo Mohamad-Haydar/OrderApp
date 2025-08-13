@@ -13,6 +13,7 @@
         <Entry Placeholder="Description" Text="{Binding Product.Description}"/>
         <Entry Placeholder="Price" Text="{Binding Product.Price}"/>
         <Entry Placeholder="Quantity" Text="{Binding Product.Quantity}"/>
-        <Button Text="Save" Command="{Binding AddProductCommand}" />
+        <!--<Button Text="Save" Command="{Binding AddProductCommand}" />-->
+        <Button Text="Save" Clicked="SaveButton_Clicked" />
     </VerticalStackLayout>
 </toolkit:Popup>

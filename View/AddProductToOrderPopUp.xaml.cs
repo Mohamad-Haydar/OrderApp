@@ -12,6 +12,22 @@ public partial class AddProductToOrderPopUp : Popup
 	public AddProductToOrderPopUp(ObservableCollection<Product> products, Order order)
 	{
 		InitializeComponent();
-        this.BindingContext = new AddProductToOrderPopupViewModel(products, order, this, new ProductsServices() , new OrderServices(new ProductsServices(), new ProductInOrdersServices()));
+        this.BindingContext = new AddProductToOrderPopupViewModel(products, order);
     }
+
+    private async void CancelButton_Clicked(object sender, EventArgs e)
+    {
+        await this.CloseAsync();
+    }
+
+    private async void AddButton_Clicked(object sender, EventArgs e)
+    {
+        if (this.BindingContext is AddProductToOrderPopupViewModel viewModel)
+        {
+            await viewModel.AddProductToOrderCommand.ExecuteAsync(null);
+
+            await this.CloseAsync();
+        }
+    }
+
 }

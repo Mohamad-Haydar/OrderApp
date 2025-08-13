@@ -1,5 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using OrderApp.Helper;
 using OrderApp.Model;
 using OrderApp.Services;
 using System.Collections.ObjectModel;
@@ -13,11 +14,11 @@ namespace OrderApp.ViewModel
 
         public ObservableCollection<Client> Clients { get; }
 
-        public ClientsViewModel(PopupService popupService, LocalizationService localizationService, ThemeService themeService, ClientServices clientServices) : base(localizationService, themeService)
+        public ClientsViewModel()
         {
             Clients = [];
-            _popupService = popupService;
-            _clientServices = clientServices;
+            _popupService = ServiceHelper.Resolve<PopupService>();
+            _clientServices = ServiceHelper.Resolve<ClientServices>();
         }
 
 

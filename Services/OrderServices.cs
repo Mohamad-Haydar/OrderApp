@@ -72,8 +72,11 @@ namespace OrderApp.Services
                     // Step 2.1: Check available stock
                     var availableStock = await _productServices.GetStuckQuantity(item.Product.Id);
 
-                    if (difference > availableStock)
-                        throw new Exception("Not enough product in stock for product: " + item.Product.Name);
+                    if (difference > availableStock) 
+                    {
+                        await Shell.Current.DisplayAlert("Error", "Not enough stock available", "OK");
+                        return;
+                    }
                 }
 
                 // Step 3: Update ProductsInOrders

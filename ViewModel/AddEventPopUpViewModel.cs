@@ -30,24 +30,19 @@ namespace OrderApp.ViewModel
         [ObservableProperty]
         DateTime today = DateTime.Today;
 
-        private readonly Popup _popup;
         private EventsServices _eventsServices;
-        private readonly HttpClient _httpClient;
 
-        public AddEventPopUpViewModel(Popup popup, ObservableCollection<EventModel> events, EventsServices eventsServices, DateOnly dateSelected)
+        public AddEventPopUpViewModel()
         {
-            _popup = popup;
-            _eventsServices = eventsServices;
+            _eventsServices = ServiceHelper.Resolve<EventsServices>();
             EventTypes = ["Meeting", "Vacation", "Call"];
             startTime = DateTime.Now.TimeOfDay;
             EndTime = DateTime.Now.TimeOfDay;
             startDate = DateTime.Now.Date;
-            endDate = startDate; // Default to next day
+            endDate = startDate;
         }
 
-        [RelayCommand]
-        async Task Close() => await _popup.CloseAsync();
-
+      
         [RelayCommand]
         async Task AddEventAsync()
         {
@@ -122,7 +117,6 @@ namespace OrderApp.ViewModel
                 }
 
                 await Shell.Current.DisplayAlert("Success", "Event added successfully!", "OK");
-                    await _popup.CloseAsync();
             }
             catch (Exception ex)
             {

@@ -7,12 +7,7 @@
     xmlns:view="clr-namespace:OrderApp.View"
     xmlns:viewmodel="clr-namespace:OrderApp.ViewModel"
     x:DataType="viewmodel:ShellViewModel"
-    Shell.BackgroundColor="{DynamicResource BackgroundColor}"
-    Shell.TitleColor="{DynamicResource TextColor}"
-    Shell.TabBarBackgroundColor="{DynamicResource BackgroundColor}"
-    Shell.TabBarTitleColor="{DynamicResource TextColor}"
-    Shell.TabBarUnselectedColor="{DynamicResource TextColor}"
-    Shell.ForegroundColor="{DynamicResource TextColor}"
+   
     FlowDirection="{Binding AppFlowDirection}"
     Title="OrderApp">
 

@@ -5,11 +5,11 @@ namespace OrderApp.View;
 public partial class Orders : ContentPage
 {
     private OrdersViewModel _ordersViewModel;
-    public Orders(OrdersViewModel viewModel, OrdersViewModel ordersViewModel)
+    public Orders(OrdersViewModel viewModel)
     {
         InitializeComponent();
         BindingContext = viewModel;
-        _ordersViewModel = ordersViewModel;
+        _ordersViewModel = viewModel;
     }
 
     protected override async void OnNavigatedTo(NavigatedToEventArgs args)

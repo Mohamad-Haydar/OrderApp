@@ -1,5 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using OrderApp.Helper;
 using OrderApp.Model;
 using OrderApp.Services;
 using Plugin.LocalNotification;
@@ -24,11 +25,11 @@ namespace OrderApp.ViewModel
         public DateOnly DateUi => DateSelected;
 
 
-        public EventsViewModel(LocalizationService localizationService, ThemeService themeService, EventsServices eventsServices, PopupService popupService) : base(localizationService, themeService)
+        public EventsViewModel() 
         {
 
-            _eventsServices = eventsServices;
-            _popupService = popupService;
+            _eventsServices = ServiceHelper.Resolve<EventsServices>();
+            _popupService = ServiceHelper.Resolve<PopupService>();
             DateSelected = DateOnly.FromDateTime(DateTime.Now);
             Title = $"Events of {DateSelected}";
         }
@@ -86,7 +87,7 @@ namespace OrderApp.ViewModel
         async Task AddEventAsync()
         {
             // call the popup service to create new popup to add an Event
-            await _popupService.ShowAddEventPopupAsync(EventsOfDay, dateSelected);
+            await _popupService.ShowAddEventPopupAsync();
             await SelectDateAync(dateSelected);
         }
 
@@ -94,7 +95,7 @@ namespace OrderApp.ViewModel
         async Task EditEventAsync(EventModel eventModel)
         {
             if (eventModel == null) return;
-            await _popupService.ShowEditEventPopupAsync(EventsOfDay, dateSelected, eventModel);
+            await _popupService.ShowEditEventPopupAsync(eventModel);
             // cancel the notification
             //LocalNotificationCenter.Current.Cancel(eventModel.Id + 1000);
 

@@ -27,16 +27,16 @@ namespace OrderApp.ViewModel
         public readonly IFingerprint _fingerprint;
 
 
-        public LoginViewModel(IFingerprint fingerprint, Helpers helper, LocalizationService localization, ThemeService themeService, LoginServices loginServices) : base(localization, themeService)
+        public LoginViewModel() 
         {
-            connection = AdoDatabaseService.GetConnection();
-            user = new();
-            _fingerprint = fingerprint;
-            _helper = helper;
+            user = new() { UserName = "admin", Email= "admin@gmail.com", Password="1234"};
             EnableBiometrics = Preferences.Get("BiometricEnabled", false);
-            _localization = localization;
-            _themeService = themeService;
-            _loginServices = loginServices;
+            connection = AdoDatabaseService.GetConnection();
+            _fingerprint = ServiceHelper.Resolve<IFingerprint>();
+            _helper = ServiceHelper.Resolve<Helpers>();
+            _localization = ServiceHelper.Resolve<LocalizationService>();
+            _themeService = ServiceHelper.Resolve<ThemeService>();
+            _loginServices = ServiceHelper.Resolve<LoginServices>();
         }
 
         [RelayCommand]
@@ -97,7 +97,7 @@ namespace OrderApp.ViewModel
             var res = await TryAutoLoginWithBiometricsAsync();
             if(res)
             {
-                Application.Current.MainPage = new AppShell(new ShellViewModel(_localization, Language, _themeService));
+                Application.Current.MainPage = new AppShell(new ShellViewModel(Language));
                 return;
             }
 
@@ -124,6 +124,15 @@ namespace OrderApp.ViewModel
             {
                 Preferences.Set("BiometricEnabled", EnableBiometrics);
                 LoginResult = await _loginServices.Login(User);
+                if (LoginResult)
+                {
+                    await SecureStorage.SetAsync("SavedEmail", User.Email);
+                    await SecureStorage.SetAsync("SavedPassword", User.Password);
+
+                    IsBusy = false;
+
+                    Application.Current.MainPage = new AppShell(new ShellViewModel(Language));
+                }
             }
             catch (Exception ex)
             {
@@ -133,16 +142,7 @@ namespace OrderApp.ViewModel
             }
             finally
             {
-                //await SecureStorage.SetAsync("SavedEmail", User.Email);
-                //await SecureStorage.SetAsync("SavedPassword", User.Password);
-
-                IsBusy = false;
-
                 // Navigate to MainPage
-                if (LoginResult)
-                {
-                    Application.Current.MainPage = new AppShell(new ShellViewModel(_localization, Language, _themeService));
-                }
             }
         }
 

@@ -15,13 +15,23 @@ namespace OrderApp.Services
         public void SetTheme(string theme)
         {
             Preferences.Set("AppTheme", theme);
-            var appResources = Shell.Current.Resources;
 
-            appResources.MergedDictionaries.Clear();
             if (theme == "dark")
-                appResources.MergedDictionaries.Add(new DarkTheme());
+            {
+                Application.Current.UserAppTheme = AppTheme.Dark;
+            }
             else
-                appResources.MergedDictionaries.Add(new LightTheme());
+            {
+                Application.Current.UserAppTheme = AppTheme.Light;
+            }
+
+            //var appResources = Shell.Current.Resources;
+
+            //appResources.MergedDictionaries.Clear();
+            //if (theme == "dark")
+            //    appResources.MergedDictionaries.Add(new DarkTheme());
+            //else
+            //    appResources.MergedDictionaries.Add(new LightTheme());
         }
     }
 }

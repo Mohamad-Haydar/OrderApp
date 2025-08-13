@@ -6,7 +6,7 @@
              xmlns:viewmodel="clr-namespace:OrderApp.ViewModel"
              x:DataType="viewmodel:ClientsViewModel"
              Title="Clients">
-    <Grid RowDefinitions="Auto, *, Auto" ColumnDefinitions="*, *" Padding="10,10,10,10" BackgroundColor="{DynamicResource BackgroundColor}">
+    <Grid RowDefinitions="Auto, *, Auto" ColumnDefinitions="*, *" Padding="10,10,10,10">
         <Label 
            Text="Page"
            VerticalOptions="Center" 
@@ -20,7 +20,7 @@
             <CollectionView.ItemTemplate>
                 <DataTemplate x:DataType="model:Client">
                     <Grid Padding="10" Grid.ColumnSpan="2">
-                        <Border HeightRequest="125" BackgroundColor="White">
+                        <Border HeightRequest="125">
                             <Border.StrokeShape>
                                 <RoundRectangle CornerRadius="16" />
                             </Border.StrokeShape>
