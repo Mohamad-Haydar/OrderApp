@@ -34,10 +34,7 @@
                                 <VerticalStackLayout Grid.Column="1" VerticalOptions="Center" HorizontalOptions="Start">
                                     <Label Text="{Binding Name}" HorizontalOptions="Start" WidthRequest="130" FontSize="20"/>
                                     <Label Text="{Binding Description}"  HorizontalOptions="Start" WidthRequest="130" LineBreakMode="TailTruncation"  FontSize="12"/>
-                                    <HorizontalStackLayout>
-                                        <Label Text="Quantity" FontSize="12"/>
-                                        <Label Text="{Binding Quantity}" FontSize="12"/>
-                                    </HorizontalStackLayout>
+                                     <Label Text="{Binding Quantity, StringFormat='Quantity: {0}'}" FontSize="12"/>
                                     <HorizontalStackLayout Spacing="10">
                                         <Button Text="Select Image" Margin="0,5"
                                             Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodel:ProductsViewModel}}, Path=SelectImageCommand}"

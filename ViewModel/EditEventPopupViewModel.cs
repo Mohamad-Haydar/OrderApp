@@ -63,8 +63,9 @@ namespace OrderApp.ViewModel
 
                 // Call the service to edit the event
                 var updatedId = await _eventsServices.UpdateEvent(_oldEvent.Id, EventName, Description, SelectedEventType, startDateTime.ToString("yyyy-MM-dd HH:mm:ss"), endDateTime.ToString("yyyy-MM-dd HH:mm:ss"));
-                //int addedId = await _eventsServices.AddEvent(EventName, Description, SelectedEventType, startDateTime.ToString("yyyy-MM-dd HH:mm:ss"), endDateTime.ToString("yyyy-MM-dd HH:mm:ss"));
-
+                
+                if (updatedId == 0)
+                    return;
                 var reminderTime = startDateTime.AddSeconds(-15);
 
                 if (reminderTime > DateTime.Now)

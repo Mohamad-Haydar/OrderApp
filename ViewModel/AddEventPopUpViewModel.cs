@@ -50,7 +50,10 @@ namespace OrderApp.ViewModel
             {
                 var startDateTime = StartDate.Date + StartTime;
                 var endDateTime = EndDate.Date + EndTime;
+                // set the event in the database
                 int addedId = await _eventsServices.AddEvent(EventName, Description, SelectedEventType, startDateTime.ToString("yyyy-MM-dd HH:mm:ss"), endDateTime.ToString("yyyy-MM-dd HH:mm:ss"));
+                if (addedId == 0)
+                    return;
 /*#if ANDROID || IOS
                 await CrossFirebaseCloudMessaging.Current.CheckIfValidAsync();
                 var fcmToken = await CrossFirebaseCloudMessaging.Current.GetTokenAsync();
@@ -92,6 +95,7 @@ namespace OrderApp.ViewModel
 
                 if (reminderTime > DateTime.Now)
                 {
+                    // set the notification for the event
 #if ANDROID
                     // Schedule native AlarmManager alarm (UTC)
                     Platforms.Android.AndroidAlarmScheduler.Schedule(
