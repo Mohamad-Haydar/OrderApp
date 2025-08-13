@@ -20,40 +20,55 @@ namespace OrderApp.Services
         public async Task<bool> Login(User user)
         {
             var connection = AdoDatabaseService.GetConnection();
-            connection.Open();
-            // check for the credentials in the database
-            using var command = connection.CreateCommand();
-            command.CommandText = @"SELECT * FROM Users 
+            try
+            {
+                connection.Open();
+                // check for the credentials in the database
+                using var command = connection.CreateCommand();
+                command.CommandText = @"SELECT * FROM Users 
                                     WHERE Username = $username AND Email = $email AND Password = $password";
-            var hashedPassword = _helper.ComputeSha256Hash(user.Password.Trim()); // use hashed password
+                var hashedPassword = _helper.ComputeSha256Hash(user.Password.Trim()); // use hashed password
 
-            command.Parameters.AddWithValue("$username", user.UserName.Trim());
-            command.Parameters.AddWithValue("$email", user.Email.Trim());
-            command.Parameters.AddWithValue("$password", hashedPassword);
+                command.Parameters.AddWithValue("$username", user.UserName.Trim());
+                command.Parameters.AddWithValue("$email", user.Email.Trim());
+                command.Parameters.AddWithValue("$password", hashedPassword);
 
-            using var reader = command.ExecuteReader();
-            
-            if (reader.Read())
-            {
-                int userId = reader.GetInt32(0);
-                string username = reader.GetString(1);
-                string email = reader.GetString(2);
-                string password = reader.GetString(3);
+                using var reader = command.ExecuteReader();
 
-                // store user ID and userName in Preferences
-                Preferences.Set("UserId", userId);
-                Preferences.Set("Username", username);
-                await SecureStorage.SetAsync("SavedEmail", email);
-                await SecureStorage.SetAsync("SavedPassword", password);
-                connection.Close();
-                return true;
+                if (reader.Read())
+                {
+                    int userId = reader.GetInt32(0);
+                    string username = reader.GetString(1);
+                    string email = reader.GetString(2);
+                    string password = reader.GetString(3);
+
+                    // store user ID and userName in Preferences
+                    Preferences.Set("UserId", userId);
+                    Preferences.Set("Username", username);
+                    await SecureStorage.SetAsync("SavedEmail", email);
+                    await SecureStorage.SetAsync("SavedPassword", password);
+                    connection.Close();
+                    return true;
+                }
+                else
+                {
+                    connection.Close();
+                    // No user Is found in the database or credentials are false
+                    await Shell.Current.DisplayAlert("Login Failed", "Invalid credentials", "OK");
+                    return false;
+                }
             }
-            else
+            catch (Exception ex)
+            {
+                // Log exception somewhere
+                Console.WriteLine($"Error retrieving stock: {ex.Message}");
+
+                // Return a safe default value or rethrow a custom exception
+                return false;
+            }
+            finally
             {
                 connection.Close();
-                // No user Is found in the database or credentials are false
-                await Shell.Current.DisplayAlert("Login Failed", "Invalid credentials", "OK");
-                return false;
             }
         }
     }
