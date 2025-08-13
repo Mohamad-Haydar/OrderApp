@@ -58,7 +58,7 @@
                             <RoundRectangle CornerRadius="16" />
                         </Border.StrokeShape>
                         <Grid>
-                            <VerticalStackLayout  VerticalOptions="Center" Padding="0" HorizontalOptions="Center">
+                            <VerticalStackLayout  VerticalOptions="Center" HorizontalOptions="Center">
                                 <Image Source="{Binding ImageUrl}" WidthRequest="70" HeightRequest="70" />
                                 <Label  Text="{Binding Name}"/>
                                 <Label  Text="{Binding Price, StringFormat='Price: ${0:f2}'}"/>
