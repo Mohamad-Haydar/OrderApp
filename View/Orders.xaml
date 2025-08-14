@@ -99,12 +99,12 @@
                  VerticalOptions="End"
                  HorizontalOptions="End"
                 Command="{Binding AddOrderCommand}"/>
-            <controls:CfMultiPickerPopup Label="Contry" Grid.Row="2"
+            <!--<controls:CfMultiPickerPopup Label="Contry" Grid.Row="2"
                     SelectedItems="{Binding SelectedClient, Mode=TwoWay}"
                     SelectionChangedCommand="{Binding CountriesChangedCommand}"
                     ItemsSource="{Binding Result}"
                     ItemDisplay="Details"
-                    />
+                    />-->
     </Grid>
 
 </ContentPage>  

@@ -66,7 +66,7 @@ namespace OrderApp.ViewModel
             var availableStock = await _productService.GetStuckQuantity(product.Id);
 
             // If not enough stock, stop here
-            if (availableStock > 1)
+            if (availableStock > 0)
             {
                  // add only 1 item of the product 
                 await _orderServices.AddProductToOrder(Order, product, 1);
@@ -75,7 +75,7 @@ namespace OrderApp.ViewModel
             else
             {
                 // throw exception
-                await Shell.Current.DisplayAlert("Success", "The product is updated successfully", "Ok");
+                await Shell.Current.DisplayAlert("Failed", "Not enough stock quantity", "Ok");
             }
         }
 
@@ -163,6 +163,11 @@ namespace OrderApp.ViewModel
         [RelayCommand]
         void IncrementQuantity(ProductsInOrders item)
         {
+            if(item.Product.Quantity < 1)
+            {
+                Shell.Current.DisplayAlert("Error", "Not enough stock available", "OK");
+                return;
+            }
             item.Quantity++;
             item.Product.Quantity--;
             RecalculateTotal();
