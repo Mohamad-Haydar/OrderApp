@@ -46,7 +46,7 @@ namespace OrderApp.ViewModel
                 await _orderServices.DeleteOrder(order);
                 // After deleting the order, SHOW IN THE VIEW the updated orders
                 //await LoadOrders();
-                //Orders.Remove(order); 
+                Orders.Remove(order); 
             }
             catch (Exception)
             {
