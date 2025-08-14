@@ -48,7 +48,7 @@ namespace OrderApp.ViewModel
             }
             catch (Exception ex)
             {
-                await Shell.Current.DisplayAlert("Error", $"Database error: {ex.Message}", "OK");
+                await Shell.Current.DisplayAlert("Error", $"error: {ex.Message}", "OK");
             }
             finally
             {

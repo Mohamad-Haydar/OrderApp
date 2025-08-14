@@ -1,5 +1,4 @@
-﻿using CommunityToolkit.Maui.Views;
-using CommunityToolkit.Mvvm.ComponentModel;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using OrderApp.Helper;
 using OrderApp.Model;
@@ -36,7 +35,7 @@ namespace OrderApp.ViewModel
             }
             catch (Exception ex)
             {
-                await Shell.Current.DisplayAlert("Error", "Database error: " + ex.Message, "OK");
+                await Shell.Current.DisplayAlert("Error", "error: " + ex.Message, "OK");
             }
         }
     }

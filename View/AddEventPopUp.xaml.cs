@@ -12,7 +12,9 @@ public partial class AddEventPopUp : Popup
 	{
 		InitializeComponent();
 		this.BindingContext = new AddEventPopUpViewModel();
-	}
+        // Prevent the popup from closing when tapping outside
+        CanBeDismissedByTappingOutsideOfPopup = false;
+    }
 
     private async void CloseButton_Clicked(object sender, EventArgs e)
     {

@@ -12,6 +12,13 @@ public partial class AddClientPopup : Popup
     {
         InitializeComponent();
         this.BindingContext = new AddClientPopupViewModel(clients);
+        // Prevent the popup from closing when tapping outside
+        CanBeDismissedByTappingOutsideOfPopup = false;
+    }
+
+    private async void CloseButton_Clicked(object sender, EventArgs e)
+    {
+        await this.CloseAsync();
     }
 
     private async void SaveButton_Clicked(object sender, EventArgs e)

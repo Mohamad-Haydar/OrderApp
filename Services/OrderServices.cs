@@ -123,7 +123,6 @@ namespace OrderApp.Services
             var connection = AdoDatabaseService.GetConnection();
             try
             {
-
                 // create the command to create new order
                 connection.Open();
                 using var command = connection.CreateCommand();

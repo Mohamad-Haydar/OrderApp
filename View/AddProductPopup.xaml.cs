@@ -1,7 +1,5 @@
 using CommunityToolkit.Maui.Views;
-using CommunityToolkit.Mvvm.Input;
 using OrderApp.Model;
-using OrderApp.Services;
 using OrderApp.ViewModel;
 using System.Collections.ObjectModel;
 
@@ -13,6 +11,8 @@ public partial class AddProductPopup : Popup
     {
         InitializeComponent();
         this.BindingContext = new AddProductPopupViewModel(products);
+        // Prevent the popup from closing when tapping outside
+        CanBeDismissedByTappingOutsideOfPopup = false;
     }
 
     private async void SaveButton_Clicked(object sender, EventArgs e)
@@ -23,5 +23,10 @@ public partial class AddProductPopup : Popup
 
             await this.CloseAsync();
         }
+    }
+
+    private async void CloseButton_Clicked(object sender, EventArgs e)
+    {
+        await this.CloseAsync();
     }
 }

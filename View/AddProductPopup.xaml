@@ -8,12 +8,16 @@
                 x:Class="OrderApp.View.AddProductPopup">
 
     <VerticalStackLayout Padding="20" Spacing="10">
+       
         <Label Text="Add New Product" FontAttributes="Bold" FontSize="20" />
         <Entry Placeholder="Name" Text="{Binding Product.Name}"/>
         <Entry Placeholder="Description" Text="{Binding Product.Description}"/>
         <Entry Placeholder="Price" Text="{Binding Product.Price}"/>
         <Entry Placeholder="Quantity" Text="{Binding Product.Quantity}"/>
         <!--<Button Text="Save" Command="{Binding AddProductCommand}" />-->
-        <Button Text="Save" Clicked="SaveButton_Clicked" />
+        <HorizontalStackLayout Spacing="10" HorizontalOptions="Center">
+            <Button Text="Save" Clicked="SaveButton_Clicked" />
+            <Button Text="Close" Clicked="CloseButton_Clicked" />
+        </HorizontalStackLayout>
     </VerticalStackLayout>
 </toolkit:Popup>

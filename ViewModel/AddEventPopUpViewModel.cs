@@ -1,11 +1,8 @@
-﻿using CommunityToolkit.Maui.Views;
-using CommunityToolkit.Mvvm.ComponentModel;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using OrderApp.Helper;
-using OrderApp.Model;
 using OrderApp.Services;
 using Plugin.LocalNotification;
-using System.Collections.ObjectModel;
 
 namespace OrderApp.ViewModel
 {

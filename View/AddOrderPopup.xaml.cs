@@ -13,6 +13,8 @@ public partial class AddOrderPopup : Popup
 	{
 		InitializeComponent();
         this.BindingContext = new AddOrderPopupViewModel(clients);
+        // Prevent the popup from closing when tapping outside
+        CanBeDismissedByTappingOutsideOfPopup = false;
     }
 
     private async void CloseButton_Clicked(object sender, EventArgs e)

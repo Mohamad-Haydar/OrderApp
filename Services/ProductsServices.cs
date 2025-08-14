@@ -168,6 +168,8 @@ namespace OrderApp.Services
             var connection = AdoDatabaseService.GetConnection();
             try
             {
+                if (string.IsNullOrEmpty(name) || string.IsNullOrEmpty(description) || price <= 0 || quantity <= 0)
+                    throw new Exception("Fill all input");
                 connection.Open();
 
                 using var command = connection.CreateCommand();
@@ -188,7 +190,7 @@ namespace OrderApp.Services
                 Console.WriteLine($"Error retrieving stock: {ex.Message}");
 
                 // Return a safe default value or rethrow a custom exception
-                return;
+                throw;
             }
             finally
             {
