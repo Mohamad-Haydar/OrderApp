@@ -13,7 +13,8 @@ namespace OrderApp.ViewModel
     {
         private readonly PopupService _popupService;
         private readonly OrderServices _orderServices;
-        public ObservableCollection<Order> Orders { get; }
+        [ObservableProperty]
+        ObservableCollection<Order> orders;
         public ObservableCollection<Client> SelectedClient { get; set; } = new();
         // static information for the multy selection
         public ObservableCollection<Client> Result { get; set; } = new();
@@ -41,8 +42,11 @@ namespace OrderApp.ViewModel
         {
             try
             {
+                // Remove the order from the database
                 await _orderServices.DeleteOrder(order);
-                await LoadOrders();
+                // After deleting the order, SHOW IN THE VIEW the updated orders
+                //await LoadOrders();
+                //Orders.Remove(order); 
             }
             catch (Exception)
             {
@@ -79,17 +83,7 @@ namespace OrderApp.ViewModel
             {
                 Orders.Clear(); // clear the orders to remove all of them from the view
                 var res = await _orderServices.GetOrders();
-                foreach (var item in res)
-                {
-                    Orders.Add(new Order
-                    {
-                        Id = item.Id,
-                        ClientId = item.ClientId,
-                        Total = item.Total,
-                        DateToPick = item.DateToPick,
-                        ClientName = item.ClientName
-                    });
-                }
+                Orders = new ObservableCollection<Order>(res);
             }
             catch (Exception)
             {
