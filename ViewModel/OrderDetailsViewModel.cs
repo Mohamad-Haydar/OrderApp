@@ -33,6 +33,7 @@ namespace OrderApp.ViewModel
 
         public PopupService _popupService;
         public ProductsServices _productService;
+        private readonly ProductInOrdersServices _productInOrdersServices;
         public ClientServices _clientServices;
         public OrderServices _orderServices;
 
@@ -44,6 +45,7 @@ namespace OrderApp.ViewModel
             _productService = ServiceHelper.Resolve<ProductsServices>();
             _clientServices = ServiceHelper.Resolve<ClientServices>();
             _orderServices = ServiceHelper.Resolve<OrderServices>();
+            _productInOrdersServices = ServiceHelper.Resolve<ProductInOrdersServices>();
         }
 
         [RelayCommand]
@@ -94,6 +96,15 @@ namespace OrderApp.ViewModel
             await LoadProductsOfOrder();
             await LoadAllProductsAsync();
             IsBusy = false;
+        }
+
+        [RelayCommand]
+        async Task DeleteItem(ProductsInOrders productInOrder)
+        {
+            int quantityToRemove = productInOrder.Quantity;
+            await _productService.UpdateProductStock(-1 * quantityToRemove, productInOrder.Product.Id);
+            await _productInOrdersServices.DeleteProductInOrder(productInOrder.OrderId, productInOrder.Product.Id);
+            ProductsInOrders.Remove(productInOrder);
         }
 
         public async Task LoadProductsOfOrder()
@@ -153,6 +164,7 @@ namespace OrderApp.ViewModel
         void IncrementQuantity(ProductsInOrders item)
         {
             item.Quantity++;
+            item.Product.Quantity--;
             RecalculateTotal();
         }
 
@@ -162,6 +174,7 @@ namespace OrderApp.ViewModel
             if (item.Quantity > 0)
             {
                 item.Quantity--;
+                item.Product.Quantity++;
                 RecalculateTotal();
             }
         }
@@ -172,7 +185,9 @@ namespace OrderApp.ViewModel
             try
             {
                 await _orderServices.UpdateOrderAsync(ProductsInOrders);
+                // to see it in the UI
                 RecalculateTotal();
+                // TO update it in the database
                 Order.Total = Total;
                 await _orderServices.SetTotalAsync(Order);
                 await Shell.Current.DisplayAlert("Success", "The product is updated successfully", "Ok");

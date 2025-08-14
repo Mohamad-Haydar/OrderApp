@@ -81,8 +81,8 @@ namespace OrderApp.Services
         }
         public async Task UpdateOrderAsync(ObservableCollection<ProductsInOrders> productsInOrders)
         {
-          
-            foreach (var item in productsInOrders)
+            // ToList() makes a snapshot copy, so I can safely remove from the original collection while looping
+            foreach (var item in productsInOrders.ToList())
             {
                 // Step 1: Get the old quantity from the database
                 var oldQuantity = await _productInOrdersServices.GetQuantity(item.Id);
@@ -107,6 +107,13 @@ namespace OrderApp.Services
 
                 // Step 4: Update Product stock
                 await _productServices.UpdateProductStock(difference, item.Product.Id);
+
+                // Step 5: if product in order is 0 remove the product from this order
+                if (item.Quantity == 0)
+                {
+                    await _productInOrdersServices.DeleteProductInOrder(item.OrderId, item.Product.Id);
+                    productsInOrders.Remove(item);
+                }
             }
            
         }
@@ -203,7 +210,7 @@ namespace OrderApp.Services
             }
         }
 
-        public async Task DeleteOrder(Order order)
+        public async Task DeleteOrder(int orderId)
         {
             var connection = AdoDatabaseService.GetConnection();
             try
@@ -212,7 +219,7 @@ namespace OrderApp.Services
 
                 var command = connection.CreateCommand();
                 command.CommandText = "Delete FROM Orders WHERE Id=$id";
-                command.Parameters.AddWithValue("$id", order.Id);
+                command.Parameters.AddWithValue("$id", orderId);
 
                 command.ExecuteNonQuery();
                 connection.Close();

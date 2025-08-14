@@ -93,18 +93,18 @@
                                 <RoundRectangle CornerRadius="16" />
                             </Border.StrokeShape>
                             <Grid Padding="0,5">
-                                <HorizontalStackLayout HorizontalOptions="Center" Spacing="10">
+                                <HorizontalStackLayout HorizontalOptions="Center">
                                     <Image Source="{Binding Product.ImageUrl}" WidthRequest="50" HeightRequest="50" />
-                                    <VerticalStackLayout>
-                                        <Label Text="{Binding Product.Name}" FontSize="20"/>
+                                    <VerticalStackLayout >
+                                        <Label Text="{Binding Product.Name}" FontSize="18"/>
                                         <HorizontalStackLayout>
-                                            <Label Text="Product Price: " FontSize="12"/>
+                                            <Label Text="Price: " FontSize="12"/>
                                             <Label Text="{Binding Product.Price}" FontSize="12"/>
                                             <Label Text="$" FontSize="12"/>
                                         </HorizontalStackLayout>
                                         <HorizontalStackLayout>
-                                            <Label Text="Quantity In Stock: " FontSize="12"/>
-                                            <Label Text="{Binding Product.Quantity}" FontSize="12"/>
+                                            <Label Text="In Stock: " FontSize="12"/>
+                                            <Label Text="{Binding Product.Quantity}" FontSize="12"  LineBreakMode="TailTruncation"/>
                                         </HorizontalStackLayout>
                                     </VerticalStackLayout>
                                     <HorizontalStackLayout>
@@ -139,6 +139,14 @@
                                             Command="{Binding x:DataType='viewmodel:OrderDetailsViewModel', Source={RelativeSource AncestorType={x:Type viewmodel:OrderDetailsViewModel}}, Path=IncrementQuantityCommand}" 
                                             CommandParameter="{Binding .}" />-->
                                     </HorizontalStackLayout>
+                                    
+                                    <Frame WidthRequest="50" HeightRequest="40" Padding="0" BackgroundColor="Red"  CornerRadius="10" Margin="20,0,0,0">
+                                        <Label Text="Delete" FontSize="12" HorizontalOptions="Center" TextColor="White" VerticalOptions="Center" />
+                                        <Frame.GestureRecognizers>
+                                            <TapGestureRecognizer Command="{Binding x:DataType='viewmodel:OrderDetailsViewModel', Source={RelativeSource AncestorType={x:Type viewmodel:OrderDetailsViewModel}}, Path=DeleteItemCommand}" 
+                                                                  CommandParameter="{Binding .}"/>
+                                        </Frame.GestureRecognizers>
+                                    </Frame>
                                 </HorizontalStackLayout>
                             </Grid>
                         </Border>

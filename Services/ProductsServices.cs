@@ -134,6 +134,10 @@ namespace OrderApp.Services
 
         public async Task UpdateProductStock(int difference, int productId)
         {
+            /*
+             * when the difference is negative that means i am returning product to the stock so 
+             * the stock increase
+            */
             var connection = AdoDatabaseService.GetConnection();
             try
             {

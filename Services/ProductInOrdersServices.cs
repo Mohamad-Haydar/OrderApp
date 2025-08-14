@@ -91,5 +91,36 @@
                 connection.Close();
             }
         }
+
+        public async Task DeleteProductInOrder(int orderId, int productId)
+        {
+            var connection = AdoDatabaseService.GetConnection();
+            try
+            {
+                connection.Open();
+                // INSERT into ProductsInOrders
+                using var insertCommand = connection.CreateCommand();
+                insertCommand.CommandText = @"DELETE FROM ProductsInOrders WHERE OrderId = $orderId AND ProductId = $productId";
+
+                insertCommand.Parameters.AddWithValue("$orderId", orderId);
+                insertCommand.Parameters.AddWithValue("$productId", productId);
+
+                insertCommand.ExecuteNonQuery();
+
+                connection.Close();
+            }
+            catch (Exception ex)
+            {
+                // Log exception somewhere
+                Console.WriteLine($"Error retrieving stock: {ex.Message}");
+
+                // Return a safe default value or rethrow a custom exception
+                return;
+            }
+            finally
+            {
+                connection.Close();
+            }
+        }
     }
 }

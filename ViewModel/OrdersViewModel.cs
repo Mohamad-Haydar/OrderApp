@@ -43,7 +43,7 @@ namespace OrderApp.ViewModel
             try
             {
                 // Remove the order from the database
-                await _orderServices.DeleteOrder(order);
+                await _orderServices.DeleteOrder(order.Id);
                 // After deleting the order, SHOW IN THE VIEW the updated orders
                 //await LoadOrders();
                 Orders.Remove(order); 
