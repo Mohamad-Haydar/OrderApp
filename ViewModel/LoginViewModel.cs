@@ -142,7 +142,7 @@ namespace OrderApp.ViewModel
             }
             finally
             {
-                // Navigate to MainPage
+                IsBusy = false;
             }
         }
 
