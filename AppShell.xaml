@@ -11,22 +11,23 @@
     FlowDirection="{Binding AppFlowDirection}"
     Title="OrderApp">
 
-    <FlyoutItem FlyoutDisplayOptions="AsMultipleItems">
-
-        <ShellContent Title="{Binding Localization[Orders]}"
-                  Icon="monkey.png"
-                  ContentTemplate="{DataTemplate view:Orders}" />
-        <ShellContent Title="{Binding Localization[Clients]}"
-                  Icon="elephant.png"
-                  ContentTemplate="{DataTemplate view:Clients}" />
-        <ShellContent Title="{Binding Localization[Products]}"
-                  Icon="elephant.png"
-                  ContentTemplate="{DataTemplate view:Products}" />
-        <ShellContent Title="{Binding Localization[Events]}"
-                      Icon="elephant.png"
-                      ContentTemplate="{DataTemplate view:Events}" />
+    <!-- Each page gets its own FlyoutItem -->
+    <FlyoutItem Title="{Binding Localization[Orders]}" Icon="monkey.png">
+        <ShellContent ContentTemplate="{DataTemplate view:Orders}" />
     </FlyoutItem>
 
+    <FlyoutItem Title="{Binding Localization[Clients]}" Icon="elephant.png">
+        <ShellContent ContentTemplate="{DataTemplate view:Clients}" />
+    </FlyoutItem>
+
+    <FlyoutItem Title="{Binding Localization[Products]}" Icon="elephant.png">
+        <ShellContent ContentTemplate="{DataTemplate view:Products}" />
+    </FlyoutItem>
+
+    <FlyoutItem Title="{Binding Localization[Events]}" Icon="elephant.png">
+        <ShellContent ContentTemplate="{DataTemplate view:Events}" />
+    </FlyoutItem>
+    
     <Shell.FlyoutFooter>
         <Grid Padding="10" RowDefinitions="Auto, Auto, Auto">
 

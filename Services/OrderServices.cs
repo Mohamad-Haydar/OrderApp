@@ -1,5 +1,4 @@
-﻿using CommunityToolkit.Maui.Views;
-using OrderApp.Model;
+﻿using OrderApp.Model;
 using System.Collections.ObjectModel;
 
 namespace OrderApp.Services
@@ -54,31 +53,6 @@ namespace OrderApp.Services
             }
         }
 
-        public async Task AddProductToOrder(Order order, Product product, int quantity)
-        {
-            try
-            {
-                // INSERT into ProductsInOrders
-                await _productInOrdersServices.InsertProduct(order.Id, product.Id, quantity);
-
-                // UPDATE the product stock
-                await _productServices.UpdateProductStock(quantity, product.Id);
-
-                // Calculate cost to add to order total
-                float addedAmount = quantity * product.Price;
-
-                // UPDATE the order total
-                await UpdateTotalAsync(addedAmount, order.Id);
-            }
-            catch (Exception ex)
-            {
-                // Log exception somewhere
-                Console.WriteLine($"Error retrieving stock: {ex.Message}");
-
-                // Return a safe default value or rethrow a custom exception
-                return;
-            }
-        }
         public async Task UpdateOrderAsync(ObservableCollection<ProductsInOrders> productsInOrders)
         {
             // ToList() makes a snapshot copy, so I can safely remove from the original collection while looping
@@ -102,8 +76,16 @@ namespace OrderApp.Services
                     }
                 }
 
-                // Step 3: Update ProductsInOrders
-                await _productInOrdersServices.UpdateProductsInOrders(item.Quantity, item.Id);
+                // Step 3: Update ProductsInOrders Or insert it if not exists
+                if (oldQuantity < 1)
+                {
+                    // INSERT into ProductsInOrders
+                    await _productInOrdersServices.InsertProductIntoProductsInOrder(item.OrderId, item.Product.Id, item.Quantity);
+                }
+                else
+                {
+                    await _productInOrdersServices.UpdateProductsInOrders(item.Quantity, item.Id);
+                }
 
                 // Step 4: Update Product stock
                 await _productServices.UpdateProductStock(difference, item.Product.Id);

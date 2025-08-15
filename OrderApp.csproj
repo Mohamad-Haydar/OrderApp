@@ -121,9 +121,6 @@
 	  <MauiXaml Update="View\AddProductPopup.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
-	  <MauiXaml Update="View\AddProductToOrderPopUp.xaml">
-	    <Generator>MSBuild:Compile</Generator>
-	  </MauiXaml>
 	  <MauiXaml Update="View\Clients.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>

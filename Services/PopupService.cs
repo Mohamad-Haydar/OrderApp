@@ -39,13 +39,6 @@ namespace OrderApp.Services
             await _mainPage.ShowPopupAsync(popup);
         }
 
-        public async Task ShowAddProductToOrderPopupAsync(Order order)
-        {
-            var products = await _productServices.GetProducts();
-            var popup = new AddProductToOrderPopUp(products, order);
-            await _mainPage.ShowPopupAsync(popup);
-        }
-
         public async Task ShowAddEventPopupAsync()
         {
             var popup = new AddEventPopUp();

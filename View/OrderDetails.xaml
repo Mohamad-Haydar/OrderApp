@@ -15,38 +15,29 @@
                 Grid.ColumnSpan="2"/>-->
 
         <!-- Row 0 the Search bar -->
-        <Grid Grid.Row="0" ColumnDefinitions="*, Auto" 
-                        Grid.ColumnSpan="2"
-                       HorizontalOptions="Center"
-                       VerticalOptions="Center">
-
-            <!-- SearchBar -->
-            <SearchBar Placeholder="Search products..."
-               Text="{Binding SearchText}"
-               WidthRequest="220"
-               FontAttributes="Italic"
-               BackgroundColor="#f2f2f2"
-               PlaceholderColor="#888"
-               TextColor="Black"
-               FontSize="14" >
-            </SearchBar>
-        </Grid>
+        <SearchBar Placeholder="Search products..."
+            Text="{Binding SearchText}"
+            Grid.ColumnSpan="2"
+            WidthRequest="250"
+            Margin="0,0,0,10"
+            FontAttributes="Italic"
+            BackgroundColor="#f2f2f2"
+            PlaceholderColor="#888"
+            TextColor="Black"
+            FontSize="14" >
+        </SearchBar>
 
         <!-- row 1 Carousell products -->
-        <CarouselView ItemsSource="{Binding FilteredProducts}"
-                      Margin="-140,10,0,0"
-                      HorizontalScrollBarVisibility="Never"
-                      Loop="False"
-                      Grid.ColumnSpan="2"
-                      Grid.Row="1"
-                      IsScrollAnimated="False"
-                      PeekAreaInsets="160"
-                      >
-            <CarouselView.ItemsLayout>
-                <LinearItemsLayout Orientation="Horizontal" ItemSpacing="10"/>
-            </CarouselView.ItemsLayout>
+        <CollectionView ItemsSource="{Binding FilteredProducts}"
+                    Grid.ColumnSpan="2"
+                    Grid.Row="1"
+                    HorizontalScrollBarVisibility="Never">
 
-            <CarouselView.ItemTemplate>
+            <CollectionView.ItemsLayout>
+                <LinearItemsLayout Orientation="Horizontal" ItemSpacing="10"/>
+            </CollectionView.ItemsLayout>
+
+            <CollectionView.ItemTemplate>
                 <DataTemplate x:DataType="model:Product">
                     <Border Margin="0" WidthRequest="140" HeightRequest="180" >
                         <Border.StrokeShape>
@@ -66,11 +57,10 @@
                         </Grid>
                     </Border>
                 </DataTemplate>
-            </CarouselView.ItemTemplate>
-        </CarouselView>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
 
         <!-- row 2: Separator -->
-        <!--<Rectangle Grid.Row="2" Grid.ColumnSpan="3" BackgroundColor="Black" HeightRequest="16" Margin="0,7"/>-->
         <Label Grid.Row="2" Text="List of products in this order" Grid.ColumnSpan="2" 
                Margin="10" HorizontalOptions="Center" FontSize="16" FontAttributes="Bold" />
 
@@ -117,11 +107,12 @@
                                             </Frame.GestureRecognizers>
                                         </Frame>
 
-                                        <Label Text="{Binding Quantity}" 
+                                        <Entry Text="{Binding Quantity}" 
                                            WidthRequest="25"
                                            HorizontalTextAlignment="Center"
                                            VerticalTextAlignment="Center"
                                            FontSize="17"
+                                           Keyboard="Numeric"
                                            />
 
                                         <Frame WidthRequest="30" HeightRequest="30" Padding="0" BackgroundColor="{StaticResource Primary}"  CornerRadius="15">
@@ -153,30 +144,14 @@
 
         </CollectionView>
 
-        
         <!-- the Total -->
-        <HorizontalStackLayout HorizontalOptions="End" Grid.Row="4" Grid.Column="1" Margin="0,0,10,0">
-            <Label Text="Total: " FontSize="22"/>
-            <Label Text="{Binding Total}"  FontSize="22"/>
+        <HorizontalStackLayout HorizontalOptions="End" Grid.Row="5" Grid.Column="1" Margin="0,0,10,0" VerticalOptions="Center">
+            <Label Text="{Binding Total, StringFormat='Total: {0:f2} $'}"  FontSize="17"/>
         </HorizontalStackLayout>
 
         <!-- Button to update the details -->
-        <Button Text="Update" Grid.Row="5" Grid.Column="0" WidthRequest="130" HeightRequest="0" HorizontalOptions="Center"
+        <Button Text="Update" Grid.Row="5" Grid.Column="0" WidthRequest="100" HeightRequest="0" HorizontalOptions="Center"
                 FontSize="15" Padding="0" Command="{Binding UpdateOrderCommand}" />
-
-        <!-- Button to add new products -->
-        <Button Text="+"
-            Grid.Row="5" 
-            Grid.Column="1"
-            Margin="0,0,20,0"
-            WidthRequest="40"
-            HeightRequest="40"
-            CornerRadius="30"
-            FontSize="18"
-            BackgroundColor="#FF4081"
-            TextColor="White"
-                HorizontalOptions="End"
-            Command="{Binding AddProductToOrderCommand}"/>
 
         <ActivityIndicator IsRunning="{Binding IsBusy}"
             IsVisible="{Binding IsBusy}"

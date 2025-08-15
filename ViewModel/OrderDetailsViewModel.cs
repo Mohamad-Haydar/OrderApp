@@ -68,21 +68,22 @@ namespace OrderApp.ViewModel
             // If not enough stock, stop here
             if (availableStock > 0)
             {
-                 // add only 1 item of the product 
-                await _orderServices.AddProductToOrder(Order, product, 1);
-                await LoadProductsOfOrder();
+                // add only 1 item of the product 
+                ProductsInOrders.Insert(0, new ProductsInOrders()
+                {
+                    Id = -1,
+                    Product = product,
+                    OrderId = Order.Id,
+                    Quantity = 1
+                });
+                //await _orderServices.AddProductToOrder(Order, product, 1);
+                //await LoadProductsOfOrder();
             }
             else
             {
                 // throw exception
                 await Shell.Current.DisplayAlert("Failed", "Not enough stock quantity", "Ok");
             }
-        }
-
-        [RelayCommand]
-        async Task AddProductToOrderAsync()
-        {
-            await _popupService.ShowAddProductToOrderPopupAsync(Order);
         }
 
         [RelayCommand]
@@ -93,8 +94,8 @@ namespace OrderApp.ViewModel
             await Task.Yield();
 
             await LoadCustomer();
-            await LoadProductsOfOrder();
             await LoadAllProductsAsync();
+            await LoadProductsOfOrder();
             IsBusy = false;
         }
 
@@ -167,7 +168,7 @@ namespace OrderApp.ViewModel
                 return;
             }
             item.Quantity++;
-            item.Product.Quantity--;
+            //item.Product.Quantity--;
             RecalculateTotal();
         }
 
@@ -177,7 +178,7 @@ namespace OrderApp.ViewModel
             if (item.Quantity > 0)
             {
                 item.Quantity--;
-                item.Product.Quantity++;
+                //item.Product.Quantity++;
                 RecalculateTotal();
             }
         }

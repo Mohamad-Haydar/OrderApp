@@ -8,7 +8,6 @@
             try
             {
                 connection.Open();
-                // Step 3: Update ProductsInOrders
                 var updatePIOCommand = connection.CreateCommand();
                 updatePIOCommand.CommandText = @"UPDATE ProductsInOrders SET Quantity = $quantity WHERE Id = $id";
                 updatePIOCommand.Parameters.AddWithValue("$quantity", quantity);
@@ -58,7 +57,7 @@
             }
         }
 
-        public async Task InsertProduct(int orderId, int productId, int quantity)
+        public async Task InsertProductIntoProductsInOrder(int orderId, int productId, int quantity)
         {
             var connection = AdoDatabaseService.GetConnection();
             try
@@ -122,5 +121,6 @@
                 connection.Close();
             }
         }
+
     }
 }
