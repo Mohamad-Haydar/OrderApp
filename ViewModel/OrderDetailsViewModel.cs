@@ -133,8 +133,7 @@ namespace OrderApp.ViewModel
             FilteredProducts = new ObservableCollection<Product>(Products);
         }
 
-        [RelayCommand]  
-         async Task SearchAsync()
+        partial void OnSearchTextChanged(string value)
         {
             if (string.IsNullOrWhiteSpace(searchText))
             {
@@ -142,8 +141,7 @@ namespace OrderApp.ViewModel
             }
             else
             {
-                var lower = searchText.ToLower();
-                var results = Products.Where(p => p.Name.ToLower().Contains(lower)).ToList();
+                var results = Products.Where(p => p.Name.ToLower().Contains(value));
                 FilteredProducts = new ObservableCollection<Product>(results);
             }
         }

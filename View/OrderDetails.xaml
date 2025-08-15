@@ -20,7 +20,7 @@
                        HorizontalOptions="Center"
                        VerticalOptions="Center">
 
-            <!-- SearchBar -->            
+            <!-- SearchBar -->
             <SearchBar Placeholder="Search products..."
                Text="{Binding SearchText}"
                WidthRequest="220"
@@ -28,13 +28,8 @@
                BackgroundColor="#f2f2f2"
                PlaceholderColor="#888"
                TextColor="Black"
-               FontSize="14" />
-
-            <!-- Search Button -->
-            <Button Command="{Binding SearchCommand}"
-                    Text="Search"
-                    Grid.Column="1"
-                    Margin="10,0,0,0" />
+               FontSize="14" >
+            </SearchBar>
         </Grid>
 
         <!-- row 1 Carousell products -->
