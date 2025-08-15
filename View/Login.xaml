@@ -9,33 +9,33 @@
              FlowDirection="{Binding AppFlowDirection}"
              Title="{Binding Title}" >
     <Grid RowDefinitions="Auto, *, Auto, Auto,Auto" ColumnDefinitions="*,*" Padding="40" >
-        <Label  Text="{Binding Localization[EnterCredential]}" FontSize="30" WidthRequest="160" VerticalOptions="Center" />
+        <Label  Text="{DynamicResource EnterCredential}" FontSize="30" WidthRequest="160" VerticalOptions="Center" />
 
         <ScrollView Grid.Row="1" Grid.ColumnSpan="2">
             <StackLayout Padding="10">
-                <Label Text="{Binding Localization[UserName]}" />
-                <Entry Text="{Binding User.UserName}" PlaceholderColor="{DynamicResource NotSelectedColor}"  Placeholder="{Binding Localization[UserName]}"/>
+                <Label Text="{DynamicResource UserName}" />
+                <Entry Text="{Binding User.UserName}" PlaceholderColor="{DynamicResource NotSelectedColor}"  Placeholder="{DynamicResource UserName}"/>
 
-                <Label Text="{Binding Localization[Email]}" Margin="0,10,0,0"/>
-                <Entry Text="{Binding User.Email}"  PlaceholderColor="{DynamicResource NotSelectedColor}"  Placeholder="{Binding Localization[Email]}"/>
+                <Label Text="{DynamicResource Email}" Margin="0,10,0,0"/>
+                <Entry Text="{Binding User.Email}"  PlaceholderColor="{DynamicResource NotSelectedColor}"  Placeholder="{DynamicResource Email}"/>
 
-                <Label Text="{Binding Localization[Password]}" Margin="0,10,0,0"/>
-                <Entry Text="{Binding User.Password}"  PlaceholderColor="{DynamicResource NotSelectedColor}"  Placeholder="{Binding Localization[Password]}"/>
+                <Label Text="{DynamicResource Password}" Margin="0,10,0,0"/>
+                <Entry Text="{Binding User.Password}"  PlaceholderColor="{DynamicResource NotSelectedColor}"  Placeholder="{DynamicResource Password}"/>
             </StackLayout>
         </ScrollView>
 
         <HorizontalStackLayout Grid.Row="3" Grid.ColumnSpan="2" HorizontalOptions="Center" >
-            <Label Text="{Binding Localization[SwitchBiometric]}" VerticalOptions="Center" />
+            <Label Text="{DynamicResource SwitchBiometric}" VerticalOptions="Center" />
             <Switch x:Name="BiometricSwitch" 
                     IsToggled="{Binding EnableBiometrics}" 
                     VerticalOptions="Center"/>
         </HorizontalStackLayout>
 
         <!--<Button Margin="20"  Text="Register Admin" Grid.Row="3" Grid.Column="0" Command="{Binding RegisterAdminCommand}"/>-->
-        <Button Grid.Row="4" Grid.ColumnSpan="2" Text="{Binding Localization[LanguageButtonText]}"
+        <Button Grid.Row="4" Grid.ColumnSpan="2" Text="{DynamicResource LanguageButtonText}"
              Command="{Binding SwitchLanguageCommand}" BackgroundColor="{DynamicResource ButtonColor}" TextColor="{DynamicResource ButtonTextColor}"
              HorizontalOptions="Center" />
-        <Button Margin="20"  Text="{Binding Localization[Login]}" Grid.Row="2" Grid.ColumnSpan="2" 
+        <Button Margin="20"  Text="{DynamicResource Login}" Grid.Row="2" Grid.ColumnSpan="2" 
                 WidthRequest="200" HorizontalOptions="Center" BackgroundColor="{DynamicResource ButtonColor}" TextColor="{DynamicResource ButtonTextColor}" 
                 Command="{Binding LoginCommand}" />
 

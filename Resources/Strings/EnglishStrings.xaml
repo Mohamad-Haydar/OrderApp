@@ -1,0 +1,28 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ResourceDictionary xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="OrderApp.Resources.Strings.EnglishStrings">
+
+    <x:String x:Key="ClientName">Client Name</x:String>
+    <x:String x:Key="Clients">Clients</x:String>
+    <x:String x:Key="DateToPick">Date To Pick</x:String>
+    <x:String x:Key="Delete">Delete</x:String>
+    <x:String x:Key="Details">Details</x:String>
+    <x:String x:Key="Email">Email</x:String>
+    <x:String x:Key="EnterCredential">Enter Credential</x:String>
+    <x:String x:Key="Events">Events</x:String>
+    <x:String x:Key="LanguageButtonText">Switch To Arabic</x:String>
+    <x:String x:Key="Login">Login</x:String>
+    <x:String x:Key="Logout">Logout</x:String>
+    <x:String x:Key="OrderId">Order Id</x:String>
+    <x:String x:Key="Orders">orders</x:String>
+    <x:String x:Key="OrdersPageTitle">List Of Orders</x:String>
+    <x:String x:Key="Password">password</x:String>
+    <x:String x:Key="Products">Products</x:String>
+    <x:String x:Key="SwitchBiometric">Enable login with fingerprint</x:String>
+    <x:String x:Key="SwitchTheme">Switch Theme</x:String>
+    <x:String x:Key="TotalPrice">Total Price</x:String>
+    <x:String x:Key="UserName">User Name</x:String>
+    <x:String x:Key="Welcome">Welcom</x:String>
+
+</ResourceDictionary>

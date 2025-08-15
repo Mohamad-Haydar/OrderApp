@@ -11,6 +11,9 @@
                 <ResourceDictionary Source="Resources/Styles/Styles.xaml" />
                 <ResourceDictionary Source="Resources/Styles/LightTheme.xaml" />
                 <ResourceDictionary Source="Resources/Styles/DarkTheme.xaml" />
+
+                <ResourceDictionary Source="/Resources/Strings/ArabicStrings.xaml" />
+                <ResourceDictionary Source="Resources/Strings/EnglishStrings.xaml" />
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Application.Resources>

@@ -1,0 +1,26 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ResourceDictionary xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="OrderApp.Resources.Strings.ArabicStrings">
+    <x:String x:Key="ClientName">اسم المستخدم</x:String>
+    <x:String x:Key="Clients">العملاء</x:String>
+    <x:String x:Key="DateToPick">تاريخ استلام الطلب:</x:String>
+    <x:String x:Key="Delete">حذف</x:String>
+    <x:String x:Key="Details">التفاصيل</x:String>
+    <x:String x:Key="Email">الايميل</x:String>
+    <x:String x:Key="EnterCredential">ادخل المعلومات</x:String>
+    <x:String x:Key="Events">الاحداث</x:String>
+    <x:String x:Key="LanguageButtonText">الانتقال الى الانكليزية</x:String>
+    <x:String x:Key="Login">تسجيل الدخول</x:String>
+    <x:String x:Key="Logout">تسجيل الخروج</x:String>
+    <x:String x:Key="OrderId">رقم الطلب</x:String>
+    <x:String x:Key="Orders">الطلبات</x:String>
+    <x:String x:Key="OrdersPageTitle">مجموعة الطلبات</x:String>
+    <x:String x:Key="Password">كلمة المرور</x:String>
+    <x:String x:Key="Products">البضائع</x:String>
+    <x:String x:Key="SwitchBiometric">تمكين تسجيل الدخول باستخدام البصمة</x:String>
+    <x:String x:Key="SwitchTheme">تغيير الوضع</x:String>
+    <x:String x:Key="TotalPrice">المجموع الكلي:</x:String>
+    <x:String x:Key="UserName">اسم المستخدم</x:String>
+    <x:String x:Key="Welcome">مرحبا</x:String>
+</ResourceDictionary>

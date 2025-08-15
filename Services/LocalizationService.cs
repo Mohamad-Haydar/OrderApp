@@ -4,11 +4,11 @@ using System.Globalization;
 
 namespace OrderApp.Services
 {
-    public class LocalizationService : INotifyPropertyChanged
+    public class LocalizationService
     {
-        private CultureInfo? _currentCulture;
-        
-        public event PropertyChangedEventHandler? PropertyChanged;
+
+        private readonly ResourceDictionary _english = new EnglishStrings();
+        private readonly ResourceDictionary _arabic = new ArabicStrings();
 
         public LocalizationService()
         {
@@ -16,17 +16,19 @@ namespace OrderApp.Services
             SetLanguage(lang);
         }
 
-        public static LocalizationService Instance { get; } = new();
-        public object this[string key] => AppResources.ResourceManager.GetString(key, AppResources.Culture) ?? key;
-        
-
         public void SetLanguage(string languageCode)
         {
-            _currentCulture = new CultureInfo(languageCode);
-            CultureInfo.CurrentCulture = _currentCulture;
-            CultureInfo.CurrentUICulture = _currentCulture;
-            AppResources.Culture = _currentCulture;
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(null));
+            var appResources = Shell.Current.Resources;
+
+            // Remove previous language dictionary
+            var existing = appResources.MergedDictionaries.FirstOrDefault(d => d is EnglishStrings || d is ArabicStrings);
+            if (existing != null)
+                appResources.MergedDictionaries.Remove(existing);
+
+            if (languageCode == "en")
+                appResources.MergedDictionaries.Add(new EnglishStrings());
+            else
+                appResources.MergedDictionaries.Add(new ArabicStrings());
         }
     }
 }
