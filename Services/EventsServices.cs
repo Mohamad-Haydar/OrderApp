@@ -1,4 +1,9 @@
-﻿using OrderApp.Model;
+﻿using HealthKit;
+using OrderApp.Exceptions;
+using OrderApp.Model;
+using System.Diagnostics;
+using System.IO.Pipelines;
+using System.Xml.Linq;
 
 namespace OrderApp.Services
 {
@@ -41,11 +46,8 @@ namespace OrderApp.Services
             }
             catch (Exception ex)
             {
-                // Log exception somewhere
-                Console.WriteLine($"Error retrieving stock: {ex.Message}");
-
-                // Return a safe default value or rethrow a custom exception
-                return null;
+                Debug.WriteLine($"DB Error in DeleteProductInOrder: {ex}");
+                throw new DataAccessException("Could Not Get Events.", ex);
             }
         }
 
@@ -82,11 +84,8 @@ namespace OrderApp.Services
             }
             catch (Exception ex)
             {
-                // Log exception somewhere
-                Console.WriteLine($"Error retrieving stock: {ex.Message}");
-
-                // Return a safe default value or rethrow a custom exception
-                return null;
+                Debug.WriteLine($"DB Error in DeleteProductInOrder: {ex}");
+                throw new DataAccessException("Could not Get All Events.", ex);
             }
             finally
             {
@@ -97,16 +96,19 @@ namespace OrderApp.Services
 
         public async Task<int> AddEvent(string eventName, string description, string eventType, string startDateTime, string endDateTime)
         {
+            if (string.IsNullOrEmpty(eventName) || string.IsNullOrEmpty(description) || string.IsNullOrEmpty(eventType) || string.IsNullOrEmpty(startDateTime) || string.IsNullOrEmpty(endDateTime))
+                throw new ValidationException("All product fields must be filled and valid.");
 
-           using var connection = AdoDatabaseService.GetConnection();
+
+            using var connection = AdoDatabaseService.GetConnection();
             try
             {
                 connection.Open();
 
                 var command = connection.CreateCommand();
                 command.CommandText = @"INSERT INTO Events 
-            (UserId, EventName, Description, EventType, StartTime, EndTime) 
-            VALUES ($userId, $EventName, $Description, $SelectedEventType, $startDateTime, $endDateTime)";
+                                        (UserId, EventName, Description, EventType, StartTime, EndTime) 
+                                        VALUES ($userId, $EventName, $Description, $SelectedEventType, $startDateTime, $endDateTime)";
 
                 command.Parameters.AddWithValue("$userId", Preferences.Get("UserId", 0));
                 command.Parameters.AddWithValue("EventName", eventName);
@@ -126,11 +128,8 @@ namespace OrderApp.Services
             }
             catch (Exception ex)
             {
-                // Log exception somewhere
-                Console.WriteLine($"Error retrieving stock: {ex.Message}");
-
-                // Return a safe default value or rethrow a custom exception
-                return 0;
+                Debug.WriteLine($"DB Error in DeleteProductInOrder: {ex}");
+                throw new DataAccessException("Could not Get All Events.", ex);
             }
             finally
             {
@@ -166,11 +165,8 @@ namespace OrderApp.Services
             }
             catch (Exception ex)
             {
-                // Log exception somewhere
-                Console.WriteLine($"Error retrieving stock: {ex.Message}");
-
-                // Return a safe default value or rethrow a custom exception
-                return 0;
+                Debug.WriteLine($"DB Error in DeleteProductInOrder: {ex}");
+                throw new DataAccessException("Could not Update the event.", ex);
             }
             finally
             {
@@ -193,11 +189,8 @@ namespace OrderApp.Services
             }
             catch (Exception ex)
             {
-                // Log exception somewhere
-                Console.WriteLine($"Error retrieving stock: {ex.Message}");
-
-                // Return a safe default value or rethrow a custom exception
-                return false;
+                Debug.WriteLine($"DB Error in DeleteProductInOrder: {ex}");
+                throw new DataAccessException("Could not delete The Event.", ex);
             }
             finally
             {

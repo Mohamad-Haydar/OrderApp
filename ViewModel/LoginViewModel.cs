@@ -80,9 +80,9 @@ namespace OrderApp.ViewModel
 
                 await Shell.Current.DisplayAlert("Success", "Admin user created successfully.", "OK");
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                await Shell.Current.DisplayAlert("Error", "Failed to register admin: " + ex.Message, "OK");
+                await Shell.Current.DisplayAlert("Error", "An unexpected error occurred while registering the admin. Please try again.", "OK");
             }
             finally
             {
@@ -93,37 +93,38 @@ namespace OrderApp.ViewModel
         [RelayCommand]
         async Task LoginAsync()
         {
-            // try to login with biometric
-            var res = await TryAutoLoginWithBiometricsAsync();
-            if(res)
-            {
-                Application.Current.MainPage = new AppShell(new ShellViewModel(Language));
-                // make sure that the language is set in the new shell
-                _localization.SetLanguage(Language);
-                return;
-            }
-
-            // in case biometric don't work or is not enable normal login
-            if (string.IsNullOrWhiteSpace(User?.UserName) ||
-                   string.IsNullOrWhiteSpace(User?.Email) ||
-                   string.IsNullOrWhiteSpace(User?.Password))
-            {
-                if (EnableBiometrics)
-                {
-                    await Shell.Current.DisplayAlert("Error", "Please fill all fields At Least once before using biometrics login", "OK");
-                }
-                else
-                {
-                    await Shell.Current.DisplayAlert("Error", "Please fill all fields", "OK");
-                }
-                return;
-            }
-
-            IsBusy = true;
-            bool LoginResult = false;
-
             try
             {
+                // try to login with biometric
+                var res = await TryAutoLoginWithBiometricsAsync();
+                if(res)
+                {
+                    Application.Current.MainPage = new AppShell(new ShellViewModel(Language));
+                    // make sure that the language is set in the new shell
+                    _localization.SetLanguage(Language);
+                    return;
+                }
+
+                // in case biometric don't work or is not enable normal login
+                if (string.IsNullOrWhiteSpace(User?.UserName) ||
+                       string.IsNullOrWhiteSpace(User?.Email) ||
+                       string.IsNullOrWhiteSpace(User?.Password))
+                {
+                    if (EnableBiometrics)
+                    {
+                        await Shell.Current.DisplayAlert("Error", "Please fill all fields At Least once before using biometrics login", "OK");
+                    }
+                    else
+                    {
+                        await Shell.Current.DisplayAlert("Error", "Please fill all fields", "OK");
+                    }
+                    return;
+                }
+
+                IsBusy = true;
+                bool LoginResult = false;
+
+               
                 Preferences.Set("BiometricEnabled", EnableBiometrics);
                 LoginResult = await _loginServices.Login(User);
                 if (LoginResult)
@@ -136,9 +137,9 @@ namespace OrderApp.ViewModel
                     _localization.SetLanguage(Language);
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                await Shell.Current.DisplayAlert("Error", "Database error: " + ex.Message, "OK");
+                await Shell.Current.DisplayAlert("Error", "An unexpected error occurred during login. Please try again.", "OK");
                 IsBusy = false;
                 return;
             }

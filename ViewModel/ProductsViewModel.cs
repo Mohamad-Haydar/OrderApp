@@ -25,13 +25,27 @@ namespace OrderApp.ViewModel
         [RelayCommand]
         async Task AddProductAsync()
         {
-            await _popupService.ShowAddProductPopupAsync(Products);
+            try
+            {
+                await _popupService.ShowAddProductPopupAsync(Products);
+            }
+            catch (Exception)
+            {
+                await Shell.Current.DisplayAlert("Error", "An unexpected error occurred while opening the add product popup. Please try again.", "OK");
+            }
         }
 
         [RelayCommand]
         async Task GoToProductDetailsAsync()
         {
-
+            try
+            {
+                // Implement navigation or details logic here if needed
+            }
+            catch (Exception)
+            {
+                await Shell.Current.DisplayAlert("Error", "An unexpected error occurred while navigating to product details. Please try again.", "OK");
+            }
         }
 
         public async Task LoadProducts()
@@ -43,22 +57,20 @@ namespace OrderApp.ViewModel
 
                 foreach (var product in res)
                 {
+                    Products.Add(new Product
                     {
-                        Products.Add(new Product
-                        {
-                            Id = product.Id,
-                            Name = product.Name,
-                            Description = product.Description,
-                            Price = product.Price,
-                            Quantity = product.Quantity,
-                            ImageUrl = product.ImageUrl
-                        });
-                    }
+                        Id = product.Id,
+                        Name = product.Name,
+                        Description = product.Description,
+                        Price = product.Price,
+                        Quantity = product.Quantity,
+                        ImageUrl = product.ImageUrl
+                    });
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                Console.WriteLine($"error: { ex.Message}");
+                await Shell.Current.DisplayAlert("Error", "An unexpected error occurred while loading products. Please try again.", "OK");
             }
         }
 
@@ -101,17 +113,23 @@ namespace OrderApp.ViewModel
 
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                // Handle exceptions (user canceled, permissions, etc)
-                Debug.WriteLine($"Image pick error: {ex.Message}");
+                await Shell.Current.DisplayAlert("Error", "An unexpected error occurred while selecting an image. Please try again.", "OK");
             }
         }
 
         [RelayCommand]
         async Task AddProductToStockAsync(Product product)
         {
-            await _productsServices.UpdateProductStock(-95,product.Id);
+            try
+            {
+                await _productsServices.UpdateProductStock(-95,product.Id);
+            }
+            catch (Exception)
+            {
+                await Shell.Current.DisplayAlert("Error", "An unexpected error occurred while updating product stock. Please try again.", "OK");
+            }
         }
     }
 }

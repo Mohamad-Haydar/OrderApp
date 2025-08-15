@@ -27,13 +27,17 @@ namespace OrderApp.ViewModel
             LoadAsync();
         }
 
-
-
         [RelayCommand]
         async Task AddOrderAsync()
         {
-            // call the popup service to create new popup to add an order
-            await _popupService.ShowAddOrderPopupAsync();
+            try
+            {
+                await _popupService.ShowAddOrderPopupAsync();
+            }
+            catch (Exception)
+            {
+                await Shell.Current.DisplayAlert("Error", "An unexpected error occurred while opening the add order popup. Please try again.", "OK");
+            }
         }
 
         // To delete an order from the database
@@ -50,31 +54,42 @@ namespace OrderApp.ViewModel
             }
             catch (Exception)
             {
-                Console.WriteLine("Something went wrong");
+                await Shell.Current.DisplayAlert("Error", "An unexpected error occurred while deleting the order. Please try again.", "OK");
             }
-
         }
 
         [RelayCommand]
         async Task GoToOrderDetailsAsync(Order order)
         {
-            await Shell.Current.GoToAsync(nameof(OrderDetails), true, new Dictionary<string, object>
+            try
             {
-                {nameof(Order), order},
-            });
+                await Shell.Current.GoToAsync(nameof(OrderDetails), true, new Dictionary<string, object>
+                {
+                    {nameof(Order), order},
+                });
+            }
+            catch (Exception)
+            {
+                await Shell.Current.DisplayAlert("Error", "An unexpected error occurred while navigating to order details. Please try again.", "OK");
+            }
         }
 
         [RelayCommand]
         async Task CountriesChanged()
         {
-            // Do something with SelectedCountries
-            Debug.WriteLine("Countries changed:");
-            foreach (var c in SelectedClient)
-                Debug.WriteLine($" - {c}");
+            try
+            {
+                Debug.WriteLine("Countries changed:");
+                foreach (var c in SelectedClient)
+                    Debug.WriteLine($" - {c}");
+            }
+            catch (Exception)
+            {
+                await Shell.Current.DisplayAlert("Error", "An unexpected error occurred while handling country selection. Please try again.", "OK");
+            }
         }
 
         public static Func<Client, string> ClientDisplayProperty => c => c.Name;
-
 
         // Get the orders from the database and update the view
         public async Task LoadOrders()
@@ -87,8 +102,7 @@ namespace OrderApp.ViewModel
             }
             catch (Exception)
             {
-
-                throw;
+                await Shell.Current.DisplayAlert("Error", "An unexpected error occurred while loading orders. Please try again.", "OK");
             }
         }
 

@@ -1,4 +1,6 @@
 ﻿using Microsoft.Data.Sqlite;
+using OrderApp.Exceptions;
+using System.Diagnostics;
 
 namespace OrderApp.Services
 {
@@ -42,14 +44,9 @@ namespace OrderApp.Services
             }
             catch (Exception ex)
             {
-                // Log exception somewhere
-                Console.WriteLine($"Error retrieving stock: {ex.Message}");
-
-                // Return a safe default value or rethrow a custom exception
-                return;
+                Debug.WriteLine($"DB Error in DeleteProductInOrder: {ex}");
+                throw new DataAccessException("Could not Initialize the database.", ex);
             }
-
-
         }
 
         public static void AddProduct(string name, string description, double price, int quantity)

@@ -51,87 +51,110 @@ namespace OrderApp.ViewModel
         [RelayCommand]
         async Task AddProductAsync(Product product)
         {
-            // if the product is already in the list of added product, get the product to the first location in the list of products In order
-            var existingProduct = ProductsInOrders.FirstOrDefault(x => x.Product.Id == product.Id);
-            if (existingProduct != null)
+            try
             {
+                var existingProduct = ProductsInOrders.FirstOrDefault(x => x.Product.Id == product.Id);
+                if (existingProduct != null)
+                {
                 // Remove it from its current position
-                ProductsInOrders.Remove(existingProduct);
+                    ProductsInOrders.Remove(existingProduct);
 
                 // Insert it at the first position
-                ProductsInOrders.Insert(0,existingProduct);
-                return;
-            }
+                    ProductsInOrders.Insert(0,existingProduct);
+                    return;
+                }
+                var availableStock = await _productService.GetStuckQuantity(product.Id);
 
-            var availableStock = await _productService.GetStuckQuantity(product.Id);
-
-            // If not enough stock, stop here
-            if (availableStock > 0)
-            {
-                // add only 1 item of the product 
-                ProductsInOrders.Insert(0, new ProductsInOrders()
+                // If not enough stock, stop here
+                if (availableStock > 0)
                 {
-                    Id = -1,
-                    Product = product,
-                    OrderId = Order.Id,
-                    Quantity = 1
-                });
-                //await _orderServices.AddProductToOrder(Order, product, 1);
-                //await LoadProductsOfOrder();
+                // add only 1 item of the product 
+                    ProductsInOrders.Insert(0, new ProductsInOrders()
+                    {
+                        Id = -1,
+                        Product = product,
+                        OrderId = Order.Id,
+                        Quantity = 1
+                    });
+                }
+                else
+                {
+                    await Shell.Current.DisplayAlert("Failed", "Not enough stock quantity", "Ok");
+                }
             }
-            else
+            catch (Exception)
             {
-                // throw exception
-                await Shell.Current.DisplayAlert("Failed", "Not enough stock quantity", "Ok");
+                await Shell.Current.DisplayAlert("Error", "An unexpected error occurred while adding the product. Please try again.", "OK");
             }
         }
 
         [RelayCommand]
         public async Task LoadItems()
         {
-            IsBusy = true;
+            try
+            {
+                IsBusy = true;
             // Give the UI a moment to update the ActivityIndicator
-            await Task.Yield();
-
-            await LoadCustomer();
-            await LoadAllProductsAsync();
-            await LoadProductsOfOrder();
-            IsBusy = false;
+                await Task.Yield();
+                await LoadCustomer();
+                await LoadAllProductsAsync();
+                await LoadProductsOfOrder();
+                IsBusy = false;
+            }
+            catch (Exception)
+            {
+                IsBusy = false;
+                await Shell.Current.DisplayAlert("Error", "An unexpected error occurred while loading order details. Please try again.", "OK");
+            }
         }
 
         [RelayCommand]
         async Task DeleteItem(ProductsInOrders productInOrder)
         {
-            int quantityToRemove = productInOrder.Quantity;
-            await _productService.UpdateProductStock(-1 * quantityToRemove, productInOrder.Product.Id);
-            await _productInOrdersServices.DeleteProductInOrder(productInOrder.OrderId, productInOrder.Product.Id);
-            ProductsInOrders.Remove(productInOrder);
+            try
+            {
+                int quantityToRemove = productInOrder.Quantity;
+                await _productService.UpdateProductStock(-1 * quantityToRemove, productInOrder.Product.Id);
+                await _productInOrdersServices.DeleteProductInOrder(productInOrder.OrderId, productInOrder.Product.Id);
+                ProductsInOrders.Remove(productInOrder);
+            }
+            catch (Exception)
+            {
+                await Shell.Current.DisplayAlert("Error", "An unexpected error occurred while deleting the product from the order. Please try again.", "OK");
+            }
         }
 
         public async Task LoadProductsOfOrder()
         {
-            Title = "Details of Order: " + Order.Id;
-            Total = 0;
-            ProductsInOrders.Clear();
             try
             {
+                Title = "Details of Order: " + Order.Id;
+                Total = 0;
+                ProductsInOrders.Clear();
                 Total = await _productService.GetProductsInOrders(ProductsInOrders, Order);
             }
             catch (Exception)
             {
-                Console.WriteLine("something went wrong");
+                await Shell.Current.DisplayAlert("Error", "An unexpected error occurred while loading products of the order. Please try again.", "OK");
             }
         }
 
         public async Task LoadAllProductsAsync()
         {
-            var products = await _productService.GetProducts();
-            Products.Clear();
-            foreach (var product in products)
-                Products.Add(product);
+            try
+            {
+                var products = await _productService.GetProducts();
+                Products.Clear();
+                foreach (var product in products)
+                    Products.Add(product);
 
             // Initially show all products
-            FilteredProducts = new ObservableCollection<Product>(Products);
+                FilteredProducts = new ObservableCollection<Product>(Products);
+            }
+            catch (Exception)
+            {
+                await Shell.Current.DisplayAlert("Error", "An unexpected error occurred while loading all products. Please try again.", "OK");
+            }
         }
 
         partial void OnSearchTextChanged(string value)
@@ -155,7 +178,7 @@ namespace OrderApp.ViewModel
             }
             catch (Exception)
             {
-                Console.WriteLine("something went wrong");
+                await Shell.Current.DisplayAlert("Error", "An unexpected error occurred while loading the client information. Please try again.", "OK");
             }
         }
 
@@ -196,9 +219,9 @@ namespace OrderApp.ViewModel
                 await _orderServices.SetTotalAsync(Order);
                 await Shell.Current.DisplayAlert("Success", "The product is updated successfully", "Ok");
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                await Shell.Current.DisplayAlert("Error", $"Database error: {ex.Message}", "OK");
+                await Shell.Current.DisplayAlert("Error", "An unexpected error occurred while updating the order. Please try again.", "OK");
             }
         }
 

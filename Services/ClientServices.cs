@@ -1,5 +1,7 @@
-﻿using OrderApp.Model;
+﻿using OrderApp.Exceptions;
+using OrderApp.Model;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 
 namespace OrderApp.Services
 {
@@ -31,11 +33,8 @@ namespace OrderApp.Services
             }
             catch (Exception ex)
             {
-                // Log exception somewhere
-                Console.WriteLine($"Error retrieving stock: {ex.Message}");
-
-                // Return a safe default value or rethrow a custom exception
-                return null;
+                Debug.WriteLine($"DB Error in DeleteProductInOrder: {ex}");
+                throw new DataAccessException("Could not Get Clients For Popup.", ex);
             }
             finally
             {
@@ -69,11 +68,8 @@ namespace OrderApp.Services
             }
             catch (Exception ex)
             {
-                // Log exception somewhere
-                Console.WriteLine($"Error retrieving stock: {ex.Message}");
-
-                // Return a safe default value or rethrow a custom exception
-                return null;
+                Debug.WriteLine($"DB Error in DeleteProductInOrder: {ex}");
+                throw new DataAccessException("Could not Get Client Info", ex);
             }
             finally
             {
@@ -104,11 +100,8 @@ namespace OrderApp.Services
             }
             catch (Exception ex)
             {
-                // Log exception somewhere
-                Console.WriteLine($"Error retrieving stock: {ex.Message}");
-
-                // Return a safe default value or rethrow a custom exception
-                return null;
+                Debug.WriteLine($"DB Error in DeleteProductInOrder: {ex}");
+                throw new DataAccessException("Could not Get Customer.", ex);
             }
             finally
             {
@@ -118,31 +111,30 @@ namespace OrderApp.Services
 
         public async Task AddClient(string name, string details)
         {
+            if (string.IsNullOrEmpty(name) || string.IsNullOrEmpty(details))
+                throw new ValidationException("Name and details must be filled and valid.");
+
             var connection = AdoDatabaseService.GetConnection();
             try
             {
-                if (string.IsNullOrEmpty(name) || string.IsNullOrEmpty(details))
-                    throw new Exception("Fill all input");
                 connection.Open();
-
                 using var command = connection.CreateCommand();
                 command.CommandText = @"
                     INSERT INTO Clients (Name, Details)
                     VALUES ($name, $details)";
-
                 command.Parameters.AddWithValue("$name", name);
                 command.Parameters.AddWithValue("$details", details ?? string.Empty);
-
                 command.ExecuteNonQuery();
                 connection.Close();
             }
+            catch (ValidationException)
+            {
+                throw;
+            }
             catch (Exception ex)
             {
-                // Log exception somewhere
-                Console.WriteLine($"Error retrieving stock: {ex.Message}");
-
-                // Return a safe default value or rethrow a custom exception
-                throw;
+                Debug.WriteLine($"DB Error in DeleteProductInOrder: {ex}");
+                throw new DataAccessException("Could not Add Client", ex);
             }
             finally
             {

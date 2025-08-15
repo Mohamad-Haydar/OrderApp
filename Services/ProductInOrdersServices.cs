@@ -1,4 +1,7 @@
-﻿namespace OrderApp.Services
+﻿using OrderApp.Exceptions;
+using System.Diagnostics;
+
+namespace OrderApp.Services
 {
     public class ProductInOrdersServices
     {
@@ -17,11 +20,8 @@
             }
             catch (Exception ex)
             {
-                // Log exception somewhere
-                Console.WriteLine($"Error retrieving stock: {ex.Message}");
-
-                // Return a safe default value or rethrow a custom exception
-                return;
+                Debug.WriteLine($"DB Error in UpdateProductsInOrders: {ex}");
+                throw new DataAccessException("Could not update product quantity in order.", ex);
             }
             finally
             {
@@ -45,11 +45,8 @@
             }
             catch (Exception ex)
             {
-                // Log exception somewhere
-                Console.WriteLine($"Error retrieving stock: {ex.Message}");
-
-                // Return a safe default value or rethrow a custom exception
-                return -1;
+                Debug.WriteLine($"DB Error in GetQuantity: {ex}");
+                throw new DataAccessException("Could not retrieve product quantity from order.", ex);
             }
             finally
             {
@@ -79,11 +76,8 @@
             }
             catch (Exception ex)
             {
-                // Log exception somewhere
-                Console.WriteLine($"Error retrieving stock: {ex.Message}");
-
-                // Return a safe default value or rethrow a custom exception
-                return;
+                Debug.WriteLine($"DB Error in InsertProductIntoProductsInOrder: {ex}");
+                throw new DataAccessException("Could not insert product into order.", ex);
             }
             finally
             {
@@ -110,11 +104,8 @@
             }
             catch (Exception ex)
             {
-                // Log exception somewhere
-                Console.WriteLine($"Error retrieving stock: {ex.Message}");
-
-                // Return a safe default value or rethrow a custom exception
-                return;
+                Debug.WriteLine($"DB Error in DeleteProductInOrder: {ex}");
+                throw new DataAccessException("Could not delete product from order.", ex);
             }
             finally
             {

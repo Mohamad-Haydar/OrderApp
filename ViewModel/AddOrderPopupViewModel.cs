@@ -6,6 +6,7 @@ using OrderApp.Model;
 using OrderApp.Services;
 using OrderApp.View;
 using System.Collections.ObjectModel;
+using OrderApp.Exceptions;
 
 namespace OrderApp.ViewModel
 {
@@ -44,14 +45,18 @@ namespace OrderApp.ViewModel
             }
             try
             {
+                // Add validation for date
+                if (Order.DateToPick < DateTime.Today)
+                    throw new ValidationException("Order date cannot be in the past.");
                 await _orderServices.CreateOrder(Client.Id, Order.DateToPick);
             }
-            catch (Exception ex)
+            catch (ValidationException vex)
             {
-                await Shell.Current.DisplayAlert("Error", $"error: {ex.Message}", "OK");
+                await Shell.Current.DisplayAlert("Validation Error", vex.Message, "OK");
             }
-            finally
+            catch (Exception)
             {
+                await Shell.Current.DisplayAlert("Error", "An unexpected error occurred while creating the order. Please try again.", "OK");
             }
         }
 

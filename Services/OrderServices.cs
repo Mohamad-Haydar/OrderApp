@@ -1,5 +1,7 @@
-﻿using OrderApp.Model;
+﻿using OrderApp.Exceptions;
+using OrderApp.Model;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 
 namespace OrderApp.Services
 {
@@ -45,59 +47,64 @@ namespace OrderApp.Services
             }
             catch (Exception ex)
             {
-                // Log exception somewhere
-                Console.WriteLine($"Error retrieving stock: {ex.Message}");
-
-                // Return a safe default value or rethrow a custom exception
-                return null;
+                Debug.WriteLine($"DB Error in DeleteProductInOrder: {ex}");
+                throw new DataAccessException("Could not retrieve orders.", ex);
             }
         }
 
         public async Task UpdateOrderAsync(ObservableCollection<ProductsInOrders> productsInOrders)
         {
-            // ToList() makes a snapshot copy, so I can safely remove from the original collection while looping
-            foreach (var item in productsInOrders.ToList())
+            try
             {
-                // Step 1: Get the old quantity from the database
-                var oldQuantity = await _productInOrdersServices.GetQuantity(item.Id);
-
-                // Step 2: Calculate the difference
-                int difference = item.Quantity - oldQuantity;
-
-                if (difference > 0)
+                // ToList() makes a snapshot copy, so I can safely remove from the original collection while looping
+                foreach (var item in productsInOrders.ToList())
                 {
-                    // Step 2.1: Check available stock
-                    var availableStock = await _productServices.GetStuckQuantity(item.Product.Id);
+                    // Step 1: Get the old quantity from the database
+                    var oldQuantity = await _productInOrdersServices.GetQuantity(item.Id);
 
-                    if (difference > availableStock)
+                    // Step 2: Calculate the difference
+                    int difference = item.Quantity - oldQuantity;
+
+                    if (difference > 0)
                     {
-                        await Shell.Current.DisplayAlert("Error", "Not enough stock available", "OK");
-                        return;
+                        // Step 2.1: Check available stock
+                        var availableStock = await _productServices.GetStuckQuantity(item.Product.Id);
+
+                        if (difference > availableStock)
+                        {
+                            await Shell.Current.DisplayAlert("Error", "Not enough stock available", "OK");
+                            return;
+                        }
+                    }
+
+                    // Step 3: Update ProductsInOrders Or insert it if not exists
+                    if (oldQuantity < 1)
+                    {
+                        // INSERT into ProductsInOrders
+                        await _productInOrdersServices.InsertProductIntoProductsInOrder(item.OrderId, item.Product.Id, item.Quantity);
+                    }
+                    else
+                    {
+                        await _productInOrdersServices.UpdateProductsInOrders(item.Quantity, item.Id);
+                    }
+
+                    // Step 4: Update Product stock
+                    await _productServices.UpdateProductStock(difference, item.Product.Id);
+
+                    // Step 5: if product in order is 0 remove the product from this order
+                    if (item.Quantity == 0)
+                    {
+                        await _productInOrdersServices.DeleteProductInOrder(item.OrderId, item.Product.Id);
+                        productsInOrders.Remove(item);
                     }
                 }
-
-                // Step 3: Update ProductsInOrders Or insert it if not exists
-                if (oldQuantity < 1)
-                {
-                    // INSERT into ProductsInOrders
-                    await _productInOrdersServices.InsertProductIntoProductsInOrder(item.OrderId, item.Product.Id, item.Quantity);
-                }
-                else
-                {
-                    await _productInOrdersServices.UpdateProductsInOrders(item.Quantity, item.Id);
-                }
-
-                // Step 4: Update Product stock
-                await _productServices.UpdateProductStock(difference, item.Product.Id);
-
-                // Step 5: if product in order is 0 remove the product from this order
-                if (item.Quantity == 0)
-                {
-                    await _productInOrdersServices.DeleteProductInOrder(item.OrderId, item.Product.Id);
-                    productsInOrders.Remove(item);
-                }
             }
-           
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"DB Error in DeleteProductInOrder: {ex}");
+                throw new DataAccessException("Could not update order.", ex);
+            }
+
         }
 
         public async Task CreateOrder(int clientId, DateTime dateToPick )
@@ -108,9 +115,8 @@ namespace OrderApp.Services
                 // create the command to create new order
                 connection.Open();
                 using var command = connection.CreateCommand();
-                command.CommandText = @"
-            INSERT INTO Orders (ClientId, Total, DateToPick, UserId)
-            VALUES ($clientId, 0, $dateToPick, $userId);";
+                command.CommandText = @"INSERT INTO Orders (ClientId, Total, DateToPick, UserId)
+                                        VALUES ($clientId, 0, $dateToPick, $userId);";
 
                 command.Parameters.AddWithValue("$clientId", clientId);
                 command.Parameters.AddWithValue("$dateToPick", dateToPick.ToString("yyyy-MM-dd"));
@@ -122,11 +128,8 @@ namespace OrderApp.Services
             }
             catch (Exception ex)
             {
-                // Log exception somewhere
-                Console.WriteLine($"Error retrieving stock: {ex.Message}");
-
-                // Return a safe default value or rethrow a custom exception
-                return;
+                Debug.WriteLine($"DB Error in DeleteProductInOrder: {ex}");
+                throw new DataAccessException("Could not create order.", ex);
             }
             finally
             {
@@ -142,8 +145,8 @@ namespace OrderApp.Services
                 connection.Open();
                 using var updateTotalCommand = connection.CreateCommand();
                 updateTotalCommand.CommandText = @"UPDATE Orders 
-            SET Total = Total + $added 
-            WHERE Id = $orderId;";
+                                                    SET Total = Total + $added 
+                                                    WHERE Id = $orderId;";
 
                 updateTotalCommand.Parameters.AddWithValue("$added", addedAmount);
                 updateTotalCommand.Parameters.AddWithValue("$orderId", orderId);
@@ -152,11 +155,8 @@ namespace OrderApp.Services
             }
             catch (Exception ex)
             {
-                // Log exception somewhere
-                Console.WriteLine($"Error retrieving stock: {ex.Message}");
-
-                // Return a safe default value or rethrow a custom exception
-                return;
+                Debug.WriteLine($"DB Error in DeleteProductInOrder: {ex}");
+                throw new DataAccessException("Could not update order total", ex);
             }
             finally
             {
@@ -179,11 +179,8 @@ namespace OrderApp.Services
             }
             catch (Exception ex)
             {
-                // Log exception somewhere
-                Console.WriteLine($"Error retrieving stock: {ex.Message}");
-
-                // Return a safe default value or rethrow a custom exception
-                return;
+                Debug.WriteLine($"DB Error in DeleteProductInOrder: {ex}");
+                throw new DataAccessException("Could not set order total.", ex);
             }
             finally
             {
@@ -207,11 +204,8 @@ namespace OrderApp.Services
             }
             catch (Exception ex)
             {
-                // Log exception somewhere
-                Console.WriteLine($"Error retrieving stock: {ex.Message}");
-
-                // Return a safe default value or rethrow a custom exception
-                return;
+                Debug.WriteLine($"DB Error in DeleteProductInOrder: {ex}");
+                throw new DataAccessException("Could not delete order.", ex);
             }
             finally
             {

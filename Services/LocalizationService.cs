@@ -1,5 +1,7 @@
-﻿using OrderApp.Resources.Strings;
+﻿using OrderApp.Exceptions;
+using OrderApp.Resources.Strings;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Globalization;
 
 namespace OrderApp.Services
@@ -18,17 +20,25 @@ namespace OrderApp.Services
 
         public void SetLanguage(string languageCode)
         {
-            var appResources = Shell.Current.Resources;
+            try
+            {
+                var appResources = Shell.Current.Resources;
 
-            // Remove previous language dictionary
-            var existing = appResources.MergedDictionaries.FirstOrDefault(d => d is EnglishStrings || d is ArabicStrings);
-            if (existing != null)
-                appResources.MergedDictionaries.Remove(existing);
+                // Remove previous language dictionary
+                var existing = appResources.MergedDictionaries.FirstOrDefault(d => d is EnglishStrings || d is ArabicStrings);
+                if (existing != null)
+                    appResources.MergedDictionaries.Remove(existing);
 
-            if (languageCode == "en")
-                appResources.MergedDictionaries.Add(new EnglishStrings());
-            else
-                appResources.MergedDictionaries.Add(new ArabicStrings());
+                if (languageCode == "en")
+                    appResources.MergedDictionaries.Add(new EnglishStrings());
+                else
+                    appResources.MergedDictionaries.Add(new ArabicStrings());
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"DB Error in DeleteProductInOrder: {ex}");
+                throw new DataAccessException("Could not Set the Language", ex);
+            }
         }
     }
 }

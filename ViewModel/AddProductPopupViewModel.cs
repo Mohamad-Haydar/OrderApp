@@ -5,6 +5,7 @@ using OrderApp.Helper;
 using OrderApp.Model;
 using OrderApp.Services;
 using System.Collections.ObjectModel;
+using OrderApp.Exceptions;
 
 namespace OrderApp.ViewModel
 {
@@ -33,9 +34,13 @@ namespace OrderApp.ViewModel
 
                 await Shell.Current.DisplayAlert("Success", "Product added successfully", "OK");
             }
-            catch (Exception ex)
+            catch (ValidationException vex)
             {
-                await Shell.Current.DisplayAlert("Error", "error: " + ex.Message, "OK");
+                await Shell.Current.DisplayAlert("Validation Error", vex.Message, "OK");
+            }
+            catch (Exception)
+            {
+                await Shell.Current.DisplayAlert("Error", "An unexpected error occurred while adding the product. Please try again.", "OK");
             }
         }
     }

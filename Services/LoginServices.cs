@@ -1,7 +1,9 @@
-﻿using OrderApp.Helper;
+﻿using OrderApp.Exceptions;
+using OrderApp.Helper;
 using OrderApp.Model;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -60,11 +62,8 @@ namespace OrderApp.Services
             }
             catch (Exception ex)
             {
-                // Log exception somewhere
-                Console.WriteLine($"Error retrieving stock: {ex.Message}");
-
-                // Return a safe default value or rethrow a custom exception
-                return false;
+                Debug.WriteLine($"DB Error in DeleteProductInOrder: {ex}");
+                throw new DataAccessException("Could not Login", ex);
             }
             finally
             {

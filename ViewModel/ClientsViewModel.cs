@@ -25,29 +25,49 @@ namespace OrderApp.ViewModel
         [RelayCommand]
         async Task AddClientAsync()
         {
-            await _popupService.ShowAddClientPopupAsync(Clients);
+            try
+            {
+                await _popupService.ShowAddClientPopupAsync(Clients);
+            }
+            catch (Exception)
+            {
+                await Shell.Current.DisplayAlert("Error", "An unexpected error occurred while opening the add client popup. Please try again.", "OK");
+            }
         }
 
         [RelayCommand]
         async Task GoToClientDetailsAsync()
         {
-
+            try
+            {
+                // Implement navigation or details logic here if needed
+            }
+            catch (Exception)
+            {
+                await Shell.Current.DisplayAlert("Error", "An unexpected error occurred while navigating to client details. Please try again.", "OK");
+            }
         }
 
         public async Task LoadClients()
         {
-            Clients.Clear();
-            var result = await _clientServices.GetClientsInfo();
-            foreach (var item in result) 
+            try
             {
-                Clients.Add(new Client
+                Clients.Clear();
+                var result = await _clientServices.GetClientsInfo();
+                foreach (var item in result) 
                 {
-                    Id = item.Id,
-                    Name = item.Name,
-                    Details = item.Details
-                });
+                    Clients.Add(new Client
+                    {
+                        Id = item.Id,
+                        Name = item.Name,
+                        Details = item.Details
+                    });
+                }
             }
-
+            catch (Exception)
+            {
+                await Shell.Current.DisplayAlert("Error", "An unexpected error occurred while loading clients. Please try again.", "OK");
+            }
         }
     }
 }

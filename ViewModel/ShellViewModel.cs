@@ -15,26 +15,46 @@ namespace OrderApp.ViewModel
         [RelayCommand]
         async Task SwitchLanguageAsync()
         {
-           await base.SwitchLanguageAsync();
+            try
+            {
+                await base.SwitchLanguageAsync();
+            }
+            catch (Exception)
+            {
+                await Shell.Current.DisplayAlert("Error", "An unexpected error occurred while switching language. Please try again.", "OK");
+            }
         }
 
         [RelayCommand]
         async Task SwitchTheme()
         {
-            await base.SelectTheme();
+            try
+            {
+                await base.SelectTheme();
+            }
+            catch (Exception)
+            {
+                await Shell.Current.DisplayAlert("Error", "An unexpected error occurred while switching theme. Please try again.", "OK");
+            }
         }
 
         [RelayCommand]
         async Task LogoutAsync()
         {
-            Preferences.Remove("UserId");
-            Preferences.Remove("Username");
-            SecureStorage.Remove("SavedEmail");
-            SecureStorage.Remove("SavedPassword");
-            Application.Current.Windows[0].Page = new LoginShell();
-
-            var themeService = ServiceHelper.Resolve<ThemeService>();
-            themeService.SetTheme(Preferences.Get("AppTheme", "white"));
+            try
+            {
+                Preferences.Remove("UserId");
+                Preferences.Remove("Username");
+                SecureStorage.Remove("SavedEmail");
+                SecureStorage.Remove("SavedPassword");
+                Application.Current.Windows[0].Page = new LoginShell();
+                var themeService = ServiceHelper.Resolve<ThemeService>();
+                themeService.SetTheme(Preferences.Get("AppTheme", "white"));
+            }
+            catch (Exception)
+            {
+                await Shell.Current.DisplayAlert("Error", "An unexpected error occurred while logging out. Please try again.", "OK");
+            }
         }
 
 

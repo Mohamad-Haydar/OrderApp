@@ -85,12 +85,12 @@ namespace OrderApp.ViewModel
 
                 }
 
-                await Shell.Current.DisplayAlert("Success", "Event added successfully!", "OK");
+                await Shell.Current.DisplayAlert("Success", "Event updated successfully!", "OK");
                 await _popup.CloseAsync();
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                await Shell.Current.DisplayAlert("Error", "Event Not added successfully!", "OK");
+                await Shell.Current.DisplayAlert("Error", "An unexpected error occurred while updating the event. Please try again.", "OK");
             }
 
         }

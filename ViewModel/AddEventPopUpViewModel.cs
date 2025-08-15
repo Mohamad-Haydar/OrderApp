@@ -1,5 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using OrderApp.Exceptions;
 using OrderApp.Helper;
 using OrderApp.Services;
 using Plugin.LocalNotification;
@@ -119,9 +120,13 @@ namespace OrderApp.ViewModel
 
                 await Shell.Current.DisplayAlert("Success", "Event added successfully!", "OK");
             }
-            catch (Exception ex)
+            catch (ValidationException vex)
             {
-                await Shell.Current.DisplayAlert("Error", "Event Not added successfully!", "OK");
+                await Shell.Current.DisplayAlert("Validation Error", vex.Message, "OK");
+            }
+            catch (Exception)
+            {
+                await Shell.Current.DisplayAlert("Error", "Unable to add Event please try again", "OK");
             }
             
         }

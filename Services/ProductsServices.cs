@@ -1,5 +1,7 @@
-﻿using OrderApp.Model;
+﻿using OrderApp.Exceptions;
+using OrderApp.Model;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 
 namespace OrderApp.Services
 {
@@ -34,11 +36,8 @@ namespace OrderApp.Services
             }
             catch (Exception ex)
             {
-                // Log exception somewhere
-                Console.WriteLine($"Error retrieving stock: {ex.Message}");
-
-                // Return a safe default value or rethrow a custom exception
-                return null;
+                Debug.WriteLine($"DB Error in GetProducts: {ex}");
+                throw new DataAccessException("Failed to load products from the database.", ex);
             }
             finally
             {
@@ -65,11 +64,11 @@ namespace OrderApp.Services
             }
             catch (Exception ex)
             {
-                // Log exception somewhere
-                Console.WriteLine($"Error retrieving stock: {ex.Message}");
+                // Log technical details
+                Debug.WriteLine($"DB Error: {ex}");
 
-                // Return a safe default value or rethrow a custom exception
-                return -1;
+                // Either throw a custom exception:
+                throw new DataAccessException("Could not retrieve products.", ex);
             }
             finally
             {
@@ -120,11 +119,8 @@ namespace OrderApp.Services
             }
             catch (Exception ex)
             {
-                // Log exception somewhere
-                Console.WriteLine($"Error retrieving stock: {ex.Message}");
-
-                // Return a safe default value or rethrow a custom exception
-                return -1;
+                Debug.WriteLine($"DB Error in GetProductsInOrders: {ex}");
+                throw new DataAccessException("Failed to retrieve products for the order.", ex);
             }
             finally
             {
@@ -151,11 +147,8 @@ namespace OrderApp.Services
             }
             catch (Exception ex)
             {
-                // Log exception somewhere
-                Console.WriteLine($"Error retrieving stock: {ex.Message}");
-
-                // Return a safe default value or rethrow a custom exception
-                return;
+                Debug.WriteLine($"DB Error in UpdateProductStock: {ex}");
+                throw new DataAccessException("Failed to update product stock.", ex);
             }
             finally
             {
@@ -165,11 +158,12 @@ namespace OrderApp.Services
 
         public async Task AddProductAsync(string name, string description, float price, int quantity)
         {
+            if (string.IsNullOrEmpty(name) || string.IsNullOrEmpty(description) || price <= 0 || quantity <= 0)
+                throw new ValidationException("All product fields must be filled and valid.");
+
             var connection = AdoDatabaseService.GetConnection();
             try
             {
-                if (string.IsNullOrEmpty(name) || string.IsNullOrEmpty(description) || price <= 0 || quantity <= 0)
-                    throw new Exception("Fill all input");
                 connection.Open();
 
                 using var command = connection.CreateCommand();
@@ -184,13 +178,14 @@ namespace OrderApp.Services
                 command.ExecuteNonQuery();
                 connection.Close();
             }
+            catch (ValidationException)
+            {
+                throw;
+            }
             catch (Exception ex)
             {
-                // Log exception somewhere
-                Console.WriteLine($"Error retrieving stock: {ex.Message}");
-
-                // Return a safe default value or rethrow a custom exception
-                throw;
+                Debug.WriteLine($"DB Error in AddProductAsync: {ex}");
+                throw new DataAccessException("Failed to add the product.", ex);
             }
             finally
             {
@@ -213,11 +208,8 @@ namespace OrderApp.Services
             }
             catch (Exception ex)
             {
-                // Log exception somewhere
-                Console.WriteLine($"Error retrieving stock: {ex.Message}");
-
-                // Return a safe default value or rethrow a custom exception
-                return;
+                Debug.WriteLine($"DB Error in UpdateProductImage: {ex}");
+                throw new DataAccessException("Failed to update product image.", ex);
             }
             finally
             {

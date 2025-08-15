@@ -36,17 +36,23 @@ namespace OrderApp.ViewModel
 
         public async Task SelectDateAync(DateOnly date)
         {
-            //TappedCommand = "{Binding SelectDateAyncCommand}"
-            DateSelected = date;
-            Title = $"Events of {dateSelected}";
-            var eventsResult = await _eventsServices.GetEvents(date);
-            EventsOfDay.Clear();
-            foreach (var item in eventsResult)
+            try
             {
-                item.Background = GetColorBrushForEventType(item.EventType);
-                item.BackgroundStr = GetBackgroundStrForEventType(item.EventType);
-                item.TextColor = GetColorForEventType(item.EventType);
-                EventsOfDay.Add(item);
+                DateSelected = date;
+                Title = $"Events of {dateSelected}";
+                var eventsResult = await _eventsServices.GetEvents(date);
+                EventsOfDay.Clear();
+                foreach (var item in eventsResult)
+                {
+                    item.Background = GetColorBrushForEventType(item.EventType);
+                    item.BackgroundStr = GetBackgroundStrForEventType(item.EventType);
+                    item.TextColor = GetColorForEventType(item.EventType);
+                    EventsOfDay.Add(item);
+                }
+            }
+            catch (Exception)
+            {
+                await Shell.Current.DisplayAlert("Error", "An unexpected error occurred while loading events. Please try again.", "OK");
             }
         }
 
@@ -86,37 +92,49 @@ namespace OrderApp.ViewModel
         [RelayCommand]
         async Task AddEventAsync()
         {
-            // call the popup service to create new popup to add an Event
-            await _popupService.ShowAddEventPopupAsync();
-            await SelectDateAync(dateSelected);
+            try
+            {
+                await _popupService.ShowAddEventPopupAsync();
+                await SelectDateAync(dateSelected);
+            }
+            catch (Exception)
+            {
+                await Shell.Current.DisplayAlert("Error", "An unexpected error occurred while adding an event. Please try again.", "OK");
+            }
         }
 
         [RelayCommand]
         async Task EditEventAsync(EventModel eventModel)
         {
-            if (eventModel == null) return;
-            await _popupService.ShowEditEventPopupAsync(eventModel);
-            // cancel the notification
-            //LocalNotificationCenter.Current.Cancel(eventModel.Id + 1000);
-
-            //// Call the service to edit the event
-            //var result = await _eventsServices.UpdateEvent(eventModel.Id, eventModel.EventName, eventModel.Description, eventModel.EventType, eventModel.From.ToString("yyyy-MM-dd HH:mm:ss"), eventModel.To.ToString("yyyy-MM-dd HH:mm:ss"));
-            await SelectDateAync(dateSelected);
+            try
+            {
+                if (eventModel == null) return;
+                await _popupService.ShowEditEventPopupAsync(eventModel);
+                await SelectDateAync(dateSelected);
+            }
+            catch (Exception)
+            {
+                await Shell.Current.DisplayAlert("Error", "An unexpected error occurred while editing the event. Please try again.", "OK");
+            }
         }
 
 
         [RelayCommand]
         async Task DeleteEventAsync(EventModel eventModel)
         {
-            if (eventModel == null) return;
-            // cancel the notification
-            LocalNotificationCenter.Current.Cancel(eventModel.Id + 1000);
-
-            // Call the service to delete the event
-            var result = await _eventsServices.DeleteEvent(eventModel.Id);
-            if (result)
+            try
             {
-                EventsOfDay.Remove(eventModel);
+                if (eventModel == null) return;
+                LocalNotificationCenter.Current.Cancel(eventModel.Id + 1000);
+                var result = await _eventsServices.DeleteEvent(eventModel.Id);
+                if (result)
+                {
+                    EventsOfDay.Remove(eventModel);
+                }
+            }
+            catch (Exception)
+            {
+                await Shell.Current.DisplayAlert("Error", "An unexpected error occurred while deleting the event. Please try again.", "OK");
             }
         }
     }
