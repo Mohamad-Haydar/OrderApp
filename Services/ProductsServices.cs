@@ -1,11 +1,12 @@
 ﻿using OrderApp.Exceptions;
 using OrderApp.Model;
+using OrderApp.Services.Interfaces;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 
 namespace OrderApp.Services
 {
-    public class ProductsServices
+    public class ProductsServices : IRepository<Product>
     {
         public async Task<ObservableCollection<Product>> GetProducts()
         {
@@ -215,6 +216,31 @@ namespace OrderApp.Services
             {
                 connection.Close();
             }
+        }
+
+        public Task<IEnumerable<Product>> GetAllAsync()
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<Product?> GetByIdAsync(int id)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task AddAsync(Product entity)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task UpdateAsync(Product entity)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task DeleteAsync(int id)
+        {
+            throw new NotImplementedException();
         }
     }
 }

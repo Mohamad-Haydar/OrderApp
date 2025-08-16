@@ -12,10 +12,4 @@ public partial class Clients : ContentPage
         BindingContext = viewModel;
         _clientsViewModel = clientsViewModel;
     }
-
-    protected override async void OnNavigatedTo(NavigatedToEventArgs args)
-    {
-        base.OnNavigatedTo(args);
-        await _clientsViewModel.LoadClients();
-    }
 }

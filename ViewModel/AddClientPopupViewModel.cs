@@ -1,5 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using CommunityToolkit.Mvvm.Messaging;
 using OrderApp.Helper;
 using OrderApp.Model;
 using OrderApp.Services;
@@ -33,6 +34,8 @@ namespace OrderApp.ViewModel
                 Client = new Client();
 
                 await Shell.Current.DisplayAlert("Success", "Client added successfully", "OK");
+                // Signal to close the popup
+                WeakReferenceMessenger.Default.Send(new ClosePopupMessage());
             }
             catch (ValidationException vex)
             {
@@ -44,4 +47,7 @@ namespace OrderApp.ViewModel
             }
         }
     }
+
+    // Message class for closing popup
+    public class ClosePopupMessage { }
 }

@@ -46,6 +46,7 @@ namespace OrderApp.ViewModel
             _clientServices = ServiceHelper.Resolve<ClientServices>();
             _orderServices = ServiceHelper.Resolve<OrderServices>();
             _productInOrdersServices = ServiceHelper.Resolve<ProductInOrdersServices>();
+            _ = LoadItems();
         }
 
         [RelayCommand]
@@ -81,6 +82,7 @@ namespace OrderApp.ViewModel
                 {
                     await Shell.Current.DisplayAlert("Failed", "Not enough stock quantity", "Ok");
                 }
+                RecalculateTotal();
             }
             catch (Exception)
             {
@@ -94,7 +96,7 @@ namespace OrderApp.ViewModel
             try
             {
                 IsBusy = true;
-            // Give the UI a moment to update the ActivityIndicator
+                // Give the UI a moment to update the ActivityIndicator
                 await Task.Yield();
                 await LoadCustomer();
                 await LoadAllProductsAsync();

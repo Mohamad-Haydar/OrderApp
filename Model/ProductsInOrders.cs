@@ -53,5 +53,28 @@ namespace OrderApp.Model
                 product.Quantity -= difference;
             }
         }
+
+        public bool IsValid(out string error)
+        {
+            if (Quantity < 0)
+            {
+                error = "Quantity cannot be negative.";
+                return false;
+            }
+
+            if (Product == null)
+            {
+                error = "Product must be selected.";
+                return false;
+            }
+
+            error = string.Empty;
+            return true;
+        }
+
+        public bool ShouldBeDeleted()
+        {
+            return Quantity == 0;
+        }
     }
 }

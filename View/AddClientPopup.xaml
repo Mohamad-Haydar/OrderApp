@@ -11,9 +11,8 @@
         <Label Text="Add New Client" FontAttributes="Bold" FontSize="20" />
         <Entry Placeholder="Name" Text="{Binding Client.Name}"/>
         <Entry Placeholder="Details" Text="{Binding Client.Details}"/>
-        <!--<Button Text="Save" Command="{Binding AddClientCommand}" />-->
         <HorizontalStackLayout Spacing="10" HorizontalOptions="Center">
-            <Button Text="Save" Clicked="SaveButton_Clicked" />
+            <Button Text="Save" Command="{Binding AddClientCommand}" />
             <Button Text="Close" Clicked="CloseButton_Clicked" />
         </HorizontalStackLayout>
     </VerticalStackLayout>

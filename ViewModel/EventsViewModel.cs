@@ -4,6 +4,7 @@ using OrderApp.Helper;
 using OrderApp.Model;
 using OrderApp.Services;
 using Plugin.LocalNotification;
+using Syncfusion.Maui.Scheduler;
 using System.Collections.ObjectModel;
 
 namespace OrderApp.ViewModel
@@ -19,11 +20,10 @@ namespace OrderApp.ViewModel
         string title;
 
         [ObservableProperty]
-        [NotifyPropertyChangedFor(nameof(DateUi))]
         DateOnly dateSelected;
 
-        public DateOnly DateUi => DateSelected;
-
+        [ObservableProperty]
+        DateTime dateTimeSelected;
 
         public EventsViewModel() 
         {
@@ -32,6 +32,20 @@ namespace OrderApp.ViewModel
             _popupService = ServiceHelper.Resolve<PopupService>();
             DateSelected = DateOnly.FromDateTime(DateTime.Now);
             Title = $"Events of {DateSelected}";
+            _ = InitAsync();
+        }
+
+        private async Task InitAsync()
+        {
+            try
+            {
+                await SelectDateAync(DateOnly.FromDateTime(DateTime.Now));
+            }
+            catch (Exception)
+            {
+                IsBusy = false;
+                await Shell.Current.DisplayAlert("Error", "An unexpected error occurred while loading Events. Please try again.", "OK");
+            }
         }
 
         public async Task SelectDateAync(DateOnly date)
@@ -89,6 +103,12 @@ namespace OrderApp.ViewModel
             };
         }
 
+        partial void OnDateTimeSelectedChanged(DateTime value)
+        {
+            // Whenever the user selects a date in the scheduler
+            _ = SelectDateAync(DateOnly.FromDateTime(value));
+        }
+
         [RelayCommand]
         async Task AddEventAsync()
         {
@@ -118,7 +138,6 @@ namespace OrderApp.ViewModel
             }
         }
 
-
         [RelayCommand]
         async Task DeleteEventAsync(EventModel eventModel)
         {
@@ -137,5 +156,16 @@ namespace OrderApp.ViewModel
                 await Shell.Current.DisplayAlert("Error", "An unexpected error occurred while deleting the event. Please try again.", "OK");
             }
         }
+
+        [RelayCommand]
+        async Task SchedulerTappedAsync(SchedulerTappedEventArgs args)
+        {
+            if (args.Date != null)
+            {
+                await SelectDateAync(DateOnly.FromDateTime(args.Date.Value));
+            }
+        }
+
+
     }
 }

@@ -1,4 +1,5 @@
 using CommunityToolkit.Maui.Views;
+using CommunityToolkit.Mvvm.Messaging;
 using OrderApp.Model;
 using OrderApp.Services;
 using OrderApp.ViewModel;
@@ -10,11 +11,17 @@ namespace OrderApp.View;
 public partial class AddOrderPopup : Popup
 {
     public AddOrderPopup(ObservableCollection<Client> clients)
-	{
-		InitializeComponent();
+    {
+        InitializeComponent();
         this.BindingContext = new AddOrderPopupViewModel(clients);
         // Prevent the popup from closing when tapping outside
         CanBeDismissedByTappingOutsideOfPopup = false;
+
+        // Subscribe to close message
+        WeakReferenceMessenger.Default.Register<ClosePopupMessage>(this, async (r, m) =>
+        {
+            await this.CloseAsync();
+        });
     }
 
     private async void CloseButton_Clicked(object sender, EventArgs e)
@@ -22,13 +29,5 @@ public partial class AddOrderPopup : Popup
         await this.CloseAsync();
     }
 
-    private async void SaveButton_Clicked(object sender, EventArgs e)
-    {
-        if (this.BindingContext is AddOrderPopupViewModel viewModel)
-        {
-           await viewModel.AddOrderCommand.ExecuteAsync(null);
 
-            await this.CloseAsync();
-        }
-    }
 }

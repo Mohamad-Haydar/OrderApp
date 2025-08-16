@@ -1,5 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using CommunityToolkit.Mvvm.Messaging;
 using OrderApp.Exceptions;
 using OrderApp.Helper;
 using OrderApp.Services;
@@ -68,7 +69,7 @@ namespace OrderApp.ViewModel
 
                     // 4. Send the notification request to .NET Core Web API
                     var response = await _httpClient.PostAsJsonAsync("api/notifications/send", notificationPayload);
-
+                 
                     if (response.IsSuccessStatusCode)
                     {
                         Console.WriteLine("FCM notification request sent successfully to backend.");
@@ -119,6 +120,8 @@ namespace OrderApp.ViewModel
                 }
 
                 await Shell.Current.DisplayAlert("Success", "Event added successfully!", "OK");
+                // Signal to close the popup
+                WeakReferenceMessenger.Default.Send(new ClosePopupMessage());
             }
             catch (ValidationException vex)
             {

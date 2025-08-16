@@ -25,7 +25,7 @@
 
         <!-- Buttons -->
         <HorizontalStackLayout Spacing="10" HorizontalOptions="Center">
-            <Button Text="Save" Clicked="SaveButton_Clicked" WidthRequest="90"/>
+            <Button Text="Save"  Command="{Binding AddOrderCommand}" WidthRequest="90"/>
             <Button Text="Cancel" Clicked="CloseButton_Clicked" WidthRequest="90"/>
         </HorizontalStackLayout>
     </VerticalStackLayout>

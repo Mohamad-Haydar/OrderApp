@@ -1,4 +1,5 @@
 using CommunityToolkit.Maui.Views;
+using CommunityToolkit.Mvvm.Messaging;
 using OrderApp.Model;
 using OrderApp.ViewModel;
 using System.Collections.ObjectModel;
@@ -13,16 +14,12 @@ public partial class AddProductPopup : Popup
         this.BindingContext = new AddProductPopupViewModel(products);
         // Prevent the popup from closing when tapping outside
         CanBeDismissedByTappingOutsideOfPopup = false;
-    }
 
-    private async void SaveButton_Clicked(object sender, EventArgs e)
-    {
-        if (this.BindingContext is AddProductPopupViewModel viewModel)
+        // Subscribe to close message
+        WeakReferenceMessenger.Default.Register<ClosePopupMessage>(this, async (r, m) =>
         {
-            await viewModel.AddProductCommand.ExecuteAsync(null);
-
             await this.CloseAsync();
-        }
+        });
     }
 
     private async void CloseButton_Clicked(object sender, EventArgs e)

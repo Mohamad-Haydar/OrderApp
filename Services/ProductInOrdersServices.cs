@@ -1,9 +1,11 @@
 ﻿using OrderApp.Exceptions;
+using OrderApp.Model;
+using OrderApp.Services.Interfaces;
 using System.Diagnostics;
 
 namespace OrderApp.Services
 {
-    public class ProductInOrdersServices
+    public class ProductInOrdersServices : IRepository<ProductsInOrders>
     {
         public async Task UpdateProductsInOrders(int quantity, int id)
         {
@@ -113,5 +115,31 @@ namespace OrderApp.Services
             }
         }
 
+        // IRepository Implementation
+        public async Task<IEnumerable<ProductsInOrders>> GetAllAsync()
+        {
+            throw new NotImplementedException(); // you can fill similar to GetOrders
+        }
+
+        public async Task<ProductsInOrders?> GetByIdAsync(int id)
+        {
+            throw new NotImplementedException();
+        }
+
+        public async Task AddAsync(ProductsInOrders entity)
+        {
+            await InsertProductIntoProductsInOrder(entity.OrderId,entity.Product.Id, entity.Quantity);
+        }
+
+        public async Task UpdateAsync(ProductsInOrders entity)
+        {
+            await UpdateProductsInOrders(entity.Quantity,entity.Id);
+        }
+
+        public async Task DeleteAsync(int id)
+        {
+            // You’d need orderId and productId, so maybe adapt this
+            throw new NotImplementedException();
+        }
     }
 }

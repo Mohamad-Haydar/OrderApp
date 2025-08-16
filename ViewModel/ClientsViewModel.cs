@@ -19,6 +19,12 @@ namespace OrderApp.ViewModel
             Clients = [];
             _popupService = ServiceHelper.Resolve<PopupService>();
             _clientServices = ServiceHelper.Resolve<ClientServices>();
+            _ = InitAsync();
+        }
+
+        private async Task InitAsync()
+        {
+            await LoadClients();
         }
 
 

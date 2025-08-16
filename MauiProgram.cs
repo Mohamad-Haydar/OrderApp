@@ -68,9 +68,9 @@ namespace OrderApp
             builder.Services.AddSingleton<ProductsViewModel>();
             builder.Services.AddSingleton<OrdersViewModel>();
             builder.Services.AddSingleton<LoginViewModel>();
-            builder.Services.AddSingleton<OrderDetailsViewModel>();
 
             // popup view models
+            builder.Services.AddTransient<OrderDetailsViewModel>();
             builder.Services.AddTransient<AddClientPopupViewModel>();
             builder.Services.AddTransient<AddProductPopupViewModel>();
             builder.Services.AddTransient<AddOrderPopupViewModel>();

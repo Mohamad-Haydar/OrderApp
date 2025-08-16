@@ -1,11 +1,12 @@
 ﻿using OrderApp.Exceptions;
 using OrderApp.Model;
+using OrderApp.Services.Interfaces;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 
 namespace OrderApp.Services
 {
-    public class OrderServices
+    public class OrderServices : IRepository<Order>
     {
         private ProductsServices _productServices;
         private ProductInOrdersServices _productInOrdersServices;
@@ -211,6 +212,43 @@ namespace OrderApp.Services
             {
                 connection.Close();
             }
+        }
+
+        public async Task<IEnumerable<Order>> GetAllAsync()
+        {
+            return await GetOrders();
+        }
+
+        public async Task<Order?> GetByIdAsync(int id)
+        {
+            // TODO: implement like your GetOrders but with WHERE Id=$id
+            throw new NotImplementedException();
+        }
+
+        public async Task AddAsync(Order entity)
+        {
+            // Business logic from model
+            if (!entity.IsValid(out var error))
+                throw new InvalidOperationException(error);
+
+            entity.CalculateTotal();
+
+            await CreateOrder(entity.ClientId, entity.DateToPick);
+        }
+
+        public async Task UpdateAsync(Order entity)
+        {
+            if (!entity.IsValid(out var error))
+                throw new InvalidOperationException(error);
+
+            entity.CalculateTotal();
+
+            await SetTotalAsync(entity);
+        }
+
+        public async Task DeleteAsync(int id)
+        {
+            await DeleteOrder(id);
         }
     }
 }

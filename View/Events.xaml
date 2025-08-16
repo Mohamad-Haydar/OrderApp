@@ -13,9 +13,9 @@
                        AppointmentsSource="{Binding EventsOfDay}"
                        View="Month"
                        BackgroundColor="White"
-                       Tapped="OnSchedulerTapped">
-
-
+                       SelectedDate="{Binding DateTimeSelected, Mode=TwoWay}"
+             
+                       >
 
             <scheduler:SfScheduler.AppointmentMapping >
                 <scheduler:SchedulerAppointmentMapping
@@ -64,7 +64,7 @@
                                         <VerticalStackLayout  VerticalOptions="Center" HorizontalOptions="Start">
                                             <Label Text="{Binding EventType}" FontSize="12" WidthRequest="100" LineBreakMode="TailTruncation"/>
                                             <!--<Label Text="{Binding Description}" FontSize="12" WidthRequest="100" LineBreakMode="TailTruncation"/>-->
-                                            <Label Text="{Binding x:DataType='viewmodel:EventsViewModel',Source={RelativeSource AncestorType={x:Type viewmodel:EventsViewModel}}, Path=DateUi}"
+                                            <Label Text="{Binding x:DataType='viewmodel:EventsViewModel',Source={RelativeSource AncestorType={x:Type viewmodel:EventsViewModel}}, Path=DateSelected}"
                                                    FontSize="12" WidthRequest="100" LineBreakMode="TailTruncation"/>
                                             <Label Text="{Binding From.TimeOfDay}" FontSize="12" WidthRequest="100" LineBreakMode="TailTruncation"/>
                                         </VerticalStackLayout>

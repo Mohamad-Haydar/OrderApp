@@ -24,7 +24,8 @@ namespace OrderApp.ViewModel
             Orders = [];
             _popupService = ServiceHelper.Resolve<PopupService>();
             _orderServices = ServiceHelper.Resolve<OrderServices>();
-            LoadAsync();
+            _ = LoadOrders();
+            //LoadAsync();
         }
 
         [RelayCommand]
@@ -49,7 +50,6 @@ namespace OrderApp.ViewModel
                 // Remove the order from the database
                 await _orderServices.DeleteOrder(order.Id);
                 // After deleting the order, SHOW IN THE VIEW the updated orders
-                //await LoadOrders();
                 Orders.Remove(order); 
             }
             catch (Exception)

@@ -20,6 +20,7 @@ namespace OrderApp.ViewModel
             Products = [];
             _popupService = ServiceHelper.Resolve<PopupService>();
             _productsServices = ServiceHelper.Resolve<ProductsServices>();
+            _ = InitAsync();
         }
 
         [RelayCommand]
@@ -45,32 +46,6 @@ namespace OrderApp.ViewModel
             catch (Exception)
             {
                 await Shell.Current.DisplayAlert("Error", "An unexpected error occurred while navigating to product details. Please try again.", "OK");
-            }
-        }
-
-        public async Task LoadProducts()
-        {
-            try
-            {
-                Products.Clear();
-                var res = await _productsServices.GetProducts();
-
-                foreach (var product in res)
-                {
-                    Products.Add(new Product
-                    {
-                        Id = product.Id,
-                        Name = product.Name,
-                        Description = product.Description,
-                        Price = product.Price,
-                        Quantity = product.Quantity,
-                        ImageUrl = product.ImageUrl
-                    });
-                }
-            }
-            catch (Exception)
-            {
-                await Shell.Current.DisplayAlert("Error", "An unexpected error occurred while loading products. Please try again.", "OK");
             }
         }
 
@@ -131,5 +106,45 @@ namespace OrderApp.ViewModel
                 await Shell.Current.DisplayAlert("Error", "An unexpected error occurred while updating product stock. Please try again.", "OK");
             }
         }
+
+        private async Task InitAsync()
+        {
+            try
+            {
+                Title = "Products";
+                await LoadProducts();
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Error initializing ProductsViewModel: {ex.Message}");
+                await Shell.Current.DisplayAlert("Error", "An unexpected error occurred while initializing the products view. Please try again.", "OK");
+            }
+        }
+        public async Task LoadProducts()
+        {
+            try
+            {
+                Products.Clear();
+                var res = await _productsServices.GetProducts();
+
+                foreach (var product in res)
+                {
+                    Products.Add(new Product
+                    {
+                        Id = product.Id,
+                        Name = product.Name,
+                        Description = product.Description,
+                        Price = product.Price,
+                        Quantity = product.Quantity,
+                        ImageUrl = product.ImageUrl
+                    });
+                }
+            }
+            catch (Exception)
+            {
+                await Shell.Current.DisplayAlert("Error", "An unexpected error occurred while loading products. Please try again.", "OK");
+            }
+        }
+
     }
 }

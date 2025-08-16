@@ -16,7 +16,7 @@
         <Entry Placeholder="Quantity" Text="{Binding Product.Quantity}"/>
         <!--<Button Text="Save" Command="{Binding AddProductCommand}" />-->
         <HorizontalStackLayout Spacing="10" HorizontalOptions="Center">
-            <Button Text="Save" Clicked="SaveButton_Clicked" />
+            <Button Text="Save"  Command="{Binding AddProductCommand}"/>
             <Button Text="Close" Clicked="CloseButton_Clicked" />
         </HorizontalStackLayout>
     </VerticalStackLayout>

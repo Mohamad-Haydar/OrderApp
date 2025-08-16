@@ -1,13 +1,11 @@
-﻿using HealthKit;
-using OrderApp.Exceptions;
+﻿using OrderApp.Exceptions;
 using OrderApp.Model;
+using OrderApp.Services.Interfaces;
 using System.Diagnostics;
-using System.IO.Pipelines;
-using System.Xml.Linq;
 
 namespace OrderApp.Services
 {
-    public class EventsServices
+    public class EventsServices : IRepository<EventModel>
     {
         public async  Task<List<EventModel>> GetEvents(DateOnly date)
         {
@@ -196,6 +194,31 @@ namespace OrderApp.Services
             {
                 connection.Close();
             }
+        }
+
+        public Task<IEnumerable<EventModel>> GetAllAsync()
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<EventModel?> GetByIdAsync(int id)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task AddAsync(EventModel entity)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task UpdateAsync(EventModel entity)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task DeleteAsync(int id)
+        {
+            throw new NotImplementedException();
         }
     }
 }
