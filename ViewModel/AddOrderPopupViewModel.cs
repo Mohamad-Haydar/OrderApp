@@ -1,13 +1,11 @@
-﻿using CommunityToolkit.Maui.Views;
-using CommunityToolkit.Mvvm.ComponentModel;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
+using OrderApp.Exceptions;
 using OrderApp.Helper;
 using OrderApp.Model;
 using OrderApp.Services;
-using OrderApp.View;
 using System.Collections.ObjectModel;
-using OrderApp.Exceptions;
 
 namespace OrderApp.ViewModel
 {
@@ -47,8 +45,8 @@ namespace OrderApp.ViewModel
             try
             {
                 // Add validation for date
-                if (Order.DateToPick < DateTime.Today)
-                    throw new ValidationException("Order date cannot be in the past.");
+                if (Order.IsValid(out var error))
+                    throw new ValidationException(error);
                 await _orderServices.CreateOrder(Client.Id, Order.DateToPick);
                 // Signal to close the popup
                 WeakReferenceMessenger.Default.Send(new ClosePopupMessage());

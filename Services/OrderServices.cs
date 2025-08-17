@@ -6,7 +6,7 @@ using System.Diagnostics;
 
 namespace OrderApp.Services
 {
-    public class OrderServices : IRepository<Order>
+    public class OrderServices : IOrderRepository
     {
         private ProductsServices _productServices;
         private ProductInOrdersServices _productInOrdersServices;
@@ -231,7 +231,7 @@ namespace OrderApp.Services
             if (!entity.IsValid(out var error))
                 throw new InvalidOperationException(error);
 
-            entity.CalculateTotal();
+            //entity.CalculateTotal();
 
             await CreateOrder(entity.ClientId, entity.DateToPick);
         }
@@ -241,7 +241,7 @@ namespace OrderApp.Services
             if (!entity.IsValid(out var error))
                 throw new InvalidOperationException(error);
 
-            entity.CalculateTotal();
+            //entity.CalculateTotal();
 
             await SetTotalAsync(entity);
         }
@@ -249,6 +249,21 @@ namespace OrderApp.Services
         public async Task DeleteAsync(int id)
         {
             await DeleteOrder(id);
+        }
+
+        public Task<List<Order>> GetOrdersByUserIdAsync(int userId)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task UpdateOrderProductsAsync(ObservableCollection<ProductsInOrders> productsInOrders)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task CreateOrderAsync(int clientId, DateTime dateToPick, int userId)
+        {
+            throw new NotImplementedException();
         }
     }
 }

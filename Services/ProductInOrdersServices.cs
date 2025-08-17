@@ -5,7 +5,7 @@ using System.Diagnostics;
 
 namespace OrderApp.Services
 {
-    public class ProductInOrdersServices : IRepository<ProductsInOrders>
+    public class ProductInOrdersServices : IProductInOrdersRepository
     {
         public async Task UpdateProductsInOrders(int quantity, int id)
         {
@@ -139,6 +139,26 @@ namespace OrderApp.Services
         public async Task DeleteAsync(int id)
         {
             // You’d need orderId and productId, so maybe adapt this
+            throw new NotImplementedException();
+        }
+
+        public Task UpdateProductsInOrdersAsync(int quantity, int id)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<int> GetQuantityAsync(int id)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task InsertProductIntoProductsInOrderAsync(int orderId, int productId, int quantity)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task DeleteProductInOrderAsync(int orderId, int productId)
+        {
             throw new NotImplementedException();
         }
     }

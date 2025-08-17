@@ -4,7 +4,8 @@ using OrderApp.Helper;
 using OrderApp.Model;
 using OrderApp.Services;
 using System.Collections.ObjectModel;
-using System.Diagnostics;
+using CommunityToolkit.Mvvm.Collections;
+using OrderApp.View;
 
 namespace OrderApp.ViewModel
 {
@@ -25,8 +26,6 @@ namespace OrderApp.ViewModel
         [ObservableProperty]
         Order order;
         [ObservableProperty]
-        float total;
-        [ObservableProperty]
         string title;
         [ObservableProperty]
         string? clientName;
@@ -41,12 +40,10 @@ namespace OrderApp.ViewModel
         {
             _popupService = ServiceHelper.Resolve<PopupService>();
             ProductsInOrders = [];
-            Total = 0;
             _productService = ServiceHelper.Resolve<ProductsServices>();
             _clientServices = ServiceHelper.Resolve<ClientServices>();
             _orderServices = ServiceHelper.Resolve<OrderServices>();
-            _productInOrdersServices = ServiceHelper.Resolve<ProductInOrdersServices>();
-            _ = LoadItems();
+            _productInOrdersServices = ServiceHelper.Resolve<ProductInOrdersServices>(); 
         }
 
         [RelayCommand]
@@ -82,7 +79,7 @@ namespace OrderApp.ViewModel
                 {
                     await Shell.Current.DisplayAlert("Failed", "Not enough stock quantity", "Ok");
                 }
-                RecalculateTotal();
+                Order.CalculateTotal(ProductsInOrders);
             }
             catch (Exception)
             {
@@ -90,23 +87,30 @@ namespace OrderApp.ViewModel
             }
         }
 
-        [RelayCommand]
-        public async Task LoadItems()
+        partial void OnOrderChanged(Order value)
+        {
+            _ = LoadItems(); // fire-and-forget, does not block UI thread
+        }
+
+        private async Task LoadItems()
         {
             try
             {
                 IsBusy = true;
                 // Give the UI a moment to update the ActivityIndicator
                 await Task.Yield();
-                await LoadCustomer();
-                await LoadAllProductsAsync();
-                await LoadProductsOfOrder();
-                IsBusy = false;
+                var loadProductsTask = LoadAllProductsAsync();
+                var loadProductsOfOrderTask = LoadProductsOfOrder();
+                await Task.WhenAll(loadProductsTask, loadProductsOfOrderTask);
             }
             catch (Exception)
             {
                 IsBusy = false;
                 await Shell.Current.DisplayAlert("Error", "An unexpected error occurred while loading order details. Please try again.", "OK");
+            }
+            finally
+            {
+                IsBusy = false;
             }
         }
 
@@ -131,9 +135,9 @@ namespace OrderApp.ViewModel
             try
             {
                 Title = "Details of Order: " + Order.Id;
-                Total = 0;
                 ProductsInOrders.Clear();
-                Total = await _productService.GetProductsInOrders(ProductsInOrders, Order);
+                await _productService.GetProductsInOrders(ProductsInOrders, Order);
+                Order.CalculateTotal(ProductsInOrders);
             }
             catch (Exception)
             {
@@ -147,10 +151,9 @@ namespace OrderApp.ViewModel
             {
                 var products = await _productService.GetProducts();
                 Products.Clear();
-                foreach (var product in products)
-                    Products.Add(product);
+                Products = new ObservableCollection<Product>(products);
 
-            // Initially show all products
+                // Initially show all products
                 FilteredProducts = new ObservableCollection<Product>(Products);
             }
             catch (Exception)
@@ -172,29 +175,16 @@ namespace OrderApp.ViewModel
             }
         }
 
-        public async Task LoadCustomer()
-        {
-            try
-            {
-                ClientName = await _clientServices.GetCustomer(Order);
-            }
-            catch (Exception)
-            {
-                await Shell.Current.DisplayAlert("Error", "An unexpected error occurred while loading the client information. Please try again.", "OK");
-            }
-        }
-
         [RelayCommand]
         void IncrementQuantity(ProductsInOrders item)
         {
-            if(item.Product.Quantity < 1)
+            if(item.Product.HasStock())
             {
                 Shell.Current.DisplayAlert("Error", "Not enough stock available", "OK");
                 return;
             }
             item.Quantity++;
-            //item.Product.Quantity--;
-            RecalculateTotal();
+            Order.CalculateTotal(ProductsInOrders);
         }
 
         [RelayCommand]
@@ -204,7 +194,8 @@ namespace OrderApp.ViewModel
             {
                 item.Quantity--;
                 //item.Product.Quantity++;
-                RecalculateTotal();
+                //RecalculateTotal();
+                Order.CalculateTotal(ProductsInOrders);
             }
         }
 
@@ -215,24 +206,14 @@ namespace OrderApp.ViewModel
             {
                 await _orderServices.UpdateOrderAsync(ProductsInOrders);
                 // to see it in the UI
-                RecalculateTotal();
+                Order.CalculateTotal(ProductsInOrders);
                 // TO update it in the database
-                Order.Total = Total;
                 await _orderServices.SetTotalAsync(Order);
                 await Shell.Current.DisplayAlert("Success", "The product is updated successfully", "Ok");
             }
             catch (Exception)
             {
                 await Shell.Current.DisplayAlert("Error", "An unexpected error occurred while updating the order. Please try again.", "OK");
-            }
-        }
-
-        void RecalculateTotal()
-        {
-            Total = 0;
-            foreach (var item in ProductsInOrders)
-            {
-                Total += item.Quantity * item.Product.Price;
             }
         }
     }

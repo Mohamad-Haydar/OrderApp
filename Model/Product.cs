@@ -11,5 +11,8 @@ namespace OrderApp.Model
         [ObservableProperty]
         int quantity;
         public string ImageUrl { get; set; }
+
+        public bool HasStock(int requiredQuantity = 1) => Quantity >= requiredQuantity;
+
     }
 }

@@ -1,11 +1,12 @@
 ﻿using OrderApp.Exceptions;
 using OrderApp.Model;
 using System.Collections.ObjectModel;
+using OrderApp.Services.Interfaces;
 using System.Diagnostics;
 
 namespace OrderApp.Services
 {
-    public class ClientServices
+    public class ClientServices : IClientRepository
     {
 
         public async Task<ObservableCollection<Client>> GetClientsForPopup()
@@ -142,5 +143,44 @@ namespace OrderApp.Services
             }
         }
 
+        public Task<ObservableCollection<Client>> GetClientsForPopupAsync()
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<List<Client>> GetClientsInfoAsync()
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<string> GetCustomerAsync(Order order)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<IEnumerable<Client>> GetAllAsync()
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<Client?> GetByIdAsync(int id)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task AddAsync(Client entity)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task UpdateAsync(Client entity)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task DeleteAsync(int id)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

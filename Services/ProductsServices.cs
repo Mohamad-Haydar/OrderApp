@@ -6,7 +6,7 @@ using System.Diagnostics;
 
 namespace OrderApp.Services
 {
-    public class ProductsServices : IRepository<Product>
+    public class ProductsServices : IProductRepository
     {
         public async Task<ObservableCollection<Product>> GetProducts()
         {
@@ -76,9 +76,8 @@ namespace OrderApp.Services
                 connection.Close();
             }
         }
-        public async Task<float> GetProductsInOrders(ObservableCollection<ProductsInOrders> products, Order o)
+        public async Task GetProductsInOrders(ObservableCollection<ProductsInOrders> products, Order o)
         {
-            float t = 0;
             var connection = AdoDatabaseService.GetConnection();
             try
             {
@@ -113,10 +112,8 @@ namespace OrderApp.Services
                             ImageUrl = reader.GetString(8)
                         }
                     });
-                    t += reader.GetInt32(2) * reader.GetFloat(6);
                 }
                 connection.Close();
-                return t;
             }
             catch (Exception ex)
             {
@@ -239,6 +236,31 @@ namespace OrderApp.Services
         }
 
         public Task DeleteAsync(int id)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<ObservableCollection<Product>> GetProductsAsync()
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<int> GetStockQuantityAsync(int productId)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<float> GetProductsInOrdersAsync(ObservableCollection<ProductsInOrders> products, Order o)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task UpdateProductStockAsync(int difference, int productId)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task UpdateProductImageAsync(Product product)
         {
             throw new NotImplementedException();
         }

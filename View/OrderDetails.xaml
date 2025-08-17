@@ -146,7 +146,7 @@
 
         <!-- the Total -->
         <HorizontalStackLayout HorizontalOptions="End" Grid.Row="5" Grid.Column="1" Margin="0,0,10,0" VerticalOptions="Center">
-            <Label Text="{Binding Total, StringFormat='Total: {0:f2} $'}"  FontSize="17"/>
+            <Label Text="{Binding Order.Total, StringFormat='Total: {0:f2} $'}"  FontSize="17"/>
         </HorizontalStackLayout>
 
         <!-- Button to update the details -->
@@ -154,12 +154,11 @@
                 FontSize="15" Padding="0" Command="{Binding UpdateOrderCommand}" />
 
         <ActivityIndicator IsRunning="{Binding IsBusy}"
-            IsVisible="{Binding IsBusy}"
-            Grid.RowSpan="6"
-            Grid.ColumnSpan="2"
-            WidthRequest="150"
-            HeightRequest="150"
-            />
+                            IsVisible="{Binding IsBusy}"
+                            Grid.RowSpan="6"
+                            Grid.ColumnSpan="2"
+                            WidthRequest="150"
+                            HeightRequest="150"/>
 
     </Grid>
 </ContentPage>

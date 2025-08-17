@@ -23,19 +23,13 @@ namespace OrderApp.Model
                 return false;
             }
 
-            if (Products.Count == 0)
-            {
-                error = "Order must contain at least one product.";
-                return false;
-            }
-
             error = string.Empty;
             return true;
         }
 
-        public void CalculateTotal()
+        public void CalculateTotal(IEnumerable<ProductsInOrders> productsInOrders)
         {
-            Total = Products.Sum(p => p.Price * p.Quantity);
+            Total = productsInOrders.Sum(item => item.Quantity * item.Product.Price);
         }
 
     }
