@@ -29,6 +29,7 @@ namespace OrderApp.Services
                         Description = reader.GetString(2),
                         Price = reader.GetFloat(3),
                         Quantity = reader.GetInt32(4),
+                        Stock = reader.GetInt32(4),
                         ImageUrl = reader.GetString(5)
                     });
                 }
@@ -109,6 +110,7 @@ namespace OrderApp.Services
                             Description = reader.IsDBNull(5) ? null : reader.GetString(5),
                             Price = reader.GetFloat(6),
                             Quantity = reader.GetInt32(7),
+                            Stock = reader.GetInt32(7) + reader.GetInt32(2),
                             ImageUrl = reader.GetString(8)
                         }
                     });

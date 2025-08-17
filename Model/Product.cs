@@ -8,6 +8,7 @@ namespace OrderApp.Model
         public string Name { get; set; }
         public string Description { get; set; }
         public float Price { get; set; }
+        public int Stock { get; set; }
         [ObservableProperty]
         int quantity;
         public string ImageUrl { get; set; }

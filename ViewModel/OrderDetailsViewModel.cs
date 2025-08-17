@@ -178,7 +178,7 @@ namespace OrderApp.ViewModel
         [RelayCommand]
         void IncrementQuantity(ProductsInOrders item)
         {
-            if(item.Product.HasStock())
+            if(!item.Product.HasStock())
             {
                 Shell.Current.DisplayAlert("Error", "Not enough stock available", "OK");
                 return;

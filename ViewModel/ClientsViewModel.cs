@@ -19,12 +19,30 @@ namespace OrderApp.ViewModel
             Clients = [];
             _popupService = ServiceHelper.Resolve<PopupService>();
             _clientServices = ServiceHelper.Resolve<ClientServices>();
-            _ = InitAsync();
+            LoadClientsCommand.Execute(null);
         }
 
-        private async Task InitAsync()
+        [RelayCommand]
+        private async Task LoadClientsAsync()
         {
-            await LoadClients();
+            try
+            {
+                IsBusy = true;
+
+                var clientList = await _clientServices.GetClientsInfo();
+
+                Clients.Clear();
+                foreach (var client in clientList)
+                    Clients.Add(client);
+            }
+            catch (Exception ex)
+            {
+                // TODO: handle/log error (maybe show a popup)
+            }
+            finally
+            {
+                IsBusy = false;
+            }
         }
 
 

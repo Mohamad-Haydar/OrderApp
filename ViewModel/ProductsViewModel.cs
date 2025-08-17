@@ -136,6 +136,7 @@ namespace OrderApp.ViewModel
                         Description = product.Description,
                         Price = product.Price,
                         Quantity = product.Quantity,
+                        Stock = product.Stock,
                         ImageUrl = product.ImageUrl
                     });
                 }

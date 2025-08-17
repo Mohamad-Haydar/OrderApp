@@ -33,7 +33,7 @@ namespace OrderApp.Model
                 Quantity = _previousQuantity;
                 return;
             }
-            if (value > product.Quantity)
+            if (value > product.Stock)
             {
                 _isUpdatingQuantity = true;
 
