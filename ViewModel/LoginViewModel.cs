@@ -17,6 +17,13 @@ namespace OrderApp.ViewModel
         [ObservableProperty]
         public bool enableBiometrics;
 
+        [ObservableProperty]
+        [NotifyPropertyChangedFor(nameof(EyeImage))]
+        private bool isPassword = true;
+
+        [ObservableProperty]
+        private string eyeImage = "eye.png";
+
         public LocalizationService _localization;
         public ThemeService _themeService;
         public LoginServices _loginServices;
@@ -153,6 +160,17 @@ namespace OrderApp.ViewModel
         async Task SwitchLanguageAsync()
         {
             await base.SwitchLanguageAsync();
+        }
+
+        [RelayCommand]
+        void TogglePasswordVisibility()
+        {
+            IsPassword = !IsPassword;
+        }
+
+        partial void OnIsPasswordChanged(bool value)
+        {
+            EyeImage = value ? "eye.png" : "eye_off.png";
         }
 
         public async Task<bool> TryAutoLoginWithBiometricsAsync()

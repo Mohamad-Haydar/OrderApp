@@ -25,7 +25,6 @@ namespace OrderApp.ViewModel
             _popupService = ServiceHelper.Resolve<PopupService>();
             _orderServices = ServiceHelper.Resolve<OrderServices>();
             _ = LoadOrders();
-            //LoadAsync();
         }
 
         [RelayCommand]

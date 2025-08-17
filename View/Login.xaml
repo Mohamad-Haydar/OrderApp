@@ -20,7 +20,34 @@
                 <Entry Text="{Binding User.Email}"  PlaceholderColor="{DynamicResource NotSelectedColor}"  Placeholder="{DynamicResource Email}"/>
 
                 <Label Text="{DynamicResource Password}" Margin="0,10,0,0"/>
-                <Entry Keyboard="Password" Text="{Binding User.Password}"  PlaceholderColor="{DynamicResource NotSelectedColor}"  Placeholder="{DynamicResource Password}"/>
+                <!--<Entry Keyboard="Password" Text="{Binding User.Password}"  PlaceholderColor="{DynamicResource NotSelectedColor}"  Placeholder="{DynamicResource Password}"/>-->
+                <Grid>
+                    <Entry x:Name="PasswordEntry"
+                        Keyboard="Default"
+                        Text="{Binding User.Password}"
+                        IsPassword="{Binding IsPassword}"
+                        PlaceholderColor="{DynamicResource NotSelectedColor}"
+                        Placeholder="{DynamicResource Password}"
+                        Grid.Column="0"
+                       />
+                    <ImageButton Source="{Binding EyeImage}"
+                                 Command="{Binding TogglePasswordVisibilityCommand}"
+                                 BackgroundColor="Transparent"
+                                 WidthRequest="20"
+                                 HeightRequest="20"
+                                 Padding="0"
+                                 Margin="0"
+                                 Aspect="AspectFit"
+                                 HorizontalOptions="End"
+                                 VerticalOptions="Center"
+                                 MinimumWidthRequest="30"
+                                 MinimumHeightRequest="30"
+                                 Grid.Column="1"/>
+                    <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+            </Grid>
             </StackLayout>
         </ScrollView>
 
