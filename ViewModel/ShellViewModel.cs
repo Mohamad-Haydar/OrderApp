@@ -1,4 +1,5 @@
-﻿using CommunityToolkit.Mvvm.Input;
+﻿using AndroidX.Lifecycle;
+using CommunityToolkit.Mvvm.Input;
 using OrderApp.Helper;
 using OrderApp.Services;
 
@@ -10,6 +11,8 @@ namespace OrderApp.ViewModel
         public ShellViewModel(string language)
         {
             Language = language;
+            _localization = ServiceHelper.Resolve<LocalizationService>();
+            _localization.SetLanguage(Language);
         }
 
         [RelayCommand]

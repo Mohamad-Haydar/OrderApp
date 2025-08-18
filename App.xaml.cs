@@ -1,4 +1,5 @@
 ﻿using OrderApp.Services;
+using OrderApp.ViewModel;
 
 namespace OrderApp
 {
@@ -14,7 +15,25 @@ namespace OrderApp
 
         protected override Window CreateWindow(IActivationState? activationState)
         {
-            return new Window(new LoginShell());
+            // Use synchronous call here (bad to block, but acceptable at startup)
+            var email = SecureStorage.GetAsync("SavedEmail").Result;
+            var password = SecureStorage.GetAsync("SavedPassword").Result;
+
+            Page startPage;
+
+            if (!string.IsNullOrWhiteSpace(email) && !string.IsNullOrWhiteSpace(password))
+            {
+                // User has logged in before -> go to AppShell directly
+                startPage = new AppShell(new ShellViewModel(Preferences.Get("AppLanguage", "en"))); // or whatever your default language is
+            }
+            else
+            {
+                // No saved credentials -> go to login
+                startPage = new LoginShell();
+            }
+
+            return new Window(startPage);
+             //return new Window(new LoginShell());
         }
 
         public void SetRootPage(Page page)

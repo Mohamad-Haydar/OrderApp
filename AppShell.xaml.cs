@@ -9,6 +9,7 @@ namespace OrderApp
         {
             InitializeComponent();
             BindingContext = viewModel;
+
             Routing.RegisterRoute(nameof(Orders), typeof(Orders));
             Routing.RegisterRoute(nameof(OrderDetails), typeof(OrderDetails));
             Routing.RegisterRoute(nameof(Clients), typeof(Clients));

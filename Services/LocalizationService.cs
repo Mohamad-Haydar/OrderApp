@@ -22,6 +22,8 @@ namespace OrderApp.Services
         {
             try
             {
+                if (Shell.Current is null)
+                    return;
                 var appResources = Shell.Current.Resources;
 
                 // Remove previous language dictionary
