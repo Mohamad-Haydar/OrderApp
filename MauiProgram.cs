@@ -11,6 +11,8 @@ using Plugin.Firebase.CloudMessaging;
 using Plugin.LocalNotification;
 using SkiaSharp.Views.Maui.Controls.Hosting;
 using Syncfusion.Maui.Core.Hosting;
+using Microsoft.Maui.Hosting;
+
 
 
 

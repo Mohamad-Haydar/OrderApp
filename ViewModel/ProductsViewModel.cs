@@ -124,6 +124,8 @@ namespace OrderApp.ViewModel
         {
             try
             {
+                IsBusy = true;
+                await Task.Yield();
                 Products.Clear();
                 var res = await _productsServices.GetProducts();
 
@@ -144,6 +146,10 @@ namespace OrderApp.ViewModel
             catch (Exception)
             {
                 await Shell.Current.DisplayAlert("Error", "An unexpected error occurred while loading products. Please try again.", "OK");
+            }
+            finally
+            {
+                IsBusy = false;
             }
         }
 

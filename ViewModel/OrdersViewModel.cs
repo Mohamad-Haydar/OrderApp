@@ -14,14 +14,13 @@ namespace OrderApp.ViewModel
         private readonly PopupService _popupService;
         private readonly OrderServices _orderServices;
         [ObservableProperty]
-        ObservableCollection<Order> orders;
+        ObservableCollection<Order> orders = [];
         public ObservableCollection<Client> SelectedClient { get; set; } = new();
         // static information for the multy selection
         public ObservableCollection<Client> Result { get; set; } = new();
 
         public OrdersViewModel()
         {
-            Orders = [];
             _popupService = ServiceHelper.Resolve<PopupService>();
             _orderServices = ServiceHelper.Resolve<OrderServices>();
             _ = LoadOrders();
@@ -95,13 +94,21 @@ namespace OrderApp.ViewModel
         {
             try
             {
+                IsBusy = true;
                 Orders.Clear(); // clear the orders to remove all of them from the view
                 var res = await _orderServices.GetOrders();
-                Orders = new ObservableCollection<Order>(res);
+                // Update in-place instead of reassigning
+                Orders.Clear();
+                foreach (var order in res)
+                    Orders.Add(order);
             }
             catch (Exception)
             {
                 await Shell.Current.DisplayAlert("Error", "An unexpected error occurred while loading orders. Please try again.", "OK");
+            }
+            finally
+            {
+                IsBusy = false;
             }
         }
 

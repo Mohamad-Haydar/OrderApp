@@ -33,12 +33,19 @@ namespace OrderApp.Services
                                         StartTime DateTime NOT NULL,
                                         EndTime DateTime NOT NULL,
                                         FOREIGN KEY (UserId) REFERENCES Users(Id) ON DELETE CASCADE);";
+
+                string indexProductsInOrdersOrderId = "CREATE INDEX IF NOT EXISTS idx_ProductsInOrders_OrderId ON ProductsInOrders(OrderId);";
+                string indexProductsInOrdersProductId = "CREATE INDEX IF NOT EXISTS idx_ProductsInOrders_ProductId ON ProductsInOrders(ProductId);";
+                string indexOrdersUserId = "CREATE INDEX IF NOT EXISTS idx_Orders_UserId ON Orders(UserId);";
+                string indexOrdersClientId = "CREATE INDEX IF NOT EXISTS idx_Orders_ClientId ON Orders(ClientId);";
+
+                // After your CREATE TABLE statements:
                 connection.Open();
 
 
                 var command = connection.CreateCommand();
                 command.CommandText = clientTalbeQuery + usersTableQuery + ordersTableQUery + productsTableQuery + productsInOrdersTableQuery + eventsTableQuery;
-
+                command.CommandText += indexProductsInOrdersOrderId + indexProductsInOrdersProductId + indexOrdersUserId + indexOrdersClientId;
                 command.ExecuteNonQuery();
                 connection.Close();
             }

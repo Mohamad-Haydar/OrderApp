@@ -4,24 +4,22 @@ using OrderApp.Helper;
 using OrderApp.Model;
 using OrderApp.Services;
 using System.Collections.ObjectModel;
-using CommunityToolkit.Mvvm.Collections;
-using OrderApp.View;
 
 namespace OrderApp.ViewModel
 {
     [QueryProperty(nameof(Order), nameof(Order))]
     public partial class OrderDetailsViewModel : BaseViewModel
     {
-        public ObservableCollection<Product> Products { get; set; } = new();
+        public IEnumerable<Product> Products { get; set; } = [];
 
         [ObservableProperty]
-        ObservableCollection<Product> filteredProducts = new();
+        ObservableCollection<Product> filteredProducts =[];
 
         [ObservableProperty]
         string searchText;
 
         [ObservableProperty]
-        ObservableCollection<ProductsInOrders> productsInOrders;
+        ObservableCollection<ProductsInOrders> productsInOrders = [];
 
         [ObservableProperty]
         Order order;
@@ -30,20 +28,15 @@ namespace OrderApp.ViewModel
         [ObservableProperty]
         string? clientName;
 
-        public PopupService _popupService;
         public ProductsServices _productService;
         private readonly ProductInOrdersServices _productInOrdersServices;
-        public ClientServices _clientServices;
         public OrderServices _orderServices;
 
         public OrderDetailsViewModel() 
         {
-            _popupService = ServiceHelper.Resolve<PopupService>();
-            ProductsInOrders = [];
             _productService = ServiceHelper.Resolve<ProductsServices>();
-            _clientServices = ServiceHelper.Resolve<ClientServices>();
             _orderServices = ServiceHelper.Resolve<OrderServices>();
-            _productInOrdersServices = ServiceHelper.Resolve<ProductInOrdersServices>(); 
+            _productInOrdersServices = ServiceHelper.Resolve<ProductInOrdersServices>();
         }
 
         [RelayCommand]
@@ -87,32 +80,6 @@ namespace OrderApp.ViewModel
             }
         }
 
-        partial void OnOrderChanged(Order value)
-        {
-            _ = LoadItems(); // fire-and-forget, does not block UI thread
-        }
-
-        private async Task LoadItems()
-        {
-            try
-            {
-                IsBusy = true;
-                // Give the UI a moment to update the ActivityIndicator
-                await Task.Yield();
-                var loadProductsTask = LoadAllProductsAsync();
-                var loadProductsOfOrderTask = LoadProductsOfOrder();
-                await Task.WhenAll(loadProductsTask, loadProductsOfOrderTask);
-            }
-            catch (Exception)
-            {
-                IsBusy = false;
-                await Shell.Current.DisplayAlert("Error", "An unexpected error occurred while loading order details. Please try again.", "OK");
-            }
-            finally
-            {
-                IsBusy = false;
-            }
-        }
 
         [RelayCommand]
         async Task DeleteItem(ProductsInOrders productInOrder)
@@ -130,35 +97,38 @@ namespace OrderApp.ViewModel
             }
         }
 
-        public async Task LoadProductsOfOrder()
+        public async Task LoadDataAsync()
         {
+            if (Order == null) return;
+
             try
             {
-                Title = "Details of Order: " + Order.Id;
-                ProductsInOrders.Clear();
-                await _productService.GetProductsInOrders(ProductsInOrders, Order);
-                Order.CalculateTotal(ProductsInOrders);
+                IsBusy = true;
+                await Task.Yield();
+
+                var productsres = await _productService.GetProducts();
+                var productsIOres = await _productService.GetProductsInOrders(Order);
+
+                //await Task.WhenAll(productsTask, productsIOtask);
+
+                //var products = await productsTask;
+                //var productsIO = await productsIOtask;
+
+                // Always clear and replace to avoid showing old values
+                Products = productsres;
+                FilteredProducts = new ObservableCollection<Product>(productsres);
+                ProductsInOrders = new ObservableCollection<ProductsInOrders>(productsIOres);
+
+                Title = $"Order #{Order.Id}" +
+                        (string.IsNullOrEmpty(Order.ClientName) ? "" : $" - {Order.ClientName}");
             }
             catch (Exception)
             {
                 await Shell.Current.DisplayAlert("Error", "An unexpected error occurred while loading products of the order. Please try again.", "OK");
             }
-        }
-
-        public async Task LoadAllProductsAsync()
-        {
-            try
+            finally
             {
-                var products = await _productService.GetProducts();
-                Products.Clear();
-                Products = new ObservableCollection<Product>(products);
-
-                // Initially show all products
-                FilteredProducts = new ObservableCollection<Product>(Products);
-            }
-            catch (Exception)
-            {
-                await Shell.Current.DisplayAlert("Error", "An unexpected error occurred while loading all products. Please try again.", "OK");
+                IsBusy = false;
             }
         }
 

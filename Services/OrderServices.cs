@@ -18,11 +18,11 @@ namespace OrderApp.Services
         }
         public async Task<List<Order>> GetOrders()
         {
+            var connection = AdoDatabaseService.GetConnection();
             try
             {
                 List<Order> orders = [];
-                var connection = AdoDatabaseService.GetConnection();
-                connection.Open();
+                await connection.OpenAsync();
 
                 var command = connection.CreateCommand();
                 command.CommandText = @"SELECT o.Id, o.ClientId, o.Total, o.DateToPick, c.Name
@@ -30,7 +30,7 @@ namespace OrderApp.Services
 
                 command.Parameters.AddWithValue("$userId", Preferences.Get("UserId", 0));
 
-                using var reader = command.ExecuteReader();
+                using var reader = await command.ExecuteReaderAsync();
                 // add all the orders to the order collection to see them in the view
                 while (reader.Read())
                 {
@@ -43,13 +43,16 @@ namespace OrderApp.Services
                         ClientName = reader.GetString(4)
                     });
                 }
-                connection.Close();
                 return orders;
             }
             catch (Exception ex)
             {
                 Debug.WriteLine($"DB Error in DeleteProductInOrder: {ex}");
                 throw new DataAccessException("Could not retrieve orders.", ex);
+            }
+            finally
+            {
+                await connection.CloseAsync();
             }
         }
 

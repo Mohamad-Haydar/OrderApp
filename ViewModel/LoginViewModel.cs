@@ -106,7 +106,7 @@ namespace OrderApp.ViewModel
                 var res = await TryAutoLoginWithBiometricsAsync();
                 if(res)
                 {
-                    Application.Current.MainPage = new AppShell(new ShellViewModel(Language));
+                    Application.Current.Windows[0].Page = new AppShell(new ShellViewModel(Language));
                     // make sure that the language is set in the new shell
                     _localization.SetLanguage(Language);
                     return;
@@ -140,7 +140,7 @@ namespace OrderApp.ViewModel
                     await SecureStorage.SetAsync("SavedPassword", User.Password);
 
                     IsBusy = false;
-                    Application.Current.MainPage = new AppShell(new ShellViewModel(Language));
+                    Application.Current.Windows[0].Page = new AppShell(new ShellViewModel(Language));
                     _localization.SetLanguage(Language);
                 }
             }

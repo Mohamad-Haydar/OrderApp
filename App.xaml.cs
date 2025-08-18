@@ -16,5 +16,11 @@ namespace OrderApp
         {
             return new Window(new LoginShell());
         }
+
+        public void SetRootPage(Page page)
+        {
+            // This replaces the root page of the main window
+            MainPage = page;
+        }
     }
 }

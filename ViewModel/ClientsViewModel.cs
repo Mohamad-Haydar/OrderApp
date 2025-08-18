@@ -12,28 +12,28 @@ namespace OrderApp.ViewModel
         private readonly PopupService _popupService;
         private readonly ClientServices _clientServices;
 
-        public ObservableCollection<Client> Clients { get; }
+        public ObservableCollection<Client> Clients { get; set; }
 
         public ClientsViewModel()
         {
             Clients = [];
             _popupService = ServiceHelper.Resolve<PopupService>();
             _clientServices = ServiceHelper.Resolve<ClientServices>();
-            LoadClientsCommand.Execute(null);
+            MainThread.BeginInvokeOnMainThread(async () => await LoadDataAsync());
         }
 
-        [RelayCommand]
-        private async Task LoadClientsAsync()
+        private async Task LoadDataAsync()
         {
             try
             {
                 IsBusy = true;
+                await Task.Run(async () =>
+                {
 
-                var clientList = await _clientServices.GetClientsInfo();
+                    var clientList = await _clientServices.GetClientsInfo();
 
-                Clients.Clear();
-                foreach (var client in clientList)
-                    Clients.Add(client);
+                    Clients = new ObservableCollection<Client>(clientList);
+                });
             }
             catch (Exception ex)
             {

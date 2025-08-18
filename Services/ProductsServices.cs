@@ -8,21 +8,20 @@ namespace OrderApp.Services
 {
     public class ProductsServices : IProductRepository
     {
-        public async Task<ObservableCollection<Product>> GetProducts()
+        public async Task<IEnumerable<Product>> GetProducts()
         {
             var connection = AdoDatabaseService.GetConnection();
+            var productList = new Collection<Product>();
             try
             {
-                ObservableCollection<Product> ProductList = [];
-                connection.Open();
-
+                await connection.OpenAsync();
                 var command = connection.CreateCommand();
-                command.CommandText = "SELECT * From Products";
+                command.CommandText = "SELECT * FROM Products";
 
-                using var reader = command.ExecuteReader();
-                while (reader.Read())
+                using var reader = await command.ExecuteReaderAsync();
+                while (await reader.ReadAsync())
                 {
-                    ProductList.Add(new Product
+                    productList.Add(new Product
                     {
                         Id = reader.GetInt32(0),
                         Name = reader.GetString(1),
@@ -33,8 +32,8 @@ namespace OrderApp.Services
                         ImageUrl = reader.GetString(5)
                     });
                 }
-                connection.Close();
-                return ProductList;
+               
+                return productList;
             }
             catch (Exception ex)
             {
@@ -43,8 +42,9 @@ namespace OrderApp.Services
             }
             finally
             {
-                connection.Close();
+                await connection.CloseAsync();
             }
+            
         }
 
         public async Task<int> GetStuckQuantity(int productId)
@@ -77,12 +77,13 @@ namespace OrderApp.Services
                 connection.Close();
             }
         }
-        public async Task GetProductsInOrders(ObservableCollection<ProductsInOrders> products, Order o)
+        public async Task<ICollection<ProductsInOrders>> GetProductsInOrders(Order o)
         {
             var connection = AdoDatabaseService.GetConnection();
+            var products = new Collection<ProductsInOrders>();
             try
             {
-                connection.Open();
+                await connection.OpenAsync();
 
                 var command = connection.CreateCommand();
                 command.CommandText = @"SELECT pio.Id, pio.OrderId, pio.Quantity,
@@ -95,7 +96,7 @@ namespace OrderApp.Services
                 command.Parameters.AddWithValue("$orderId", o.Id);
 
 
-                using var reader = command.ExecuteReader();
+                using var reader = await command.ExecuteReaderAsync();
                 while (reader.Read())
                 {
                     products.Add(new ProductsInOrders
@@ -107,7 +108,7 @@ namespace OrderApp.Services
                         {
                             Id = reader.GetInt32(3),
                             Name = reader.GetString(4),
-                            Description = reader.IsDBNull(5) ? null : reader.GetString(5),
+                            Description = reader.GetString(5),
                             Price = reader.GetFloat(6),
                             Quantity = reader.GetInt32(7),
                             Stock = reader.GetInt32(7) + reader.GetInt32(2),
@@ -115,7 +116,7 @@ namespace OrderApp.Services
                         }
                     });
                 }
-                connection.Close();
+                return new ObservableCollection<ProductsInOrders>(products);
             }
             catch (Exception ex)
             {
@@ -124,7 +125,7 @@ namespace OrderApp.Services
             }
             finally
             {
-                connection.Close();
+                await connection.CloseAsync();
             }
         }
 
