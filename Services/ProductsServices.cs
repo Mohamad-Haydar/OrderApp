@@ -99,7 +99,7 @@ namespace OrderApp.Services
                 using var reader = await command.ExecuteReaderAsync();
                 while (reader.Read())
                 {
-                    products.Add(new ProductsInOrders
+                    products.Add(new ProductsInOrders(o)
                     {
                         Id = reader.GetInt32(0),
                         OrderId = reader.GetInt32(1),

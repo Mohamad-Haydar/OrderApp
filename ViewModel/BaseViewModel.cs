@@ -12,9 +12,10 @@ namespace OrderApp.ViewModel
         private readonly ThemeService _themeService;
         public BaseViewModel()
         {
+           
             _localization = ServiceHelper.Resolve<LocalizationService>();
             Language = Preferences.Get("AppLanguage", "en");
-            
+
 
             _themeService = ServiceHelper.Resolve<ThemeService>();
             _themeService.SetTheme(Preferences.Get("AppTheme", "white"));

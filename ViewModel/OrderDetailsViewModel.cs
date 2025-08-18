@@ -19,10 +19,8 @@ namespace OrderApp.ViewModel
         string searchText;
 
         [ObservableProperty]
-        ObservableCollection<ProductsInOrders> productsInOrders = [];
-
-        [ObservableProperty]
         Order order;
+
         [ObservableProperty]
         string title;
         [ObservableProperty]
@@ -44,14 +42,14 @@ namespace OrderApp.ViewModel
         {
             try
             {
-                var existingProduct = ProductsInOrders.FirstOrDefault(x => x.Product.Id == product.Id);
+                var existingProduct = Order.Products.FirstOrDefault(x => x.Product.Id == product.Id);
                 if (existingProduct != null)
                 {
                 // Remove it from its current position
-                    ProductsInOrders.Remove(existingProduct);
+                    Order.Products.Remove(existingProduct);
 
                 // Insert it at the first position
-                    ProductsInOrders.Insert(0,existingProduct);
+                    Order.Products.Insert(0,existingProduct);
                     return;
                 }
                 var availableStock = await _productService.GetStuckQuantity(product.Id);
@@ -60,7 +58,7 @@ namespace OrderApp.ViewModel
                 if (availableStock > 0)
                 {
                 // add only 1 item of the product 
-                    ProductsInOrders.Insert(0, new ProductsInOrders()
+                    Order.Products.Insert(0, new ProductsInOrders()
                     {
                         Id = -1,
                         Product = product,
@@ -72,7 +70,7 @@ namespace OrderApp.ViewModel
                 {
                     await Shell.Current.DisplayAlert("Failed", "Not enough stock quantity", "Ok");
                 }
-                Order.CalculateTotal(ProductsInOrders);
+                Order.CalculateTotal();
             }
             catch (Exception)
             {
@@ -89,7 +87,7 @@ namespace OrderApp.ViewModel
                 int quantityToRemove = productInOrder.Quantity;
                 await _productService.UpdateProductStock(-1 * quantityToRemove, productInOrder.Product.Id);
                 await _productInOrdersServices.DeleteProductInOrder(productInOrder.OrderId, productInOrder.Product.Id);
-                ProductsInOrders.Remove(productInOrder);
+                Order.Products.Remove(productInOrder);
             }
             catch (Exception)
             {
@@ -99,6 +97,7 @@ namespace OrderApp.ViewModel
 
         public async Task LoadDataAsync()
         {
+
             if (Order == null) return;
 
             try
@@ -109,15 +108,11 @@ namespace OrderApp.ViewModel
                 var productsres = await _productService.GetProducts();
                 var productsIOres = await _productService.GetProductsInOrders(Order);
 
-                //await Task.WhenAll(productsTask, productsIOtask);
-
-                //var products = await productsTask;
-                //var productsIO = await productsIOtask;
-
                 // Always clear and replace to avoid showing old values
                 Products = productsres;
                 FilteredProducts = new ObservableCollection<Product>(productsres);
-                ProductsInOrders = new ObservableCollection<ProductsInOrders>(productsIOres);
+                if(!Order.IsLoaded)
+                    Order.Products = new ObservableCollection<ProductsInOrders>(productsIOres);
 
                 Title = $"Order #{Order.Id}" +
                         (string.IsNullOrEmpty(Order.ClientName) ? "" : $" - {Order.ClientName}");
@@ -129,6 +124,7 @@ namespace OrderApp.ViewModel
             finally
             {
                 IsBusy = false;
+                Order.IsLoaded = true;
             }
         }
 
@@ -154,7 +150,8 @@ namespace OrderApp.ViewModel
                 return;
             }
             item.Quantity++;
-            Order.CalculateTotal(ProductsInOrders);
+           // Order.UpdateTotal(item.Product.Price);
+            //Order.CalculateTotal();
         }
 
         [RelayCommand]
@@ -163,9 +160,8 @@ namespace OrderApp.ViewModel
             if (item.Quantity > 0)
             {
                 item.Quantity--;
-                //item.Product.Quantity++;
-                //RecalculateTotal();
-                Order.CalculateTotal(ProductsInOrders);
+                //Order.UpdateTotal(-1 * item.Product.Price);
+                //Order.CalculateTotal();
             }
         }
 
@@ -174,9 +170,9 @@ namespace OrderApp.ViewModel
         {
             try
             {
-                await _orderServices.UpdateOrderAsync(ProductsInOrders);
+                await _orderServices.UpdateOrderAsync(Order.Products);
                 // to see it in the UI
-                Order.CalculateTotal(ProductsInOrders);
+                Order.CalculateTotal();
                 // TO update it in the database
                 await _orderServices.SetTotalAsync(Order);
                 await Shell.Current.DisplayAlert("Success", "The product is updated successfully", "Ok");

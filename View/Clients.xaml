@@ -8,18 +8,13 @@
              Title="Clients">
     <Grid RowDefinitions="*, Auto" ColumnDefinitions="*, *" Padding="10,10,10,10">
 
-        <RefreshView 
-            Grid.Row="0"
-            Grid.ColumnSpan="2"
-            Command="{Binding LoadClientsCommand}"
-         
-            IsRefreshing="{Binding IsBusy}">
+       
             <CollectionView 
                BackgroundColor="Transparent" 
                Grid.ColumnSpan="2"
                ItemsSource="{Binding Clients}"
                SelectionMode="None"
-               Grid.Row="1">
+               Grid.Row="0">
                 <CollectionView.ItemTemplate>
                     <DataTemplate x:DataType="model:Client">
                         <Grid Padding="10" Grid.ColumnSpan="2">
@@ -45,7 +40,6 @@
                 </CollectionView.ItemTemplate>
 
             </CollectionView>
-        </RefreshView>
         <Button Grid.Row="2" Grid.Column="0" Text="Add new Client" Command="{Binding AddClientCommand }"/>
     </Grid>
 </ContentPage>

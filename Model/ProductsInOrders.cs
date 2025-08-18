@@ -14,6 +14,12 @@ namespace OrderApp.Model
 
         private int _previousQuantity;
         private bool _isUpdatingQuantity = false;
+        private readonly Order _parentOrder;
+
+        public ProductsInOrders(Order parentOrder = null)
+        {
+            _parentOrder = parentOrder;
+        }
 
 
         partial void OnQuantityChanging(int value)
@@ -51,6 +57,8 @@ namespace OrderApp.Model
             {
                 int difference = quantity - _previousQuantity;
                 product.Quantity -= difference;
+                _parentOrder?.UpdateTotal(difference * product.Price);
+               // _parentOrder.CalculateTotal();
             }
         }
 

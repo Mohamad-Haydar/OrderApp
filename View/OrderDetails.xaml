@@ -70,7 +70,7 @@
         <!-- row3: products of this order -->
         <CollectionView 
            Grid.ColumnSpan="2"
-           ItemsSource="{Binding ProductsInOrders}"
+           ItemsSource="{Binding Order.Products}"
            SelectionMode="None"
             RemainingItemsThreshold="1"
            Grid.Row="3">

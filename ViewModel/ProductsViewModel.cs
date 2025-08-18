@@ -13,14 +13,14 @@ namespace OrderApp.ViewModel
         private readonly PopupService _popupService;
         private readonly ProductsServices _productsServices;
 
-        public ObservableCollection<Product> Products { get;  }
+        [ObservableProperty]
+        ObservableCollection<Product> products;
 
         public ProductsViewModel()
         {
             Products = [];
             _popupService = ServiceHelper.Resolve<PopupService>();
             _productsServices = ServiceHelper.Resolve<ProductsServices>();
-            _ = InitAsync();
         }
 
         [RelayCommand]
@@ -107,41 +107,16 @@ namespace OrderApp.ViewModel
             }
         }
 
-        private async Task InitAsync()
-        {
-            try
-            {
-                Title = "Products";
-                await LoadProducts();
-            }
-            catch (Exception ex)
-            {
-                Debug.WriteLine($"Error initializing ProductsViewModel: {ex.Message}");
-                await Shell.Current.DisplayAlert("Error", "An unexpected error occurred while initializing the products view. Please try again.", "OK");
-            }
-        }
         public async Task LoadProducts()
         {
             try
             {
+                if(Products.Count > 0)
+                    return;
                 IsBusy = true;
                 await Task.Yield();
-                Products.Clear();
                 var res = await _productsServices.GetProducts();
-
-                foreach (var product in res)
-                {
-                    Products.Add(new Product
-                    {
-                        Id = product.Id,
-                        Name = product.Name,
-                        Description = product.Description,
-                        Price = product.Price,
-                        Quantity = product.Quantity,
-                        Stock = product.Stock,
-                        ImageUrl = product.ImageUrl
-                    });
-                }
+                Products = new ObservableCollection<Product>(res);
             }
             catch (Exception)
             {

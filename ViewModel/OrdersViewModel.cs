@@ -23,7 +23,6 @@ namespace OrderApp.ViewModel
         {
             _popupService = ServiceHelper.Resolve<PopupService>();
             _orderServices = ServiceHelper.Resolve<OrderServices>();
-            _ = LoadOrders();
         }
 
         [RelayCommand]
@@ -66,7 +65,7 @@ namespace OrderApp.ViewModel
                     {nameof(Order), order},
                 });
             }
-            catch (Exception)
+            catch (Exception ex)
             {
                 await Shell.Current.DisplayAlert("Error", "An unexpected error occurred while navigating to order details. Please try again.", "OK");
             }
@@ -94,13 +93,11 @@ namespace OrderApp.ViewModel
         {
             try
             {
+                if (Orders.Count > 0) return;
                 IsBusy = true;
-                Orders.Clear(); // clear the orders to remove all of them from the view
+                await Task.Yield();
                 var res = await _orderServices.GetOrders();
-                // Update in-place instead of reassigning
-                Orders.Clear();
-                foreach (var order in res)
-                    Orders.Add(order);
+                Orders = new ObservableCollection<Order>(res);
             }
             catch (Exception)
             {

@@ -86,6 +86,12 @@
 
         </CollectionView>
 
+        <ActivityIndicator IsRunning="{Binding IsBusy}"
+                     IsVisible="{Binding IsBusy}"
+                     Grid.RowSpan="3"
+                     Grid.ColumnSpan="2"
+                     WidthRequest="150"
+                     HeightRequest="150"/>
 
 
         <Button Text="+"

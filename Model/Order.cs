@@ -1,4 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
+using System.Collections.ObjectModel;
+using System.Collections.Specialized;
+using System.ComponentModel;
 
 namespace OrderApp.Model
 {
@@ -8,12 +11,13 @@ namespace OrderApp.Model
         public int ClientId { get; set; }
         public string ClientName { get; set; }
         public int UserId { get; set; }
+        public bool IsLoaded { get; set; } = false;
 
         [ObservableProperty]
         float total;
         public DateTime DateToPick { get; set; }
-        public List<Product> Products { get; set; } = [];
-
+        [ObservableProperty]
+        ObservableCollection<ProductsInOrders> products = [];
 
         public bool IsValid(out string error)
         {
@@ -27,9 +31,14 @@ namespace OrderApp.Model
             return true;
         }
 
-        public void CalculateTotal(IEnumerable<ProductsInOrders> productsInOrders)
+        public void CalculateTotal()
         {
-            Total = productsInOrders.Sum(item => item.Quantity * item.Product.Price);
+            Total = Products.Sum(item => item.Quantity * item.Product.Price);
+        }
+
+        public void UpdateTotal(float difference)
+        {
+            Total += difference;
         }
 
     }
