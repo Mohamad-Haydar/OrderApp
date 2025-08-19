@@ -1,5 +1,4 @@
-﻿using AndroidX.Lifecycle;
-using CommunityToolkit.Mvvm.Input;
+﻿using CommunityToolkit.Mvvm.Input;
 using OrderApp.Helper;
 using OrderApp.Services;
 
@@ -7,14 +6,6 @@ namespace OrderApp.ViewModel
 {
     public partial class ShellViewModel : BaseViewModel
     {
-
-        public ShellViewModel(string language)
-        {
-            Language = language;
-            _localization = ServiceHelper.Resolve<LocalizationService>();
-            _localization.SetLanguage(Language);
-        }
-
         [RelayCommand]
         async Task SwitchLanguageAsync()
         {

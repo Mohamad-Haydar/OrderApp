@@ -24,7 +24,7 @@ namespace OrderApp
             if (!string.IsNullOrWhiteSpace(email) && !string.IsNullOrWhiteSpace(password))
             {
                 // User has logged in before -> go to AppShell directly
-                startPage = new AppShell(new ShellViewModel(Preferences.Get("AppLanguage", "en"))); // or whatever your default language is
+                startPage = new AppShell();
             }
             else
             {
