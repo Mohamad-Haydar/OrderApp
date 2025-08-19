@@ -5,6 +5,7 @@
              xmlns:model="clr-namespace:OrderApp.Model"
              xmlns:viewmodel="clr-namespace:OrderApp.ViewModel"
              x:DataType="viewmodel:ClientsViewModel"
+             BackgroundColor="{DynamicResource BackgroundColor}"
              Title="Clients">
     <Grid RowDefinitions="*, Auto" ColumnDefinitions="*, *" Padding="10,10,10,10">
 
@@ -18,7 +19,12 @@
                 <CollectionView.ItemTemplate>
                     <DataTemplate x:DataType="model:Client">
                         <Grid Padding="10" Grid.ColumnSpan="2">
-                            <Border HeightRequest="125">
+                        <Grid.Resources>
+                            <Style TargetType="Label">
+                                <Setter Property="TextColor" Value="{DynamicResource TextColor}" />
+                            </Style>
+                        </Grid.Resources>
+                        <Border HeightRequest="125">
                                 <Border.StrokeShape>
                                     <RoundRectangle CornerRadius="16" />
                                 </Border.StrokeShape>

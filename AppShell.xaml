@@ -7,9 +7,13 @@
     xmlns:view="clr-namespace:OrderApp.View"
     xmlns:viewmodel="clr-namespace:OrderApp.ViewModel"
     x:DataType="viewmodel:ShellViewModel"
-   
+     Shell.TitleColor="{DynamicResource TextColor}"
+     Shell.BackgroundColor="{DynamicResource BackgroundColor}"
+     Shell.ForegroundColor="{DynamicResource TextColor}" 
     FlowDirection="{Binding AppFlowDirection}"
     Title="OrderApp">
+    
+    
 
     <!-- Each page gets its own FlyoutItem -->
     <FlyoutItem Title="{DynamicResource Orders}" Icon="monkey.png">
@@ -29,7 +33,7 @@
     </FlyoutItem>
     
     <Shell.FlyoutFooter>
-        <Grid Padding="10" RowDefinitions="Auto, Auto, Auto">
+        <Grid Padding="10" RowDefinitions="Auto, Auto, Auto" >
 
             <Button Grid.Row="0" Text="{DynamicResource SwitchTheme}"
                 Command="{Binding SwitchThemeCommand}" HeightRequest="40"

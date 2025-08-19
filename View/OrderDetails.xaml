@@ -4,11 +4,21 @@
              x:Class="OrderApp.View.OrderDetails"
              xmlns:model="clr-namespace:OrderApp.Model"
              xmlns:viewmodel="clr-namespace:OrderApp.ViewModel"
+             BackgroundColor="{DynamicResource BackgroundColor}"
              x:DataType="viewmodel:OrderDetailsViewModel"
              Title="{Binding Title}">
 
-    <Grid RowDefinitions="Auto, Auto, Auto, *, Auto, Auto" ColumnDefinitions="*, *"  Padding="10,10,10,10">
-       
+    <Grid RowDefinitions="Auto, Auto, Auto, *, Auto, Auto" ColumnDefinitions="*, *"  Padding="10">
+
+        <Grid.Resources>
+            <Style TargetType="Label">
+                <Setter Property="TextColor" Value="{DynamicResource TextColor}" />
+            </Style>
+            <Style TargetType="Entry">
+                <Setter Property="TextColor" Value="{DynamicResource TextColor}" />
+            </Style>
+        </Grid.Resources>
+
         <!-- Row 0 the title of horizontal products -->
         <!--<Label Text="List Of Products"
                VerticalOptions="Center" 
@@ -81,7 +91,7 @@
                             <Border.StrokeShape>
                                 <RoundRectangle CornerRadius="16" />
                             </Border.StrokeShape>
-                            <Grid Padding="0,5">
+                            <Grid Padding="0,10">
                                 <HorizontalStackLayout HorizontalOptions="Center" Spacing="5">
                                     <Image Source="{Binding Product.ImageUrl}" WidthRequest="50" HeightRequest="50"/>
                                     
@@ -98,7 +108,7 @@
                                         </HorizontalStackLayout>
                                     </VerticalStackLayout>
                                     
-                                    <HorizontalStackLayout>
+                                    <HorizontalStackLayout VerticalOptions="Center">
                                         <!--<Button Text="-"  HeightRequest="25"
                                                 Command="{Binding x:DataType='viewmodel:OrderDetailsViewModel', Source={RelativeSource AncestorType={x:Type viewmodel:OrderDetailsViewModel}}, Path=DecrementQuantityCommand}" 
                                             CommandParameter="{Binding .}" />-->
@@ -112,10 +122,10 @@
                                         </Frame>
 
                                         <Entry Text="{Binding Quantity}" 
-                                           WidthRequest="25"
+                                           WidthRequest="35"
                                            HorizontalTextAlignment="Center"
                                            VerticalTextAlignment="Center"
-                                           FontSize="17"
+                                           FontSize="15"
                                            Keyboard="Numeric"
                                            />
 

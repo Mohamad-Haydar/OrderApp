@@ -6,15 +6,22 @@
              xmlns:model="clr-namespace:OrderApp.Model"
              xmlns:viewmodel="clr-namespace:OrderApp.ViewModel"
              x:DataType="viewmodel:EventsViewModel"  
+             BackgroundColor="{DynamicResource BackgroundColor}"
              Title="Events">
 
     <Grid RowDefinitions="400,Auto, *">
+
+        <Grid.Resources>
+            <Style TargetType="Label">
+                <Setter Property="TextColor" Value="{DynamicResource TextColor}" />
+            </Style>
+        </Grid.Resources>
+        
         <scheduler:SfScheduler x:Name="scheduler" 
                        AppointmentsSource="{Binding EventsOfDay}"
                        View="Month"
-                       BackgroundColor="White"
+                       BackgroundColor="{DynamicResource White}"
                        SelectedDate="{Binding DateTimeSelected, Mode=TwoWay}"
-             
                        >
 
             <scheduler:SfScheduler.AppointmentMapping >
@@ -29,7 +36,6 @@
             </scheduler:SfScheduler.AppointmentMapping>
 
             <scheduler:SfScheduler.MonthView>
-
                 <scheduler:SchedulerMonthView 
                         AppointmentDisplayMode="Indicator"
                         AppointmentIndicatorCount="4"/>
@@ -46,11 +52,11 @@
             <CollectionView.ItemTemplate>
                 <DataTemplate x:DataType="model:EventModel">
                     <Grid Padding="10">
-                        <Border  BackgroundColor="White">
+                        <Border >
                             <Border.StrokeShape>
                                 <RoundRectangle CornerRadius="16" />
                             </Border.StrokeShape>
-                            <Grid Padding="10">
+                            <Grid Padding="10" BackgroundColor="{DynamicResource BackgroundColor}">
                                 <VerticalStackLayout>
                                     <HorizontalStackLayout HorizontalOptions="Center" VerticalOptions="Center" >
                                         <Frame WidthRequest="16"
