@@ -6,10 +6,14 @@ namespace OrderApp.Services.Interfaces
 {
     public interface IOrderRepository : IRepository<Order>
     {
-        Task<List<Order>> GetOrdersByUserIdAsync(int userId);
-        Task UpdateOrderProductsAsync(ObservableCollection<ProductsInOrders> productsInOrders);
-        Task CreateOrderAsync(int clientId, DateTime dateToPick, int userId);
-        Task UpdateTotalAsync(float addedAmount, int orderId);
-        Task SetTotalAsync(Order order);
+       Task<List<Order>> GetOrders();
+       Task UpdateOrderAsync(ObservableCollection<ProductsInOrders> productsInOrders);
+
+       Task CreateOrder(int clientId, DateTime dateToPick);
+
+       Task UpdateTotalAsync(float addedAmount, int orderId);
+       Task SetTotalAsync(Order order);
+
+       Task DeleteOrder(int orderId);
     }
 }

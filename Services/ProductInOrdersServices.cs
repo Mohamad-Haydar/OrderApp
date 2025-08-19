@@ -115,51 +115,5 @@ namespace OrderApp.Services
             }
         }
 
-        // IRepository Implementation
-        public async Task<IEnumerable<ProductsInOrders>> GetAllAsync()
-        {
-            throw new NotImplementedException(); // you can fill similar to GetOrders
-        }
-
-        public async Task<ProductsInOrders?> GetByIdAsync(int id)
-        {
-            throw new NotImplementedException();
-        }
-
-        public async Task AddAsync(ProductsInOrders entity)
-        {
-            await InsertProductIntoProductsInOrder(entity.OrderId,entity.Product.Id, entity.Quantity);
-        }
-
-        public async Task UpdateAsync(ProductsInOrders entity)
-        {
-            await UpdateProductsInOrders(entity.Quantity,entity.Id);
-        }
-
-        public async Task DeleteAsync(int id)
-        {
-            // You’d need orderId and productId, so maybe adapt this
-            throw new NotImplementedException();
-        }
-
-        public Task UpdateProductsInOrdersAsync(int quantity, int id)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<int> GetQuantityAsync(int id)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task InsertProductIntoProductsInOrderAsync(int orderId, int productId, int quantity)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task DeleteProductInOrderAsync(int orderId, int productId)
-        {
-            throw new NotImplementedException();
-        }
     }
 }

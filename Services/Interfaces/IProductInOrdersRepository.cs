@@ -6,9 +6,12 @@ namespace OrderApp.Services.Interfaces
 {
     public interface IProductInOrdersRepository : IRepository<ProductsInOrders>
     {
-        Task UpdateProductsInOrdersAsync(int quantity, int id);
-        Task<int> GetQuantityAsync(int id);
-        Task InsertProductIntoProductsInOrderAsync(int orderId, int productId, int quantity);
-        Task DeleteProductInOrderAsync(int orderId, int productId);
+       Task UpdateProductsInOrders(int quantity, int id);
+
+       Task<int> GetQuantity(int id);
+
+       Task InsertProductIntoProductsInOrder(int orderId, int productId, int quantity);
+
+       Task DeleteProductInOrder(int orderId, int productId);
     }
 }

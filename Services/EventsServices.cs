@@ -5,7 +5,7 @@ using System.Diagnostics;
 
 namespace OrderApp.Services
 {
-    public class EventsServices : IRepository<EventModel>
+    public class EventsServices : IEventRepository
     {
         public async  Task<List<EventModel>> GetEvents(DateOnly date)
         {
@@ -196,29 +196,5 @@ namespace OrderApp.Services
             }
         }
 
-        public Task<IEnumerable<EventModel>> GetAllAsync()
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<EventModel?> GetByIdAsync(int id)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task AddAsync(EventModel entity)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task UpdateAsync(EventModel entity)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task DeleteAsync(int id)
-        {
-            throw new NotImplementedException();
-        }
     }
 }

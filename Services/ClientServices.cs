@@ -142,45 +142,5 @@ namespace OrderApp.Services
                 connection.Close();
             }
         }
-
-        public Task<ObservableCollection<Client>> GetClientsForPopupAsync()
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<List<Client>> GetClientsInfoAsync()
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<string> GetCustomerAsync(Order order)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<IEnumerable<Client>> GetAllAsync()
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<Client?> GetByIdAsync(int id)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task AddAsync(Client entity)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task UpdateAsync(Client entity)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task DeleteAsync(int id)
-        {
-            throw new NotImplementedException();
-        }
     }
 }

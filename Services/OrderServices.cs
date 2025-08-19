@@ -217,56 +217,5 @@ namespace OrderApp.Services
             }
         }
 
-        public async Task<IEnumerable<Order>> GetAllAsync()
-        {
-            return await GetOrders();
-        }
-
-        public async Task<Order?> GetByIdAsync(int id)
-        {
-            // TODO: implement like your GetOrders but with WHERE Id=$id
-            throw new NotImplementedException();
-        }
-
-        public async Task AddAsync(Order entity)
-        {
-            // Business logic from model
-            if (!entity.IsValid(out var error))
-                throw new InvalidOperationException(error);
-
-            //entity.CalculateTotal();
-
-            await CreateOrder(entity.ClientId, entity.DateToPick);
-        }
-
-        public async Task UpdateAsync(Order entity)
-        {
-            if (!entity.IsValid(out var error))
-                throw new InvalidOperationException(error);
-
-            //entity.CalculateTotal();
-
-            await SetTotalAsync(entity);
-        }
-
-        public async Task DeleteAsync(int id)
-        {
-            await DeleteOrder(id);
-        }
-
-        public Task<List<Order>> GetOrdersByUserIdAsync(int userId)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task UpdateOrderProductsAsync(ObservableCollection<ProductsInOrders> productsInOrders)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task CreateOrderAsync(int clientId, DateTime dateToPick, int userId)
-        {
-            throw new NotImplementedException();
-        }
     }
 }

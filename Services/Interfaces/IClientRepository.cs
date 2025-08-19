@@ -6,8 +6,12 @@ namespace OrderApp.Services.Interfaces
 {
     public interface IClientRepository : IRepository<Client>
     {
-        Task<ObservableCollection<Client>> GetClientsForPopupAsync();
-        Task<List<Client>> GetClientsInfoAsync();
-        Task<string> GetCustomerAsync(Order order);
+        Task<ObservableCollection<Client>> GetClientsForPopup();
+
+        Task<List<Client>> GetClientsInfo();
+
+        Task<string> GetCustomer(Order order);
+
+        Task AddClient(string name, string details);
     }
 }
