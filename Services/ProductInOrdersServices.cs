@@ -12,13 +12,13 @@ namespace OrderApp.Services
             var connection = AdoDatabaseService.GetConnection();
             try
             {
-                connection.Open();
+                await connection.OpenAsync();
                 var updatePIOCommand = connection.CreateCommand();
                 updatePIOCommand.CommandText = @"UPDATE ProductsInOrders SET Quantity = $quantity WHERE Id = $id";
                 updatePIOCommand.Parameters.AddWithValue("$quantity", quantity);
                 updatePIOCommand.Parameters.AddWithValue("$id", id);
-                updatePIOCommand.ExecuteNonQuery();
-                connection.Close();
+                await updatePIOCommand.ExecuteNonQueryAsync();
+                await connection.CloseAsync();
             }
             catch (Exception ex)
             {
@@ -27,7 +27,8 @@ namespace OrderApp.Services
             }
             finally
             {
-                connection.Close();
+                if (connection.State != System.Data.ConnectionState.Closed)
+                    await connection.CloseAsync();
             }
         }
 
@@ -36,13 +37,13 @@ namespace OrderApp.Services
             var connection = AdoDatabaseService.GetConnection();
             try
             {
-                connection.Open();
+                await connection.OpenAsync();
                 var getOldCommand = connection.CreateCommand();
                 getOldCommand.CommandText = @"SELECT Quantity FROM ProductsInOrders WHERE Id = $id";
                 getOldCommand.Parameters.AddWithValue("$id", id);
-                var oldQuantity = Convert.ToInt32(getOldCommand.ExecuteScalar());
+                var oldQuantity = Convert.ToInt32(await getOldCommand.ExecuteScalarAsync());
 
-                connection.Close();
+                await connection.CloseAsync();
                 return oldQuantity;
             }
             catch (Exception ex)
@@ -52,7 +53,8 @@ namespace OrderApp.Services
             }
             finally
             {
-                connection.Close();
+                if (connection.State != System.Data.ConnectionState.Closed)
+                    await connection.CloseAsync();
             }
         }
 
@@ -61,8 +63,8 @@ namespace OrderApp.Services
             var connection = AdoDatabaseService.GetConnection();
             try
             {
-                connection.Open();
-                // INSERT into ProductsInOrders
+                await connection.OpenAsync();
+                // INSERT into ProductsInOrders asynchronously
                 using var insertCommand = connection.CreateCommand();
                 insertCommand.CommandText = @"
             INSERT INTO ProductsInOrders (OrderId, ProductId, Quantity)
@@ -72,9 +74,9 @@ namespace OrderApp.Services
                 insertCommand.Parameters.AddWithValue("$productId", productId);
                 insertCommand.Parameters.AddWithValue("$quantity", quantity);
 
-                insertCommand.ExecuteNonQuery();
+                await insertCommand.ExecuteNonQueryAsync();
 
-                connection.Close();
+                await connection.CloseAsync();
             }
             catch (Exception ex)
             {
@@ -83,7 +85,8 @@ namespace OrderApp.Services
             }
             finally
             {
-                connection.Close();
+                if (connection.State != System.Data.ConnectionState.Closed)
+                    await connection.CloseAsync();
             }
         }
 
@@ -92,17 +95,16 @@ namespace OrderApp.Services
             var connection = AdoDatabaseService.GetConnection();
             try
             {
-                connection.Open();
-                // INSERT into ProductsInOrders
-                using var insertCommand = connection.CreateCommand();
-                insertCommand.CommandText = @"DELETE FROM ProductsInOrders WHERE OrderId = $orderId AND ProductId = $productId";
+                await connection.OpenAsync();
+                using var deleteCommand = connection.CreateCommand();
+                deleteCommand.CommandText = @"DELETE FROM ProductsInOrders WHERE OrderId = $orderId AND ProductId = $productId";
 
-                insertCommand.Parameters.AddWithValue("$orderId", orderId);
-                insertCommand.Parameters.AddWithValue("$productId", productId);
+                deleteCommand.Parameters.AddWithValue("$orderId", orderId);
+                deleteCommand.Parameters.AddWithValue("$productId", productId);
 
-                insertCommand.ExecuteNonQuery();
+                await deleteCommand.ExecuteNonQueryAsync();
 
-                connection.Close();
+                await connection.CloseAsync();
             }
             catch (Exception ex)
             {
@@ -111,9 +113,9 @@ namespace OrderApp.Services
             }
             finally
             {
-                connection.Close();
+                if (connection.State != System.Data.ConnectionState.Closed)
+                    await connection.CloseAsync();
             }
         }
-
     }
 }

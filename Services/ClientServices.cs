@@ -15,13 +15,13 @@ namespace OrderApp.Services
             try
             {
                 ObservableCollection<Client> ClientsList = [];
-                connection.Open();
+                await connection.OpenAsync();
 
                 var command = connection.CreateCommand();
                 command.CommandText = "SELECT Id, Name FROM Clients";
 
-                using var reader = command.ExecuteReader();
-                while (reader.Read())
+                using var reader = await command.ExecuteReaderAsync();
+                while (await reader.ReadAsync())
                 {
                     ClientsList.Add(new Client
                     {
@@ -29,17 +29,18 @@ namespace OrderApp.Services
                         Name = reader.GetString(1)
                     });
                 }
-                connection.Close();
+                await connection.CloseAsync();
                 return ClientsList;
             }
             catch (Exception ex)
             {
-                Debug.WriteLine($"DB Error in DeleteProductInOrder: {ex}");
+                Debug.WriteLine($"DB Error in GetClientsForPopup: {ex}");
                 throw new DataAccessException("Could not Get Clients For Popup.", ex);
             }
             finally
             {
-                connection.Close();
+                if (connection.State != System.Data.ConnectionState.Closed)
+                    await connection.CloseAsync();
             }
         }
 
@@ -49,13 +50,13 @@ namespace OrderApp.Services
             try
             {
                 List<Client> res = [];
-                connection.Open();
+                await connection.OpenAsync();
 
                 var command = connection.CreateCommand();
                 command.CommandText = "SELECT Id, Name, Details FROM Clients";
 
-                using var reader = command.ExecuteReader();
-                while (reader.Read())
+                using var reader = await command.ExecuteReaderAsync();
+                while (await reader.ReadAsync())
                 {
                     res.Add(new Client
                     {
@@ -64,17 +65,18 @@ namespace OrderApp.Services
                         Details = reader.GetString(2)
                     });
                 }
-                connection.Close();
+                await connection.CloseAsync();
                 return res;
             }
             catch (Exception ex)
             {
-                Debug.WriteLine($"DB Error in DeleteProductInOrder: {ex}");
+                Debug.WriteLine($"DB Error in GetClientsInfo: {ex}");
                 throw new DataAccessException("Could not Get Client Info", ex);
             }
             finally
             {
-                connection.Close();
+                if (connection.State != System.Data.ConnectionState.Closed)
+                    await connection.CloseAsync();
             }
         }
 
@@ -84,29 +86,30 @@ namespace OrderApp.Services
             try
             {
                 var result = string.Empty;
-                connection.Open();
+                await connection.OpenAsync();
 
                 var command = connection.CreateCommand();
                 command.CommandText = @"SELECT c.Name FROM Clients as c Where c.Id = $clientId";
 
                 command.Parameters.AddWithValue("$clientId", order.ClientId);
-                using var reader = command.ExecuteReader();
-                if (reader.Read())
+                using var reader = await command.ExecuteReaderAsync();
+                if (await reader.ReadAsync())
                 {
                     result = reader.GetString(0);
                 }
 
-                connection.Close();
+                await connection.CloseAsync();
                 return result;
             }
             catch (Exception ex)
             {
-                Debug.WriteLine($"DB Error in DeleteProductInOrder: {ex}");
+                Debug.WriteLine($"DB Error in GetCustomer: {ex}");
                 throw new DataAccessException("Could not Get Customer.", ex);
             }
             finally
             {
-                connection.Close();
+                if (connection.State != System.Data.ConnectionState.Closed)
+                    await connection.CloseAsync();
             }
         }
 
@@ -118,15 +121,15 @@ namespace OrderApp.Services
             var connection = AdoDatabaseService.GetConnection();
             try
             {
-                connection.Open();
+                await connection.OpenAsync();
                 using var command = connection.CreateCommand();
                 command.CommandText = @"
                     INSERT INTO Clients (Name, Details)
                     VALUES ($name, $details)";
                 command.Parameters.AddWithValue("$name", name);
                 command.Parameters.AddWithValue("$details", details ?? string.Empty);
-                command.ExecuteNonQuery();
-                connection.Close();
+                await command.ExecuteNonQueryAsync();
+                await connection.CloseAsync();
             }
             catch (ValidationException)
             {
@@ -134,12 +137,13 @@ namespace OrderApp.Services
             }
             catch (Exception ex)
             {
-                Debug.WriteLine($"DB Error in DeleteProductInOrder: {ex}");
+                Debug.WriteLine($"DB Error in AddClient: {ex}");
                 throw new DataAccessException("Could not Add Client", ex);
             }
             finally
             {
-                connection.Close();
+                if (connection.State != System.Data.ConnectionState.Closed)
+                    await connection.CloseAsync();
             }
         }
     }

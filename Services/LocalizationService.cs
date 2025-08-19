@@ -1,8 +1,6 @@
 ﻿using OrderApp.Exceptions;
 using OrderApp.Resources.Strings;
-using System.ComponentModel;
 using System.Diagnostics;
-using System.Globalization;
 
 namespace OrderApp.Services
 {

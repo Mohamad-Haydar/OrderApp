@@ -32,7 +32,7 @@ namespace OrderApp.Services
 
                 using var reader = await command.ExecuteReaderAsync();
                 // add all the orders to the order collection to see them in the view
-                while (reader.Read())
+                while (await reader.ReadAsync())
                 {
                     orders.Add(new Order
                     {
@@ -47,12 +47,13 @@ namespace OrderApp.Services
             }
             catch (Exception ex)
             {
-                Debug.WriteLine($"DB Error in DeleteProductInOrder: {ex}");
+                Debug.WriteLine($"DB Error in GetOrders: {ex}");
                 throw new DataAccessException("Could not retrieve orders.", ex);
             }
             finally
             {
-                await connection.CloseAsync();
+                if (connection.State != System.Data.ConnectionState.Closed)
+                    await connection.CloseAsync();
             }
         }
 
@@ -105,19 +106,18 @@ namespace OrderApp.Services
             }
             catch (Exception ex)
             {
-                Debug.WriteLine($"DB Error in DeleteProductInOrder: {ex}");
+                Debug.WriteLine($"DB Error in UpdateOrderAsync: {ex}");
                 throw new DataAccessException("Could not update order.", ex);
             }
-
         }
 
-        public async Task CreateOrder(int clientId, DateTime dateToPick )
+        public async Task CreateOrder(int clientId, DateTime dateToPick)
         {
             var connection = AdoDatabaseService.GetConnection();
             try
             {
                 // create the command to create new order
-                connection.Open();
+                await connection.OpenAsync();
                 using var command = connection.CreateCommand();
                 command.CommandText = @"INSERT INTO Orders (ClientId, Total, DateToPick, UserId)
                                         VALUES ($clientId, 0, $dateToPick, $userId);";
@@ -126,27 +126,28 @@ namespace OrderApp.Services
                 command.Parameters.AddWithValue("$dateToPick", dateToPick.ToString("yyyy-MM-dd"));
                 command.Parameters.AddWithValue("$userId", Preferences.Get("UserId", 0));
 
-                command.ExecuteNonQuery();
+                await command.ExecuteNonQueryAsync();
 
-                connection.Close();
+                await connection.CloseAsync();
             }
             catch (Exception ex)
             {
-                Debug.WriteLine($"DB Error in DeleteProductInOrder: {ex}");
+                Debug.WriteLine($"DB Error in CreateOrder: {ex}");
                 throw new DataAccessException("Could not create order.", ex);
             }
             finally
             {
-                connection.Close();
+                if (connection.State != System.Data.ConnectionState.Closed)
+                    await connection.CloseAsync();
             }
         }
 
         public async Task UpdateTotalAsync(float addedAmount, int orderId)
         {
-                var connection = AdoDatabaseService.GetConnection();
+            var connection = AdoDatabaseService.GetConnection();
             try
             {
-                connection.Open();
+                await connection.OpenAsync();
                 using var updateTotalCommand = connection.CreateCommand();
                 updateTotalCommand.CommandText = @"UPDATE Orders 
                                                     SET Total = Total + $added 
@@ -154,17 +155,18 @@ namespace OrderApp.Services
 
                 updateTotalCommand.Parameters.AddWithValue("$added", addedAmount);
                 updateTotalCommand.Parameters.AddWithValue("$orderId", orderId);
-                updateTotalCommand.ExecuteNonQuery();
-                connection.Close();
+                await updateTotalCommand.ExecuteNonQueryAsync();
+                await connection.CloseAsync();
             }
             catch (Exception ex)
             {
-                Debug.WriteLine($"DB Error in DeleteProductInOrder: {ex}");
+                Debug.WriteLine($"DB Error in UpdateTotalAsync: {ex}");
                 throw new DataAccessException("Could not update order total", ex);
             }
             finally
             {
-                connection.Close();
+                if (connection.State != System.Data.ConnectionState.Closed)
+                    await connection.CloseAsync();
             }
         }
 
@@ -173,22 +175,23 @@ namespace OrderApp.Services
             var connection = AdoDatabaseService.GetConnection();
             try
             {
-                connection.Open();
+                await connection.OpenAsync();
                 var updateOrderCommand = connection.CreateCommand();
                 updateOrderCommand.CommandText = @"UPDATE Orders SET Total = $total WHERE Id = $id";
                 updateOrderCommand.Parameters.AddWithValue("$total", order.Total);
                 updateOrderCommand.Parameters.AddWithValue("$id", order.Id);
-                updateOrderCommand.ExecuteNonQuery();
-                connection.Close();
+                await updateOrderCommand.ExecuteNonQueryAsync();
+                await connection.CloseAsync();
             }
             catch (Exception ex)
             {
-                Debug.WriteLine($"DB Error in DeleteProductInOrder: {ex}");
+                Debug.WriteLine($"DB Error in SetTotalAsync: {ex}");
                 throw new DataAccessException("Could not set order total.", ex);
             }
             finally
             {
-                connection.Close();
+                if (connection.State != System.Data.ConnectionState.Closed)
+                    await connection.CloseAsync();
             }
         }
 
@@ -197,25 +200,25 @@ namespace OrderApp.Services
             var connection = AdoDatabaseService.GetConnection();
             try
             {
-                connection.Open();
+                await connection.OpenAsync();
 
                 var command = connection.CreateCommand();
                 command.CommandText = "Delete FROM Orders WHERE Id=$id";
                 command.Parameters.AddWithValue("$id", orderId);
 
-                command.ExecuteNonQuery();
-                connection.Close();
+                await command.ExecuteNonQueryAsync();
+                await connection.CloseAsync();
             }
             catch (Exception ex)
             {
-                Debug.WriteLine($"DB Error in DeleteProductInOrder: {ex}");
+                Debug.WriteLine($"DB Error in DeleteOrder: {ex}");
                 throw new DataAccessException("Could not delete order.", ex);
             }
             finally
             {
-                connection.Close();
+                if (connection.State != System.Data.ConnectionState.Closed)
+                    await connection.CloseAsync();
             }
         }
-
     }
 }

@@ -24,7 +24,7 @@ namespace OrderApp.Services
             var connection = AdoDatabaseService.GetConnection();
             try
             {
-                connection.Open();
+                await connection.OpenAsync();
                 // check for the credentials in the database
                 using var command = connection.CreateCommand();
                 command.CommandText = @"SELECT * FROM Users 
@@ -35,9 +35,9 @@ namespace OrderApp.Services
                 command.Parameters.AddWithValue("$email", user.Email.Trim());
                 command.Parameters.AddWithValue("$password", hashedPassword);
 
-                using var reader = command.ExecuteReader();
+                using var reader = await command.ExecuteReaderAsync();
 
-                if (reader.Read())
+                if (await reader.ReadAsync())
                 {
                     int userId = reader.GetInt32(0);
                     string username = reader.GetString(1);
@@ -49,12 +49,12 @@ namespace OrderApp.Services
                     Preferences.Set("Username", username);
                     await SecureStorage.SetAsync("SavedEmail", email);
                     await SecureStorage.SetAsync("SavedPassword", password);
-                    connection.Close();
+                    await connection.CloseAsync();
                     return true;
                 }
                 else
                 {
-                    connection.Close();
+                    await connection.CloseAsync();
                     // No user Is found in the database or credentials are false
                     await Shell.Current.DisplayAlert("Login Failed", "Invalid credentials", "OK");
                     return false;
@@ -62,12 +62,13 @@ namespace OrderApp.Services
             }
             catch (Exception ex)
             {
-                Debug.WriteLine($"DB Error in DeleteProductInOrder: {ex}");
+                Debug.WriteLine($"DB Error in Login: {ex}");
                 throw new DataAccessException("Could not Login", ex);
             }
             finally
             {
-                connection.Close();
+                if (connection.State != System.Data.ConnectionState.Closed)
+                    await connection.CloseAsync();
             }
         }
     }

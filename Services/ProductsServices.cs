@@ -42,9 +42,9 @@ namespace OrderApp.Services
             }
             finally
             {
-                await connection.CloseAsync();
+                if (connection.State != System.Data.ConnectionState.Closed)
+                    await connection.CloseAsync();
             }
-            
         }
 
         public async Task<int> GetStuckQuantity(int productId)
@@ -53,30 +53,32 @@ namespace OrderApp.Services
 
             try
             {
-                connection.Open();
+                await connection.OpenAsync();
                 // CHECK the available stock first
                 using var checkStockCommand = connection.CreateCommand();
                 checkStockCommand.CommandText = @"SELECT Quantity FROM Products WHERE Id = $productId";
                 checkStockCommand.Parameters.AddWithValue("$productId", productId);
-                var availableStock = Convert.ToInt32(checkStockCommand.ExecuteScalar());
+                var availableStock = Convert.ToInt32(await checkStockCommand.ExecuteScalarAsync());
 
-                connection.Close();
+                await connection.CloseAsync();
 
                 return availableStock;
             }
             catch (Exception ex)
             {
                 // Log technical details
-                Debug.WriteLine($"DB Error: {ex}");
+                Debug.WriteLine($"DB Error in GetStuckQuantity: {ex}");
 
                 // Either throw a custom exception:
                 throw new DataAccessException("Could not retrieve products.", ex);
             }
             finally
             {
-                connection.Close();
+                if (connection.State != System.Data.ConnectionState.Closed)
+                    await connection.CloseAsync();
             }
         }
+        
         public async Task<ICollection<ProductsInOrders>> GetProductsInOrders(Order o)
         {
             var connection = AdoDatabaseService.GetConnection();
@@ -97,7 +99,7 @@ namespace OrderApp.Services
 
 
                 using var reader = await command.ExecuteReaderAsync();
-                while (reader.Read())
+                while (await reader.ReadAsync())
                 {
                     products.Add(new ProductsInOrders(o)
                     {
@@ -125,7 +127,8 @@ namespace OrderApp.Services
             }
             finally
             {
-                await connection.CloseAsync();
+                if (connection.State != System.Data.ConnectionState.Closed)
+                    await connection.CloseAsync();
             }
         }
 
@@ -138,13 +141,13 @@ namespace OrderApp.Services
             var connection = AdoDatabaseService.GetConnection();
             try
             {
-                connection.Open();
+                await connection.OpenAsync();
                 var updateProductCommand = connection.CreateCommand();
                 updateProductCommand.CommandText = @"UPDATE Products SET Quantity = Quantity - $difference WHERE Id = $productId";
                 updateProductCommand.Parameters.AddWithValue("$difference", difference);
                 updateProductCommand.Parameters.AddWithValue("$productId", productId);
-                updateProductCommand.ExecuteNonQuery();
-                connection.Close();
+                await updateProductCommand.ExecuteNonQueryAsync();
+                await connection.CloseAsync();
             }
             catch (Exception ex)
             {
@@ -153,7 +156,8 @@ namespace OrderApp.Services
             }
             finally
             {
-                connection.Close();
+                if (connection.State != System.Data.ConnectionState.Closed)
+                    await connection.CloseAsync();
             }
         }
 
@@ -165,7 +169,7 @@ namespace OrderApp.Services
             var connection = AdoDatabaseService.GetConnection();
             try
             {
-                connection.Open();
+                await connection.OpenAsync();
 
                 using var command = connection.CreateCommand();
                 command.CommandText = @"INSERT INTO Products (Name, Description, Price, Quantity)
@@ -176,8 +180,8 @@ namespace OrderApp.Services
                 command.Parameters.AddWithValue("$price", price);
                 command.Parameters.AddWithValue("$quantity", quantity);
 
-                command.ExecuteNonQuery();
-                connection.Close();
+                await command.ExecuteNonQueryAsync();
+                await connection.CloseAsync();
             }
             catch (ValidationException)
             {
@@ -190,7 +194,8 @@ namespace OrderApp.Services
             }
             finally
             {
-                connection.Close();
+                if (connection.State != System.Data.ConnectionState.Closed)
+                    await connection.CloseAsync();
             }
         }
 
@@ -199,13 +204,13 @@ namespace OrderApp.Services
             var connection = AdoDatabaseService.GetConnection();
             try
             {
-                connection.Open();
+                await connection.OpenAsync();
                 var updateProductCommand = connection.CreateCommand();
                 updateProductCommand.CommandText = @"UPDATE Products SET ImageUrl = $image WHERE Id = $productId";
                 updateProductCommand.Parameters.AddWithValue("$image", product.ImageUrl);
                 updateProductCommand.Parameters.AddWithValue("$productId", product.Id);
                 await updateProductCommand.ExecuteNonQueryAsync();
-                connection.Close();
+                await connection.CloseAsync();
             }
             catch (Exception ex)
             {
@@ -214,9 +219,9 @@ namespace OrderApp.Services
             }
             finally
             {
-                connection.Close();
+                if (connection.State != System.Data.ConnectionState.Closed)
+                    await connection.CloseAsync();
             }
         }
-
     }
 }
