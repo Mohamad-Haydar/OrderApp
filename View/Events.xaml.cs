@@ -11,10 +11,4 @@ public partial class Events : ContentPage
         InitializeComponent();
 		BindingContext = _eventsViewModel = viewModel;
 	}
-
-    protected override async void OnAppearing()
-    {
-        base.OnAppearing();
-        await _eventsViewModel.InitAsync();
-    }
 }

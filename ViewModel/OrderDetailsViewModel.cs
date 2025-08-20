@@ -96,7 +96,8 @@ namespace OrderApp.ViewModel
             }
         }
 
-        public async Task LoadDataAsync()
+        [RelayCommand]
+        public async Task InitAsync()
         {
             await Task.Yield();
             if (Order == null || _isDataLoaded) return;

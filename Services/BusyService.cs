@@ -11,6 +11,7 @@ namespace OrderApp.Services
     {
         private LoadingPopup? _loadingPopup;
         private bool _isPopupOpen = false;
+        private readonly SemaphoreSlim _popupSemaphore = new(1, 1);
         public static BusyService Instance { get; } = new();
 
         public BusyService()
@@ -26,11 +27,8 @@ namespace OrderApp.Services
         {
             try
             {
-                if (e.PropertyName != nameof(IsBusy))
+                if (e.PropertyName != nameof(IsBusy) || Shell.Current == null)
                     return;
-
-                if (Shell.Current == null)
-                    return; // not ready yet
 
                 if (Instance.IsBusy)
                 {
@@ -45,13 +43,10 @@ namespace OrderApp.Services
                         Shadow = null
                     });
                 }
-                else
+                else if (_isPopupOpen)
                 {
-                    if (_isPopupOpen)
-                    {
-                        await _loadingPopup.CloseAsync();
-                        _isPopupOpen = false;
-                    }
+                    _isPopupOpen = false;
+                    await _loadingPopup.CloseAsync();
                 }
             }
             catch (Exception ex)
@@ -60,6 +55,7 @@ namespace OrderApp.Services
 
                 throw;
             }
+           
 
         }
     }

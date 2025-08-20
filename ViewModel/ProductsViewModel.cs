@@ -107,7 +107,8 @@ namespace OrderApp.ViewModel
             }
         }
 
-        public async Task LoadProducts()
+        [RelayCommand]
+        public async Task InitAsync()
         {
             try
             {

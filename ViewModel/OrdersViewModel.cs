@@ -89,7 +89,8 @@ namespace OrderApp.ViewModel
         public static Func<Client, string> ClientDisplayProperty => c => c.Name;
 
         // Get the orders from the database and update the view
-        public async Task LoadOrders()
+        [RelayCommand]
+        public async Task InitAsync()
         {
             try
             {

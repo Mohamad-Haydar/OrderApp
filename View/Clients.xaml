@@ -1,13 +1,23 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+              xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
              x:Class="OrderApp.View.Clients"
              xmlns:model="clr-namespace:OrderApp.Model"
              xmlns:viewmodel="clr-namespace:OrderApp.ViewModel"
              xmlns:components="clr-namespace:OrderApp.Components"
              x:DataType="viewmodel:ClientsViewModel"
              BackgroundColor="{DynamicResource BackgroundColor}"
+             x:Name="clientspage"
              Title="Clients">
+
+    <ContentPage.Behaviors>
+        <toolkit:EventToCommandBehavior
+     EventName="Appearing"
+     Command="{Binding InitCommand}"
+     BindingContext="{Binding Source={x:Reference clientspage}, Path=BindingContext}"/>
+    </ContentPage.Behaviors>
+
     <Grid RowDefinitions="*, Auto" ColumnDefinitions="*, *" Padding="10,10,10,10">
 
        

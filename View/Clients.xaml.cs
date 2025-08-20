@@ -11,10 +11,4 @@ public partial class Clients : ContentPage
         InitializeComponent();
         BindingContext = _clientsViewModel = viewModel;
     }
-
-    protected override async void OnAppearing()
-    {
-        base.OnAppearing();
-        await _clientsViewModel.LoadDataAsync();
-    }
 }

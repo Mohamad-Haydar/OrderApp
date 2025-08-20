@@ -23,7 +23,7 @@ namespace OrderApp.ViewModel
         }
 
         [RelayCommand]
-        public async Task LoadDataAsync()
+        public async Task InitAsync()
         {
             try
             {

@@ -11,11 +11,4 @@ public partial class OrderDetails : ContentPage
         InitializeComponent();
         BindingContext = _orderDetailsViewModel = viewModel;
     }
-
-    protected override async void OnNavigatedTo(NavigatedToEventArgs args)
-    {
-        base.OnNavigatedTo(args);
-        await _orderDetailsViewModel.LoadDataAsync();
-    }
-
 }

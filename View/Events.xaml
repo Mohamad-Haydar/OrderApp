@@ -1,13 +1,22 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+              xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
              xmlns:scheduler="clr-namespace:Syncfusion.Maui.Scheduler;assembly=Syncfusion.Maui.Scheduler"
              x:Class="OrderApp.View.Events"
              xmlns:model="clr-namespace:OrderApp.Model"
              xmlns:viewmodel="clr-namespace:OrderApp.ViewModel"
              x:DataType="viewmodel:EventsViewModel"  
              BackgroundColor="{DynamicResource BackgroundColor}"
+               x:Name="eventspage"
              Title="Events">
+
+    <ContentPage.Behaviors>
+        <toolkit:EventToCommandBehavior
+     EventName="Appearing"
+     Command="{Binding InitCommand}"
+     BindingContext="{Binding Source={x:Reference eventspage}, Path=BindingContext}"/>
+    </ContentPage.Behaviors>
 
     <Grid RowDefinitions="400,Auto, *">
 

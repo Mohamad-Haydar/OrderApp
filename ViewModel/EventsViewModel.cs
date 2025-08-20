@@ -33,7 +33,7 @@ namespace OrderApp.ViewModel
             DateSelected = DateOnly.FromDateTime(DateTime.Now);
             Title = $"Events of {DateSelected}";
         }
-
+        [RelayCommand]
         public async Task InitAsync()
         {
             try

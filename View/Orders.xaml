@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+              xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
              x:Class="OrderApp.View.Orders"
              xmlns:model="clr-namespace:OrderApp.Model"
              xmlns:viewmodel="clr-namespace:OrderApp.ViewModel"
@@ -8,7 +9,15 @@
              xmlns:controls="clr-namespace:CraftUI.Library.Maui.Controls;assembly=CraftUI"
              x:DataType="viewmodel:OrdersViewModel"  
              Background="{DynamicResource BackgroundColor}"
+             x:Name="orderspage"
              Title="Orders">
+
+    <ContentPage.Behaviors>
+        <toolkit:EventToCommandBehavior
+        EventName="Appearing"
+        Command="{Binding InitCommand}"
+        BindingContext="{Binding Source={x:Reference orderspage}, Path=BindingContext}"/>
+    </ContentPage.Behaviors>
 
     <Grid RowDefinitions="Auto, *, Auto" ColumnDefinitions="*, Auto" Padding="10,10,10,10">
         <Label  Text="{DynamicResource OrderId}"

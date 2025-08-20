@@ -10,7 +10,7 @@
     <AbsoluteLayout BackgroundColor="Transparent">
         <ActivityIndicator 
             IsRunning="True"
-            Color="Black"
+            Color="{DynamicResource TextColor}"
             WidthRequest="50"
             HeightRequest="50"
             AbsoluteLayout.LayoutFlags="PositionProportional"
