@@ -13,7 +13,7 @@ namespace OrderApp.ViewModel
     {
         private EventsServices _eventsServices;
         private PopupService _popupService;
-        public ObservableCollection<EventModel> Events { get; set; }
+        public ObservableCollection<EventModel> Events { get; set; } = [];
         public ObservableCollection<EventModel> EventsOfDay { get; set; } = [];
 
         [ObservableProperty]
@@ -32,14 +32,14 @@ namespace OrderApp.ViewModel
             _popupService = ServiceHelper.Resolve<PopupService>();
             DateSelected = DateOnly.FromDateTime(DateTime.Now);
             Title = $"Events of {DateSelected}";
-            _ = InitAsync();
         }
 
-        private async Task InitAsync()
+        public async Task InitAsync()
         {
             try
             {
-                await SelectDateAync(DateOnly.FromDateTime(DateTime.Now));
+                await LoadAllEventsAsync();
+                await SelectDateAsync(DateOnly.FromDateTime(DateTime.Now));
             }
             catch (Exception)
             {
@@ -48,7 +48,27 @@ namespace OrderApp.ViewModel
             }
         }
 
-        public async Task SelectDateAync(DateOnly date)
+        private async Task LoadAllEventsAsync()
+        {
+            try
+            {
+                var eventsResult = await _eventsServices.GetAllEvents();
+                Events.Clear();
+                foreach (var item in eventsResult)
+                {
+                    item.Background = GetColorBrushForEventType(item.EventType);
+                    item.BackgroundStr = GetBackgroundStrForEventType(item.EventType);
+                    item.TextColor = GetColorForEventType(item.EventType);
+                    Events.Add(item);
+                }
+            }
+            catch (Exception)
+            {
+                await Shell.Current.DisplayAlert("Error", "An unexpected error occurred while loading events. Please try again.", "OK");
+            }
+        }
+
+        public async Task SelectDateAsync(DateOnly date)
         {
             try
             {
@@ -106,7 +126,7 @@ namespace OrderApp.ViewModel
         partial void OnDateTimeSelectedChanged(DateTime value)
         {
             // Whenever the user selects a date in the scheduler
-            _ = SelectDateAync(DateOnly.FromDateTime(value));
+            Task.Run(async () => await SelectDateAsync(DateOnly.FromDateTime(value))) ;
         }
 
         [RelayCommand]
@@ -115,7 +135,7 @@ namespace OrderApp.ViewModel
             try
             {
                 await _popupService.ShowAddEventPopupAsync();
-                await SelectDateAync(dateSelected);
+                await SelectDateAsync(dateSelected);
             }
             catch (Exception)
             {
@@ -130,7 +150,7 @@ namespace OrderApp.ViewModel
             {
                 if (eventModel == null) return;
                 await _popupService.ShowEditEventPopupAsync(eventModel);
-                await SelectDateAync(dateSelected);
+                await SelectDateAsync(dateSelected);
             }
             catch (Exception)
             {
@@ -162,7 +182,7 @@ namespace OrderApp.ViewModel
         {
             if (args.Date != null)
             {
-                await SelectDateAync(DateOnly.FromDateTime(args.Date.Value));
+                await SelectDateAsync(DateOnly.FromDateTime(args.Date.Value));
             }
         }
 

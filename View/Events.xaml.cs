@@ -9,7 +9,12 @@ public partial class Events : ContentPage
     public Events(EventsViewModel viewModel)
 	{
         InitializeComponent();
-		BindingContext = viewModel;
-        _eventsViewModel = viewModel;
+		BindingContext = _eventsViewModel = viewModel;
 	}
+
+    protected override async void OnAppearing()
+    {
+        base.OnAppearing();
+        await _eventsViewModel.InitAsync();
+    }
 }

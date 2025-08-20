@@ -18,7 +18,7 @@
         </Grid.Resources>
         
         <scheduler:SfScheduler x:Name="scheduler" 
-                       AppointmentsSource="{Binding EventsOfDay}"
+                       AppointmentsSource="{Binding Events}"
                        View="Month"
                        BackgroundColor="{DynamicResource White}"
                        SelectedDate="{Binding DateTimeSelected, Mode=TwoWay}"
