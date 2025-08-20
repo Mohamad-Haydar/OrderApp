@@ -22,19 +22,20 @@ namespace OrderApp.ViewModel
             _clientServices = ServiceHelper.Resolve<ClientServices>();
         }
 
+        [RelayCommand]
         public async Task LoadDataAsync()
         {
             try
             {
                 if (Clients.Count > 0) return;
                 IsBusy = true;
-                await Task.Run(async () =>
-                {
 
-                    var clientList = await _clientServices.GetClientsInfo();
+                var clientList = await _clientServices.GetClientsInfo();
+                await Task.Yield();
+                Clients = new ObservableCollection<Client>(clientList);
 
-                    Clients = new ObservableCollection<Client>(clientList);
-                });
+                IsBusy = false;
+
             }
             catch (Exception ex)
             {
@@ -45,6 +46,7 @@ namespace OrderApp.ViewModel
                 IsBusy = false;
             }
         }
+
 
 
         [RelayCommand]

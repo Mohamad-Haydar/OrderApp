@@ -1,6 +1,7 @@
 ﻿using CommunityToolkit.Maui.Views;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using CommunityToolkit.Mvvm.Messaging;
 using OrderApp.Helper;
 using OrderApp.Model;
 using OrderApp.Services;
@@ -46,10 +47,6 @@ namespace OrderApp.ViewModel
             startDate = oldEvent.From.Date;
             _oldEvent = oldEvent;
         }
-
-        [RelayCommand]
-        async Task Close() => await _popup.CloseAsync();
-
       
         [RelayCommand]
         async Task EditEventAsync()
@@ -82,11 +79,11 @@ namespace OrderApp.ViewModel
                     };
 
                     await LocalNotificationCenter.Current.Show(request);
+                    WeakReferenceMessenger.Default.Send(new ClosePopupMessage());
 
                 }
 
                 await Shell.Current.DisplayAlert("Success", "Event updated successfully!", "OK");
-                await _popup.CloseAsync();
             }
             catch (Exception)
             {

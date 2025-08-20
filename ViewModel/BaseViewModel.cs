@@ -56,6 +56,11 @@ namespace OrderApp.ViewModel
             _themeService.SetTheme(newTheme);
         }
 
+        partial void OnIsBusyChanged(bool value)
+        {
+            BusyService.Instance.IsBusy = value;
+        }
+
     }
 
 }

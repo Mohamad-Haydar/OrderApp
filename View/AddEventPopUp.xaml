@@ -5,6 +5,7 @@
                 xmlns:model="clr-namespace:OrderApp.Model"
                 xmlns:viewmodel="clr-namespace:OrderApp.ViewModel"
                 x:DataType="viewmodel:AddEventPopUpViewModel"
+               CanBeDismissedByTappingOutsideOfPopup="True"
                 x:Class="OrderApp.View.AddEventPopUp">
 
     <VerticalStackLayout Padding="20" Spacing="10">

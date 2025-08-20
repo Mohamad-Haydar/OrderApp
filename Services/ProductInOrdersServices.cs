@@ -1,4 +1,5 @@
-﻿using OrderApp.Exceptions;
+﻿using Microsoft.Data.Sqlite;
+using OrderApp.Exceptions;
 using OrderApp.Model;
 using OrderApp.Services.Interfaces;
 using System.Diagnostics;
@@ -7,27 +8,35 @@ namespace OrderApp.Services
 {
     public class ProductInOrdersServices : IProductInOrdersRepository
     {
-        public async Task UpdateProductsInOrders(int quantity, int id)
+        public async Task UpdateProductsInOrders(int quantity, int id, SqliteConnection? connection = null, SqliteTransaction? transaction = null)
         {
-            var connection = AdoDatabaseService.GetConnection();
+            bool FromOut = true;
             try
             {
-                await connection.OpenAsync();
+                if (connection == null)
+                {
+                    FromOut = false;
+                    connection = AdoDatabaseService.GetConnection();
+                    await connection.OpenAsync();
+                }
+                if (transaction == null)
+                    transaction = connection.BeginTransaction();
+
                 var updatePIOCommand = connection.CreateCommand();
                 updatePIOCommand.CommandText = @"UPDATE ProductsInOrders SET Quantity = $quantity WHERE Id = $id";
                 updatePIOCommand.Parameters.AddWithValue("$quantity", quantity);
                 updatePIOCommand.Parameters.AddWithValue("$id", id);
                 await updatePIOCommand.ExecuteNonQueryAsync();
-                await connection.CloseAsync();
             }
             catch (Exception ex)
             {
+                if (!FromOut) await transaction.RollbackAsync();
                 Debug.WriteLine($"DB Error in UpdateProductsInOrders: {ex}");
                 throw new DataAccessException("Could not update product quantity in order.", ex);
             }
             finally
             {
-                if (connection.State != System.Data.ConnectionState.Closed)
+                if (!FromOut && connection.State != System.Data.ConnectionState.Closed)
                     await connection.CloseAsync();
             }
         }
@@ -58,16 +67,22 @@ namespace OrderApp.Services
             }
         }
 
-        public async Task InsertProductIntoProductsInOrder(int orderId, int productId, int quantity)
+        public async Task InsertProductIntoProductsInOrder(int orderId, int productId, int quantity, SqliteConnection? connection = null, SqliteTransaction? transaction = null)
         {
-            var connection = AdoDatabaseService.GetConnection();
+            bool FromOut = true;
             try
             {
-                await connection.OpenAsync();
+                if (connection == null)
+                {
+                    FromOut = false;
+                    connection = AdoDatabaseService.GetConnection();
+                    await connection.OpenAsync();
+                }
+                if (transaction == null)
+                    transaction = connection.BeginTransaction();
                 // INSERT into ProductsInOrders asynchronously
                 using var insertCommand = connection.CreateCommand();
-                insertCommand.CommandText = @"
-            INSERT INTO ProductsInOrders (OrderId, ProductId, Quantity)
+                insertCommand.CommandText = @" INSERT INTO ProductsInOrders (OrderId, ProductId, Quantity)
             VALUES ($orderId, $productId, $quantity);";
 
                 insertCommand.Parameters.AddWithValue("$orderId", orderId);
@@ -75,17 +90,16 @@ namespace OrderApp.Services
                 insertCommand.Parameters.AddWithValue("$quantity", quantity);
 
                 await insertCommand.ExecuteNonQueryAsync();
-
-                await connection.CloseAsync();
             }
             catch (Exception ex)
             {
+                if (!FromOut) await transaction.RollbackAsync(); 
                 Debug.WriteLine($"DB Error in InsertProductIntoProductsInOrder: {ex}");
                 throw new DataAccessException("Could not insert product into order.", ex);
             }
             finally
             {
-                if (connection.State != System.Data.ConnectionState.Closed)
+                if (!FromOut && connection.State != System.Data.ConnectionState.Closed)
                     await connection.CloseAsync();
             }
         }

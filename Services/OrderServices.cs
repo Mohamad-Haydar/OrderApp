@@ -1,4 +1,5 @@
-﻿using OrderApp.Exceptions;
+﻿using Microsoft.Data.Sqlite;
+using OrderApp.Exceptions;
 using OrderApp.Model;
 using OrderApp.Services.Interfaces;
 using System.Collections.ObjectModel;
@@ -57,10 +58,19 @@ namespace OrderApp.Services
             }
         }
 
-        public async Task UpdateOrderAsync(ObservableCollection<ProductsInOrders> productsInOrders)
+        public async Task UpdateOrderAsync(ObservableCollection<ProductsInOrders> productsInOrders, SqliteConnection? connection = null, SqliteTransaction? transaction = null)
         {
+            bool FromOut = true;
             try
             {
+                if (connection == null)
+                {
+                    FromOut = false;
+                    connection = AdoDatabaseService.GetConnection();
+                    await connection.OpenAsync();
+                }
+                if (transaction == null)
+                    transaction = connection.BeginTransaction();
                 // ToList() makes a snapshot copy, so I can safely remove from the original collection while looping
                 foreach (var item in productsInOrders.ToList())
                 {
@@ -86,15 +96,15 @@ namespace OrderApp.Services
                     if (oldQuantity < 1)
                     {
                         // INSERT into ProductsInOrders
-                        await _productInOrdersServices.InsertProductIntoProductsInOrder(item.OrderId, item.Product.Id, item.Quantity);
+                        await _productInOrdersServices.InsertProductIntoProductsInOrder(item.OrderId, item.Product.Id, item.Quantity, connection, transaction);
                     }
                     else
                     {
-                        await _productInOrdersServices.UpdateProductsInOrders(item.Quantity, item.Id);
+                        await _productInOrdersServices.UpdateProductsInOrders(item.Quantity, item.Id, connection, transaction);
                     }
 
                     // Step 4: Update Product stock
-                    await _productServices.UpdateProductStock(difference, item.Product.Id);
+                    await _productServices.UpdateProductStock(difference, item.Product.Id, connection, transaction);
 
                     // Step 5: if product in order is 0 remove the product from this order
                     if (item.Quantity == 0)
@@ -106,8 +116,14 @@ namespace OrderApp.Services
             }
             catch (Exception ex)
             {
+                if(!FromOut) await transaction.RollbackAsync();
                 Debug.WriteLine($"DB Error in UpdateOrderAsync: {ex}");
                 throw new DataAccessException("Could not update order.", ex);
+            }
+            finally
+            {
+                if (!FromOut && connection.State != System.Data.ConnectionState.Closed)
+                    await connection.CloseAsync();
             }
         }
 
@@ -170,27 +186,36 @@ namespace OrderApp.Services
             }
         }
 
-        public async Task SetTotalAsync(Order order)
+        public async Task SetTotalAsync(Order order, SqliteConnection? connection = null, SqliteTransaction? transaction = null)
         {
-            var connection = AdoDatabaseService.GetConnection();
+            bool FromOut = true;
             try
             {
+                if (connection == null)
+                {
+                    FromOut = false;
+                    connection = AdoDatabaseService.GetConnection();
+                    await connection.OpenAsync();
+                }
                 await connection.OpenAsync();
+                if (transaction == null)
+                    transaction = connection.BeginTransaction();
+
                 var updateOrderCommand = connection.CreateCommand();
                 updateOrderCommand.CommandText = @"UPDATE Orders SET Total = $total WHERE Id = $id";
                 updateOrderCommand.Parameters.AddWithValue("$total", order.Total);
                 updateOrderCommand.Parameters.AddWithValue("$id", order.Id);
                 await updateOrderCommand.ExecuteNonQueryAsync();
-                await connection.CloseAsync();
             }
             catch (Exception ex)
             {
+                await transaction?.RollbackAsync();
                 Debug.WriteLine($"DB Error in SetTotalAsync: {ex}");
                 throw new DataAccessException("Could not set order total.", ex);
             }
             finally
             {
-                if (connection.State != System.Data.ConnectionState.Closed)
+                if (!FromOut && connection.State != System.Data.ConnectionState.Closed)
                     await connection.CloseAsync();
             }
         }

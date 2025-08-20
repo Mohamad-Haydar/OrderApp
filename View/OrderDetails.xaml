@@ -167,12 +167,5 @@
         <Button Text="Update" Grid.Row="5" Grid.Column="0" WidthRequest="100" HeightRequest="0" HorizontalOptions="Center"
                 FontSize="15" Padding="0" Command="{Binding UpdateOrderCommand}" />
 
-        <ActivityIndicator IsRunning="{Binding IsBusy}"
-                            IsVisible="{Binding IsBusy}"
-                            Grid.RowSpan="6"
-                            Grid.ColumnSpan="2"
-                            WidthRequest="150"
-                            HeightRequest="150"/>
-
     </Grid>
 </ContentPage>

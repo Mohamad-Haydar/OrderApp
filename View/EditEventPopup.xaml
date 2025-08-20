@@ -25,7 +25,7 @@
 
         <HorizontalStackLayout Spacing="20" HorizontalOptions="Center">
             <Button Text="Add" Command="{Binding EditEventCommand}" />
-            <Button Text="Cancel" Command="{Binding CloseCommand}" />
+            <Button Text="Cancel" Clicked="CloseButton_Clicked" WidthRequest="90"/>
         </HorizontalStackLayout>
     </VerticalStackLayout>
 </toolkit:Popup>

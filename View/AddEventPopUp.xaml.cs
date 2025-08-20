@@ -14,7 +14,7 @@ public partial class AddEventPopUp : Popup
         InitializeComponent();
         this.BindingContext = new AddEventPopUpViewModel();
         // Prevent the popup from closing when tapping outside
-        CanBeDismissedByTappingOutsideOfPopup = false;
+       // CanBeDismissedByTappingOutsideOfPopup = false;
 
         // Subscribe to close message
         WeakReferenceMessenger.Default.Register<ClosePopupMessage>(this, async (r, m) =>

@@ -1,11 +1,16 @@
-﻿using OrderApp.Services;
-using OrderApp.ViewModel;
+﻿using CommunityToolkit.Maui;
+using CommunityToolkit.Maui.Extensions;
+using Microsoft.Maui.Controls.Shapes;
+using OrderApp.Components;
+using OrderApp.Helper;
+using OrderApp.Services;
 
 namespace OrderApp
 {
     public partial class App : Application
     {
         public static IServiceProvider Services { get; private set; }
+       
         public App(IServiceProvider serviceProvider)
         {
             InitializeComponent();

@@ -12,6 +12,8 @@ using Plugin.LocalNotification;
 using SkiaSharp.Views.Maui.Controls.Hosting;
 using Syncfusion.Maui.Core.Hosting;
 using Microsoft.Maui.Hosting;
+using OrderApp.Components;
+
 
 
 
@@ -70,6 +72,8 @@ namespace OrderApp
             builder.Services.AddSingleton<ProductsViewModel>();
             builder.Services.AddSingleton<OrdersViewModel>();
             builder.Services.AddSingleton<LoginViewModel>();
+            builder.Services.AddSingleton<LoadingPopup>();
+            
 
             // popup view models
             builder.Services.AddTransient<OrderDetailsViewModel>();

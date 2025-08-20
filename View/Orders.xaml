@@ -4,12 +4,13 @@
              x:Class="OrderApp.View.Orders"
              xmlns:model="clr-namespace:OrderApp.Model"
              xmlns:viewmodel="clr-namespace:OrderApp.ViewModel"
+             xmlns:component="clr-namespace:OrderApp.Components"
              xmlns:controls="clr-namespace:CraftUI.Library.Maui.Controls;assembly=CraftUI"
              x:DataType="viewmodel:OrdersViewModel"  
              Background="{DynamicResource BackgroundColor}"
              Title="Orders">
 
-      <Grid RowDefinitions="Auto, *, Auto" ColumnDefinitions="*, Auto" Padding="10,10,10,10">
+    <Grid RowDefinitions="Auto, *, Auto" ColumnDefinitions="*, Auto" Padding="10,10,10,10">
         <Label  Text="{DynamicResource OrderId}"
                 TextColor="{DynamicResource TextColor}"
                 VerticalOptions="Center" 
@@ -65,20 +66,20 @@
                                             </FormattedString>
                                         </Label.FormattedText>
                                     </Label>
-                                    </VerticalStackLayout>
-                                    
-                                    <VerticalStackLayout Grid.Column="1" VerticalOptions="Center" Spacing="10">
-                                        <Button BackgroundColor="Red" WidthRequest="100" 
+                                </VerticalStackLayout>
+
+                                <VerticalStackLayout Grid.Column="1" VerticalOptions="Center" Spacing="10">
+                                    <Button BackgroundColor="Red" WidthRequest="100" 
                                                 Text="{DynamicResource Delete}" 
                                         TextColor="White" CommandParameter="{Binding .}"
                                         Command="{Binding x:DataType='viewmodel:OrdersViewModel',Source={RelativeSource AncestorType={x:Type viewmodel:OrdersViewModel}}, Path=DeleteOrderCommand}"/>
 
-                                        <Button  WidthRequest="100" 
+                                    <Button  WidthRequest="100" 
                                                  Text="{DynamicResource Details}" TextColor="White"
                                         CommandParameter="{Binding .}"
                                         Command="{Binding x:DataType='viewmodel:OrdersViewModel',Source={RelativeSource AncestorType={x:Type viewmodel:OrdersViewModel}}, Path=GoToOrderDetailsCommand}"/>
-                                    </VerticalStackLayout>
-                               
+                                </VerticalStackLayout>
+
                             </Grid>
                         </Border>
                     </Grid>
@@ -86,14 +87,6 @@
             </CollectionView.ItemTemplate>
 
         </CollectionView>
-
-        <ActivityIndicator IsRunning="{Binding IsBusy}"
-                     IsVisible="{Binding IsBusy}"
-                     Grid.RowSpan="3"
-                     Grid.ColumnSpan="2"
-                     WidthRequest="150"
-                     HeightRequest="150"/>
-
 
         <Button Text="+"
                 Grid.Row="1" 
@@ -105,7 +98,7 @@
                  VerticalOptions="End"
                  HorizontalOptions="End"
                 Command="{Binding AddOrderCommand}"/>
-            <!--<controls:CfMultiPickerPopup Label="Contry" Grid.Row="2"
+        <!--<controls:CfMultiPickerPopup Label="Contry" Grid.Row="2"
                     SelectedItems="{Binding SelectedClient, Mode=TwoWay}"
                     SelectionChangedCommand="{Binding CountriesChangedCommand}"
                     ItemsSource="{Binding Result}"

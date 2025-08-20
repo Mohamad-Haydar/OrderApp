@@ -76,13 +76,5 @@
         <Button Margin="20"  Text="{DynamicResource Login}" Grid.Row="2" Grid.ColumnSpan="2" 
                 WidthRequest="200" HorizontalOptions="Center" BackgroundColor="{DynamicResource ButtonColor}" TextColor="{DynamicResource ButtonTextColor}" 
                 Command="{Binding LoginCommand}" />
-
-        <ActivityIndicator IsRunning="{Binding IsBusy}"
-                   IsVisible="{Binding IsBusy}"
-                   Grid.RowSpan="2"
-                   Grid.ColumnSpan="2"
-                   WidthRequest="150"
-                   HeightRequest="150"
-                   />
     </Grid>
 </ContentPage>

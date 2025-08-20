@@ -16,4 +16,9 @@ public partial class EditEventPopup : Popup
         // Prevent the popup from closing when tapping outside
         CanBeDismissedByTappingOutsideOfPopup = false;
     }
+
+    private async void CloseButton_Clicked(object sender, EventArgs e)
+    {
+        await this.CloseAsync();
+    }
 }

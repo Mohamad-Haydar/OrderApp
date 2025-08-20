@@ -10,6 +10,7 @@
      Shell.TitleColor="{DynamicResource TextColor}"
      Shell.BackgroundColor="{DynamicResource BackgroundColor}"
      Shell.ForegroundColor="{DynamicResource TextColor}" 
+    
     FlowDirection="{Binding AppFlowDirection}"
     Title="OrderApp">
     

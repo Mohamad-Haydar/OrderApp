@@ -1,4 +1,5 @@
-﻿using OrderApp.Exceptions;
+﻿using Microsoft.Data.Sqlite;
+using OrderApp.Exceptions;
 using OrderApp.Model;
 using OrderApp.Services.Interfaces;
 using System.Collections.ObjectModel;
@@ -132,31 +133,39 @@ namespace OrderApp.Services
             }
         }
 
-        public async Task UpdateProductStock(int difference, int productId)
+        public async Task UpdateProductStock(int difference, int productId, SqliteConnection? connection = null, SqliteTransaction? transaction = null)
         {
             /*
              * when the difference is negative that means i am returning product to the stock so 
              * the stock increase
             */
-            var connection = AdoDatabaseService.GetConnection();
+            bool FromOut = true;
             try
             {
-                await connection.OpenAsync();
+                if (connection == null)
+                {
+                    FromOut = false;
+                    connection = AdoDatabaseService.GetConnection();
+                    await connection.OpenAsync();
+                }
+                if (transaction == null)
+                    transaction = connection.BeginTransaction();
+
                 var updateProductCommand = connection.CreateCommand();
                 updateProductCommand.CommandText = @"UPDATE Products SET Quantity = Quantity - $difference WHERE Id = $productId";
                 updateProductCommand.Parameters.AddWithValue("$difference", difference);
                 updateProductCommand.Parameters.AddWithValue("$productId", productId);
                 await updateProductCommand.ExecuteNonQueryAsync();
-                await connection.CloseAsync();
             }
             catch (Exception ex)
             {
+                if (!FromOut) await transaction.RollbackAsync();
                 Debug.WriteLine($"DB Error in UpdateProductStock: {ex}");
                 throw new DataAccessException("Failed to update product stock.", ex);
             }
             finally
             {
-                if (connection.State != System.Data.ConnectionState.Closed)
+                if (!FromOut && connection.State != System.Data.ConnectionState.Closed)
                     await connection.CloseAsync();
             }
         }

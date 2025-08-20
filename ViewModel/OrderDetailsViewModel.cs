@@ -29,6 +29,7 @@ namespace OrderApp.ViewModel
         public ProductsServices _productService;
         private readonly ProductInOrdersServices _productInOrdersServices;
         public OrderServices _orderServices;
+        private bool _isDataLoaded = false;
 
         public OrderDetailsViewModel() 
         {
@@ -98,12 +99,13 @@ namespace OrderApp.ViewModel
         public async Task LoadDataAsync()
         {
 
-            if (Order == null) return;
+            if (Order == null || _isDataLoaded) return;
 
             try
             {
                 IsBusy = true;
-                await Task.Yield();
+                _isDataLoaded = true;
+                await Task.Delay(700);
 
                 var productsres = await _productService.GetProducts();
                 var productsIOres = await _productService.GetProductsInOrders(Order);
@@ -168,18 +170,26 @@ namespace OrderApp.ViewModel
         [RelayCommand]
         async Task UpdateOrderAsync()
         {
+            var connection = AdoDatabaseService.GetConnection();
+            await connection.OpenAsync();
+            var transaction = connection.BeginTransaction();
             try
             {
-                await _orderServices.UpdateOrderAsync(Order.Products);
-                // to see it in the UI
-                Order.CalculateTotal();
+
+                await _orderServices.UpdateOrderAsync(Order.Products, connection,  transaction);
                 // TO update it in the database
-                await _orderServices.SetTotalAsync(Order);
+                await _orderServices.SetTotalAsync(Order, connection, transaction);
                 await Shell.Current.DisplayAlert("Success", "The product is updated successfully", "Ok");
             }
             catch (Exception)
             {
+                await transaction?.RollbackAsync();
                 await Shell.Current.DisplayAlert("Error", "An unexpected error occurred while updating the order. Please try again.", "OK");
+            }
+            finally
+            {
+                await transaction?.CommitAsync();
+                await connection.CloseAsync();
             }
         }
     }

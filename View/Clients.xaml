@@ -4,6 +4,7 @@
              x:Class="OrderApp.View.Clients"
              xmlns:model="clr-namespace:OrderApp.Model"
              xmlns:viewmodel="clr-namespace:OrderApp.ViewModel"
+             xmlns:components="clr-namespace:OrderApp.Components"
              x:DataType="viewmodel:ClientsViewModel"
              BackgroundColor="{DynamicResource BackgroundColor}"
              Title="Clients">
@@ -15,6 +16,8 @@
                Grid.ColumnSpan="2"
                ItemsSource="{Binding Clients}"
                SelectionMode="None"
+                ItemSizingStrategy="MeasureFirstItem"
+                ItemsUpdatingScrollMode="KeepScrollOffset" 
                Grid.Row="0">
                 <CollectionView.ItemTemplate>
                     <DataTemplate x:DataType="model:Client">
@@ -47,5 +50,7 @@
 
             </CollectionView>
         <Button Grid.Row="2" Grid.Column="0" Text="Add new Client" Command="{Binding AddClientCommand }"/>
+
     </Grid>
+        
 </ContentPage>

@@ -6,16 +6,15 @@ namespace OrderApp.View;
 public partial class Clients : ContentPage
 {
     private ClientsViewModel _clientsViewModel;
-    public Clients(ClientsViewModel viewModel, ClientsViewModel clientsViewModel)
+    public Clients(ClientsViewModel viewModel)
     {
         InitializeComponent();
-        BindingContext = viewModel;
-        _clientsViewModel = clientsViewModel;
+        BindingContext = _clientsViewModel = viewModel;
     }
 
-    protected override async void OnNavigatedTo(NavigatedToEventArgs args)
+    protected override async void OnAppearing()
     {
-        base.OnNavigatedTo(args);
+        base.OnAppearing();
         await _clientsViewModel.LoadDataAsync();
     }
 }
