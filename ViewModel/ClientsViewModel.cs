@@ -27,14 +27,12 @@ namespace OrderApp.ViewModel
         {
             try
             {
+                await Task.Yield();
                 if (Clients.Count > 0) return;
                 IsBusy = true;
 
                 var clientList = await _clientServices.GetClientsInfo();
-                await Task.Yield();
                 Clients = new ObservableCollection<Client>(clientList);
-
-                IsBusy = false;
 
             }
             catch (Exception ex)

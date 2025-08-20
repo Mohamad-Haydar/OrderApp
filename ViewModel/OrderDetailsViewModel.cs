@@ -98,7 +98,7 @@ namespace OrderApp.ViewModel
 
         public async Task LoadDataAsync()
         {
-
+            await Task.Yield();
             if (Order == null || _isDataLoaded) return;
 
             try

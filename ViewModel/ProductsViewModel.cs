@@ -111,10 +111,10 @@ namespace OrderApp.ViewModel
         {
             try
             {
+                await Task.Yield();
                 if(Products.Count > 0)
                     return;
                 IsBusy = true;
-                await Task.Yield();
                 var res = await _productsServices.GetProducts();
                 Products = new ObservableCollection<Product>(res);
             }
