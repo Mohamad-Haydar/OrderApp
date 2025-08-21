@@ -27,7 +27,8 @@
                 <Entry Text="{Binding User.UserName}" PlaceholderColor="{DynamicResource TextColor}"  Placeholder="{DynamicResource UserName}"/>
 
                 <Label Text="{DynamicResource Email}" Margin="0,10,0,0"/>
-                <Entry Text="{Binding User.Email}"  PlaceholderColor="{DynamicResource NotSelectedColor}"  Placeholder="{DynamicResource Email}"/>
+                <Entry Keyboard="Email" Text="{Binding User.Email}"  PlaceholderColor="{DynamicResource NotSelectedColor}"  Placeholder="{DynamicResource Email}"/>
+                <Label Text="{Binding User.EmailError}" TextColor="Red"/>
 
                 <Label Text="{DynamicResource Password}" Margin="0,10,0,0"/>
                 <!--<Entry Keyboard="Password" Text="{Binding User.Password}"  PlaceholderColor="{DynamicResource NotSelectedColor}"  Placeholder="{DynamicResource Password}"/>-->

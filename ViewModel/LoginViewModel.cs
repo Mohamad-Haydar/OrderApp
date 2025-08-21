@@ -102,6 +102,10 @@ namespace OrderApp.ViewModel
         {
             try
             {
+                if (!User.ValidateEmail())
+                {
+                    return;
+                }
                 // try to login with biometric
                 var res = await TryAutoLoginWithBiometricsAsync();
                 if(res)

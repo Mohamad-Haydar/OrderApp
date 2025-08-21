@@ -48,11 +48,43 @@ namespace OrderApp.Services
                 command.CommandText += indexProductsInOrdersOrderId + indexProductsInOrdersProductId + indexOrdersUserId + indexOrdersClientId;
                 command.ExecuteNonQuery();
                 connection.Close();
+
+                RegisterUser("admin", "admin@gmail.com","1234");
             }
             catch (Exception ex)
             {
                 Debug.WriteLine($"DB Error in DeleteProductInOrder: {ex}");
                 throw new DataAccessException("Could not Initialize the database.", ex);
+            }
+        }
+
+        public static void RegisterUser(string username, string email, string password)
+        {
+            using var connection = GetConnection();
+            try
+            {
+                connection.Open();
+
+                // Hash the password using your helper
+                var helpers = new OrderApp.Helper.Helpers();
+                string hashedPassword = helpers.ComputeSha256Hash(password);
+
+                using var insertCmd = connection.CreateCommand();
+                insertCmd.CommandText = @" INSERT INTO Users (Username, Email, Password) VALUES ($username, $email, $password);";
+                insertCmd.Parameters.AddWithValue("$username", username);
+                insertCmd.Parameters.AddWithValue("$email", email);
+                insertCmd.Parameters.AddWithValue("$password", hashedPassword);
+
+                insertCmd.ExecuteNonQuery();
+            }
+            catch (SqliteException ex) when (ex.SqliteErrorCode == 19)
+            {
+                // User already exists (UNIQUE constraint failed)
+                // You may want to handle this gracefully
+            }
+            finally
+            {
+                connection.Close();
             }
         }
 
