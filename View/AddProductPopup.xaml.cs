@@ -8,10 +8,10 @@ namespace OrderApp.View;
 
 public partial class AddProductPopup : Popup
 {
-    public AddProductPopup(ObservableCollection<Product> products)
+    public AddProductPopup(ObservableCollection<Product> products, Product product, int mode)
     {
         InitializeComponent();
-        this.BindingContext = new AddProductPopupViewModel(products);
+        this.BindingContext = new AddProductPopupViewModel(products, product, mode);
         // Prevent the popup from closing when tapping outside
         CanBeDismissedByTappingOutsideOfPopup = false;
 

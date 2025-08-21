@@ -112,7 +112,7 @@ namespace OrderApp.ViewModel
         {
             try
             {
-                await _popupService.ShowEditProductPopupAsync(product);
+                await _popupService.ShowEditProductPopupAsync(Products, product);
             }
             catch (Exception)
             {

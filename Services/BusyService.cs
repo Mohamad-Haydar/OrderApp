@@ -42,7 +42,7 @@ namespace OrderApp.Services
                         },
                         Shadow = null
                     });
-                    await Task.Yield();
+                    await Task.Delay(500);
                 }
                 else if (_isPopupOpen)
                 {

@@ -7,20 +7,30 @@
                 x:DataType="viewmodel:AddProductPopupViewModel"
                 x:Class="OrderApp.View.AddProductPopup">
 
-    <VerticalStackLayout Spacing="7">
+    <VerticalStackLayout Spacing="5">
        
         <Label Text="Add New Product" FontAttributes="Bold" FontSize="20" />
-        <Label Text="Name" FontAttributes="Bold" FontSize="12" />
-        <Entry Placeholder="Name" Text="{Binding Product.Name}"/>
+        <Label Text="Name" FontAttributes="Bold" FontSize="12" Margin="0"/>
+        <Entry Placeholder="Name" Text="{Binding Product.Name}" Margin="0"/>
+        
         <Label Text="Description" FontAttributes="Bold" FontSize="12" />
         <Entry Placeholder="Description" Text="{Binding Product.Description}"/>
+        
         <Label Text="Price" FontAttributes="Bold" FontSize="12" />
         <Entry Placeholder="Price" Text="{Binding Product.Price}"/>
+        
         <Label Text="Quantity" FontAttributes="Bold" FontSize="12" />
-        <Entry Placeholder="Quantity" Text="{Binding Product.Quantity}"/>
+        <Entry Placeholder="Quantity" Text="{Binding Product.Quantity}" />
+       
+        
+        <Image Source="{Binding Product.ImageUrl}" WidthRequest="150" HeightRequest="150" BackgroundColor="Gray"/>
+        <Button Text="Select Image" Margin="0,5"
+                Command="{Binding SelectImageCommand}"
+                CommandParameter="{Binding Product}"/>
+        
         <!--<Button Text="Save" Command="{Binding AddProductCommand}" />-->
         <HorizontalStackLayout Spacing="10" HorizontalOptions="Center">
-            <Button Text="Save"  Command="{Binding AddProductCommand}"/>
+            <Button Text="Save"  Command="{Binding SaveProductCommand}"/>
             <Button Text="Close" Clicked="CloseButton_Clicked" />
         </HorizontalStackLayout>
     </VerticalStackLayout>

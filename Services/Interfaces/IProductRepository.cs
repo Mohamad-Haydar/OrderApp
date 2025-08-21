@@ -14,7 +14,7 @@ namespace OrderApp.Services.Interfaces
 
         Task UpdateProductStock(int difference, int productId, SqliteConnection? connection = null, SqliteTransaction? transaction = null);
 
-        Task AddProductAsync(string name, string description, float price, int quantity);
+        Task AddProductAsync(string name, string description, float price, int quantity, string imageUrl);
 
         Task UpdateProductImage(Product product);
     }

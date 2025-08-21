@@ -142,11 +142,12 @@ namespace OrderApp.Services
             {
                 await connection.OpenAsync();
                 var updateProductCommand = connection.CreateCommand();
-                updateProductCommand.CommandText = @"UPDATE Products SET Name = $name, Description = $description, Price = $price, Quantity = $quantity WHERE Id = $id";
+                updateProductCommand.CommandText = @"UPDATE Products SET Name = $name, Description = $description, Price = $price, Quantity = $quantity, ImageUrl = $imageUrl WHERE Id = $id";
                 updateProductCommand.Parameters.AddWithValue("$name", product.Name);
                 updateProductCommand.Parameters.AddWithValue("$description", product.Description ?? string.Empty);
                 updateProductCommand.Parameters.AddWithValue("$price", product.Price);
                 updateProductCommand.Parameters.AddWithValue("$quantity", product.Quantity);
+                updateProductCommand.Parameters.AddWithValue("$imageUrl", product.ImageUrl);
                 updateProductCommand.Parameters.AddWithValue("$id", product.Id);
                 
                 await updateProductCommand.ExecuteNonQueryAsync();
@@ -214,7 +215,7 @@ namespace OrderApp.Services
             }
         }
 
-        public async Task AddProductAsync(string name, string description, float price, int quantity)
+        public async Task AddProductAsync(string name, string description, float price, int quantity, string imageUrl)
         {
             if (string.IsNullOrEmpty(name) || string.IsNullOrEmpty(description) || price <= 0 || quantity <= 0)
                 throw new ValidationException("All product fields must be filled and valid.");
@@ -225,13 +226,14 @@ namespace OrderApp.Services
                 await connection.OpenAsync();
 
                 using var command = connection.CreateCommand();
-                command.CommandText = @"INSERT INTO Products (Name, Description, Price, Quantity)
-                VALUES ($name, $description, $price, $quantity);";
+                command.CommandText = @"INSERT INTO Products (Name, Description, Price, Quantity, ImageUrl)
+                VALUES ($name, $description, $price, $quantity, $imageUrl);";
 
                 command.Parameters.AddWithValue("$name", name);
                 command.Parameters.AddWithValue("$description", description ?? string.Empty);
                 command.Parameters.AddWithValue("$price", price);
                 command.Parameters.AddWithValue("$quantity", quantity);
+                command.Parameters.AddWithValue("$imageUrl", imageUrl);
 
                 await command.ExecuteNonQueryAsync();
                 await connection.CloseAsync();

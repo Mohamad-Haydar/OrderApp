@@ -18,7 +18,7 @@
      BindingContext="{Binding Source={x:Reference clientspage}, Path=BindingContext}"/>
     </ContentPage.Behaviors>
 
-    <Grid RowDefinitions="*, Auto" ColumnDefinitions="*, *" Padding="10,10,10,10">
+    <Grid  Padding="10,10,10,10">
 
        
             <CollectionView 
@@ -59,7 +59,16 @@
                 </CollectionView.ItemTemplate>
 
             </CollectionView>
-        <Button Grid.Row="2" Grid.Column="0" Text="Add new Client" Command="{Binding AddClientCommand }"/>
+
+        <Button Text="+"
+            FontSize="30"
+             WidthRequest="60"
+             HeightRequest="60"
+             CornerRadius="30"
+             Margin="0,0,10,10"
+             VerticalOptions="End"
+             HorizontalOptions="End"
+            Command="{Binding AddClientCommand}"/>
 
     </Grid>
         

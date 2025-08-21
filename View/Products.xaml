@@ -17,7 +17,7 @@
      BindingContext="{Binding Source={x:Reference productspage}, Path=BindingContext}"/>
     </ContentPage.Behaviors>
 
-    <Grid RowDefinitions=" *, Auto" ColumnDefinitions="*, *" Padding="10,10,10,10" >
+    <Grid Padding="10,10,10,10" >
 
         <Grid.Resources>
             <Style TargetType="Label">
@@ -42,16 +42,10 @@
                                 <VerticalStackLayout Grid.Column="1" VerticalOptions="Center" HorizontalOptions="Start">
                                     <Label Text="{Binding Name}" HorizontalOptions="Start" WidthRequest="130" FontSize="20"/>
                                     <Label Text="{Binding Description}"  HorizontalOptions="Start" WidthRequest="130" LineBreakMode="TailTruncation"  FontSize="12"/>
-                                     <Label Text="{Binding Quantity, StringFormat='Quantity: {0}'}" FontSize="12"/>
-                                    <HorizontalStackLayout Spacing="10">
-                                        <Button Text="Select Image" Margin="0,5"
-                                            Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodel:ProductsViewModel}}, Path=SelectImageCommand}"
-                                            CommandParameter="{Binding .}"/>
-
+                                    <Label Text="{Binding Quantity, StringFormat='Quantity: {0}'}" FontSize="12"/>
                                     <Button Text="Edit" Margin="0,5"
                                          Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodel:ProductsViewModel}}, Path=EditProductCommand}"
                                          CommandParameter="{Binding .}"/>
-                                    </HorizontalStackLayout>
                                 </VerticalStackLayout>
                             </Grid>
                         </Border>
@@ -60,6 +54,15 @@
             </CollectionView.ItemTemplate>
 
         </CollectionView>
-        <Button Grid.Row="2" Grid.Column="0" Text="Add new Product" Command="{Binding AddProductCommand }"/>
+
+        <Button Text="+"
+         FontSize="30"
+          WidthRequest="60"
+          HeightRequest="60"
+          CornerRadius="30"
+          Margin="0,0,10,10"
+          VerticalOptions="End"
+          HorizontalOptions="End"
+         Command="{Binding AddProductCommand}"/>
     </Grid>
 </ContentPage>

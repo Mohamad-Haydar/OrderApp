@@ -28,7 +28,13 @@ namespace OrderApp.Services
 
         public async Task ShowAddProductPopupAsync(ObservableCollection<Product> products)
         {
-            var popup = new AddProductPopup(products);
+            var popup = new AddProductPopup(products, null, 0);
+            await _mainPage.ShowPopupAsync(popup);
+        }
+
+        public async Task ShowEditProductPopupAsync(ObservableCollection<Product> products, Product product)
+        {
+            var popup = new AddProductPopup(products, product, 1);
             await _mainPage.ShowPopupAsync(popup);
         }
 
@@ -47,12 +53,6 @@ namespace OrderApp.Services
         public async Task ShowEditEventPopupAsync(EventModel oldEvent)
         {
             var popup = new EditEventPopup( oldEvent);
-            await _mainPage.ShowPopupAsync(popup);
-        }
-
-        public async Task ShowEditProductPopupAsync(Product product)
-        {
-            var popup = new EditProductPopup(product);
             await _mainPage.ShowPopupAsync(popup);
         }
 
