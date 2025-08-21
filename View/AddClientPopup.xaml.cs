@@ -20,11 +20,13 @@ public partial class AddClientPopup : Popup
         WeakReferenceMessenger.Default.Register<ClosePopupMessage>(this, async (r, m) =>
         {
             await this.CloseAsync();
+            WeakReferenceMessenger.Default.Unregister<ClosePopupMessage>(this);
         });
     }
 
     private async void CloseButton_Clicked(object sender, EventArgs e)
     {
         await this.CloseAsync();
+        WeakReferenceMessenger.Default.Unregister<ClosePopupMessage>(this);
     }
 }

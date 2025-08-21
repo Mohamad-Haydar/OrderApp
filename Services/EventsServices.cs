@@ -152,14 +152,10 @@ namespace OrderApp.Services
                 command.Parameters.AddWithValue("$SelectedEventType", eventType);
                 command.Parameters.AddWithValue("$startDateTime", startDateTime);
                 command.Parameters.AddWithValue("$endDateTime", endDateTime);
+
                 await command.ExecuteNonQueryAsync();
 
-                command.CommandText = "SELECT last_insert_rowid();";
-                var result = await command.ExecuteScalarAsync();
-                int insertedId = Convert.ToInt32(result);
-                await connection.CloseAsync();
-
-                return insertedId;
+                return id;
             }
             catch (Exception ex)
             {

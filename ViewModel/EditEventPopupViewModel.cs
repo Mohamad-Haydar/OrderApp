@@ -41,9 +41,12 @@ namespace OrderApp.ViewModel
             _popup = ServiceHelper.Resolve<Popup>();
             userId = Preferences.Get("UserId", 0);
             _eventsServices = ServiceHelper.Resolve<EventsServices>();
+            EventName = oldEvent.EventName;
+            Description = oldEvent.Description;
             EventTypes = ["Meeting", "Vacation", "Call"];
             startTime = oldEvent.From.TimeOfDay;
             EndTime = oldEvent.To.TimeOfDay;
+            SelectedEventType = oldEvent.EventType;
             startDate = oldEvent.From.Date;
             _oldEvent = oldEvent;
         }
@@ -53,32 +56,41 @@ namespace OrderApp.ViewModel
         {
             try
             {
+
                 var startDateTime = StartDate.Date + StartTime;
                 var endDateTime = EndDate.Date + EndTime;
-
-                LocalNotificationCenter.Current.Cancel(_oldEvent.Id + 1000);
+                var reminderTime = startDateTime.AddSeconds(-15);
 
                 // Call the service to edit the event
                 var updatedId = await _eventsServices.UpdateEvent(_oldEvent.Id, EventName, Description, SelectedEventType, startDateTime.ToString("yyyy-MM-dd HH:mm:ss"), endDateTime.ToString("yyyy-MM-dd HH:mm:ss"));
-                
                 if (updatedId == 0)
                     return;
-                var reminderTime = startDateTime.AddSeconds(-15);
 
                 if (reminderTime > DateTime.Now)
                 {
-                    var request = new NotificationRequest
-                    {
-                        NotificationId = updatedId + 1000,
-                        Title = "Upcoming: " + EventName,  // e.g. "Meeting with Alice"
-                        Description = $"Starts at {startDateTime:t}",
-                        Schedule = new NotificationRequestSchedule
-                        {
-                            NotifyTime = reminderTime,
-                        },
-                    };
+#if ANDROID
+                    // Schedule native AlarmManager alarm (UTC)
+                    Platforms.Android.AndroidAlarmScheduler.ReSchedule(
+                            notificationId: _oldEvent.Id + 1000,
+                            title: $"Upcoming: {EventName}",
+                            message: $"Starts at {startDateTime}",
+                            newTriggerAtLocal: reminderTime);
 
-                    await LocalNotificationCenter.Current.Show(request);
+#else
+                var request = new NotificationRequest
+                {
+                    NotificationId = _oldEvent.Id + 1000,
+                    Title = "Upcoming: " + EventName,
+                    Description = $"Starts at {startDateTime:t}",
+                    Schedule = new NotificationRequestSchedule
+                    {
+                        NotifyTime = reminderTime,
+                    },
+                };
+
+                await LocalNotificationCenter.Current.Show(request);
+#endif
+
                     WeakReferenceMessenger.Default.Send(new ClosePopupMessage());
 
                 }

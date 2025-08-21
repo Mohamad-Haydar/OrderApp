@@ -170,7 +170,16 @@ namespace OrderApp.ViewModel
             try
             {
                 if (eventModel == null) return;
-                LocalNotificationCenter.Current.Cancel(eventModel.Id + 1000);
+
+#if ANDROID
+                // Cancel native AlarmManager alarm (UTC)
+                Platforms.Android.AndroidAlarmScheduler.Cancel(
+                        notificationId: eventModel.Id + 1000);
+#else
+               LocalNotificationCenter.Current.Cancel(eventModel.Id + 1000);
+#endif
+
+
                 var result = await _eventsServices.DeleteEvent(eventModel.Id);
                 if (result)
                 {
