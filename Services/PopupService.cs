@@ -50,5 +50,11 @@ namespace OrderApp.Services
             await _mainPage.ShowPopupAsync(popup);
         }
 
+        public async Task ShowEditProductPopupAsync(Product product)
+        {
+            var popup = new EditProductPopup(product);
+            await _mainPage.ShowPopupAsync(popup);
+        }
+
     }
 }

@@ -10,11 +10,10 @@
      Shell.TitleColor="{DynamicResource TextColor}"
      Shell.BackgroundColor="{DynamicResource BackgroundColor}"
      Shell.ForegroundColor="{DynamicResource TextColor}" 
-    
     FlowDirection="{Binding AppFlowDirection}"
     Title="OrderApp">
-    
-    
+
+
 
     <!-- Each page gets its own FlyoutItem -->
     <FlyoutItem Title="{DynamicResource Orders}" Icon="monkey.png">

@@ -15,5 +15,19 @@ namespace OrderApp.Model
 
         public bool HasStock(int requiredQuantity = 1) => Quantity >= requiredQuantity;
 
+        public Product Clone()
+        {
+            return new Product
+            {
+                Id = this.Id,
+                Name = this.Name,
+                Description = this.Description,
+                Price = this.Price,
+                Stock = this.Stock,
+                Quantity = this.Quantity,
+                ImageUrl = this.ImageUrl
+            };
+        }
+
     }
 }

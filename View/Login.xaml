@@ -22,7 +22,7 @@
         <Label  Text="{DynamicResource EnterCredential}" FontSize="30" WidthRequest="160" VerticalOptions="Center"/>
 
         <ScrollView Grid.Row="1" Grid.ColumnSpan="2">
-            <StackLayout Padding="10">
+            <VerticalStackLayout Padding="10">
                 <Label Text="{DynamicResource UserName}"/>
                 <Entry Text="{Binding User.UserName}" PlaceholderColor="{DynamicResource TextColor}"  Placeholder="{DynamicResource UserName}"/>
 
@@ -39,7 +39,6 @@
                         PlaceholderColor="{DynamicResource NotSelectedColor}"
                         Placeholder="{DynamicResource Password}"
                         Grid.Column="0"
-                       
                        />
                     <ImageButton Source="{Binding EyeImage}"
                                  Command="{Binding TogglePasswordVisibilityCommand}"
@@ -59,7 +58,7 @@
                     <ColumnDefinition Width="Auto" />
                 </Grid.ColumnDefinitions>
             </Grid>
-            </StackLayout>
+            </VerticalStackLayout>
         </ScrollView>
 
         <HorizontalStackLayout Grid.Row="3" Grid.ColumnSpan="2" HorizontalOptions="Center" >

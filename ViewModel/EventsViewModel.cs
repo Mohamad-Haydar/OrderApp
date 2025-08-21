@@ -38,6 +38,8 @@ namespace OrderApp.ViewModel
         {
             try
             {
+                await Task.Yield();
+                IsBusy = true;
                 await LoadAllEventsAsync();
                 await SelectDateAsync(DateOnly.FromDateTime(DateTime.Now));
             }
@@ -45,6 +47,10 @@ namespace OrderApp.ViewModel
             {
                 IsBusy = false;
                 await Shell.Current.DisplayAlert("Error", "An unexpected error occurred while loading Events. Please try again.", "OK");
+            }
+            finally
+            {
+                IsBusy = false;
             }
         }
 

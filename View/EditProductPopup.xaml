@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<toolkit:Popup xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+                xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+                xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+                xmlns:model="clr-namespace:OrderApp.Model"
+                xmlns:viewmodel="clr-namespace:OrderApp.ViewModel"
+                x:DataType="viewmodel:EditProductPopUpViewModel"
+                x:Class="OrderApp.View.EditProductPopup"
+               CanBeDismissedByTappingOutsideOfPopup="False">
+
+    <VerticalStackLayout Padding="20" Spacing="10">
+        <Label Text="Add New Product" FontAttributes="Bold" FontSize="20" />
+        <Entry Placeholder="Name" Text="{Binding EProduct.Name}"/>
+        <Entry Placeholder="Description" Text="{Binding EProduct.Description}"/>
+        <Entry Placeholder="Price" Text="{Binding EProduct.Price}"/>
+        <Entry Placeholder="Quantity" Text="{Binding EProduct.Quantity}"/>
+        <!--<Button Text="Save" Command="{Binding AddProductCommand}" />-->
+        <HorizontalStackLayout Spacing="10" HorizontalOptions="Center">
+            <Button Text="Save"  Command="{Binding UpdateProductCommand}"/>
+            <Button Text="Close" Clicked="CloseButton_Clicked" />
+        </HorizontalStackLayout>
+    </VerticalStackLayout>
+</toolkit:Popup>

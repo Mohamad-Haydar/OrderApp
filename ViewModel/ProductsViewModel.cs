@@ -108,14 +108,28 @@ namespace OrderApp.ViewModel
         }
 
         [RelayCommand]
+        async Task EditProductAsync(Product product)
+        {
+            try
+            {
+                await _popupService.ShowEditProductPopupAsync(product);
+            }
+            catch (Exception)
+            {
+                await Shell.Current.DisplayAlert("Error", "An unexpected error occurred while updating product stock. Please try again.", "OK");
+            }
+        }
+
+        [RelayCommand]
         public async Task InitAsync()
         {
             try
             {
                 await Task.Yield();
-                if(Products.Count > 0)
+                if (Products.Count > 0)
                     return;
                 IsBusy = true;
+
                 var res = await _productsServices.GetProducts();
                 Products = new ObservableCollection<Product>(res);
             }

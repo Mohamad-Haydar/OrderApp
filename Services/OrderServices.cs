@@ -88,7 +88,7 @@ namespace OrderApp.Services
                         if (difference > availableStock)
                         {
                             await Shell.Current.DisplayAlert("Error", "Not enough stock available", "OK");
-                            return;
+                            throw new ValidationException("Not enough stock available");
                         }
                     }
 

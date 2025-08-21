@@ -97,6 +97,7 @@ namespace OrderApp.ViewModel
                 await Task.Yield();
                 if (Orders.Count > 0) return;
                 IsBusy = true;
+                
                 var res = await _orderServices.GetOrders();
                 Orders = new ObservableCollection<Order>(res);
             }

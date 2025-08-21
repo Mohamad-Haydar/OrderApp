@@ -133,6 +133,40 @@ namespace OrderApp.Services
             }
         }
 
+        public async Task ChangeProductInfo(Product product)
+        {
+            if (product == null || product.Id <= 0)
+                throw new ValidationException("Invalid product or ID.");
+            var connection = AdoDatabaseService.GetConnection();
+            try
+            {
+                await connection.OpenAsync();
+                var updateProductCommand = connection.CreateCommand();
+                updateProductCommand.CommandText = @"UPDATE Products SET Name = $name, Description = $description, Price = $price, Quantity = $quantity WHERE Id = $id";
+                updateProductCommand.Parameters.AddWithValue("$name", product.Name);
+                updateProductCommand.Parameters.AddWithValue("$description", product.Description ?? string.Empty);
+                updateProductCommand.Parameters.AddWithValue("$price", product.Price);
+                updateProductCommand.Parameters.AddWithValue("$quantity", product.Quantity);
+                updateProductCommand.Parameters.AddWithValue("$id", product.Id);
+                
+                await updateProductCommand.ExecuteNonQueryAsync();
+            }
+            catch (ValidationException)
+            {
+                throw; // rethrow validation exceptions to be handled by the caller
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"DB Error in ChangeProductInfo: {ex}");
+                throw new DataAccessException("Failed to change product information.", ex);
+            }
+            finally
+            {
+                if (connection.State != System.Data.ConnectionState.Closed)
+                    await connection.CloseAsync();
+            }
+        }
+
         public async Task UpdateProductStock(int difference, int productId, SqliteConnection? connection = null, SqliteTransaction? transaction = null)
         {
             /*
@@ -151,11 +185,21 @@ namespace OrderApp.Services
                 if (transaction == null)
                     transaction = connection.BeginTransaction();
 
+                var stockQuantity = await GetStuckQuantity(productId);
+                if(stockQuantity - difference < 0)
+                {
+                    throw new ValidationException("Not enough stock available for this product.");
+                }
+
                 var updateProductCommand = connection.CreateCommand();
                 updateProductCommand.CommandText = @"UPDATE Products SET Quantity = Quantity - $difference WHERE Id = $productId";
                 updateProductCommand.Parameters.AddWithValue("$difference", difference);
                 updateProductCommand.Parameters.AddWithValue("$productId", productId);
                 await updateProductCommand.ExecuteNonQueryAsync();
+            }
+            catch (ValidationException)
+            {
+                throw; // rethrow validation exceptions to be handled by the caller
             }
             catch (Exception ex)
             {

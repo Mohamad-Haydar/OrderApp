@@ -136,6 +136,9 @@
 	  <MauiXaml Update="View\EditEventPopup.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
+	  <MauiXaml Update="View\EditProductPopup.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
 	  <MauiXaml Update="View\Events.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>

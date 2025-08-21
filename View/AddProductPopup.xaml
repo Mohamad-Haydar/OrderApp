@@ -7,12 +7,16 @@
                 x:DataType="viewmodel:AddProductPopupViewModel"
                 x:Class="OrderApp.View.AddProductPopup">
 
-    <VerticalStackLayout Padding="20" Spacing="10">
+    <VerticalStackLayout Spacing="7">
        
         <Label Text="Add New Product" FontAttributes="Bold" FontSize="20" />
+        <Label Text="Name" FontAttributes="Bold" FontSize="12" />
         <Entry Placeholder="Name" Text="{Binding Product.Name}"/>
+        <Label Text="Description" FontAttributes="Bold" FontSize="12" />
         <Entry Placeholder="Description" Text="{Binding Product.Description}"/>
+        <Label Text="Price" FontAttributes="Bold" FontSize="12" />
         <Entry Placeholder="Price" Text="{Binding Product.Price}"/>
+        <Label Text="Quantity" FontAttributes="Bold" FontSize="12" />
         <Entry Placeholder="Quantity" Text="{Binding Product.Quantity}"/>
         <!--<Button Text="Save" Command="{Binding AddProductCommand}" />-->
         <HorizontalStackLayout Spacing="10" HorizontalOptions="Center">
