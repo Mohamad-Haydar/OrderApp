@@ -42,7 +42,6 @@ namespace OrderApp.Services
                         },
                         Shadow = null
                     });
-                    await Task.Delay(500);
                 }
                 else if (_isPopupOpen)
                 {
@@ -56,8 +55,6 @@ namespace OrderApp.Services
 
                 throw;
             }
-           
-
         }
     }
 }

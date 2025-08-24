@@ -6,6 +6,14 @@ namespace OrderApp.ViewModel
 {
     public partial class ShellViewModel : BaseViewModel
     {
+
+        private OrdersViewModel _ordersVM;
+
+        public ShellViewModel()
+        {
+            _ordersVM = ServiceHelper.Resolve<OrdersViewModel>();
+        }
+
         [RelayCommand]
         async Task SwitchLanguageAsync()
         {
@@ -37,7 +45,8 @@ namespace OrderApp.ViewModel
         {
             try
             {
-                Preferences.Remove("UserId");
+                _ordersVM.Orders.Clear();
+                SecureStorage.Remove("UserId");
                 Preferences.Remove("Username");
                 SecureStorage.Remove("SavedEmail");
                 SecureStorage.Remove("SavedPassword");

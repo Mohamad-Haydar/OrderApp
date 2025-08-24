@@ -10,7 +10,7 @@ namespace OrderApp.Services.Interfaces
        Task<List<Order>> GetOrders();
        Task UpdateOrderAsync(ObservableCollection<ProductsInOrders> productsInOrders, SqliteConnection? connection = null, SqliteTransaction? transaction = null);
 
-       Task CreateOrder(int clientId, DateTime dateToPick);
+        Task<Order> CreateOrder(int clientId, DateTime dateToPick);
 
        Task UpdateTotalAsync(float addedAmount, int orderId);
        Task SetTotalAsync(Order order, SqliteConnection? connection = null, SqliteTransaction? transaction = null);

@@ -140,6 +140,7 @@ namespace OrderApp.ViewModel
                 LoginResult = await _loginServices.Login(User);
                 if (LoginResult)
                 {
+                    
                     await SecureStorage.SetAsync("SavedEmail", User.Email);
                     await SecureStorage.SetAsync("SavedPassword", User.Password);
 

@@ -28,8 +28,9 @@ namespace OrderApp.Services
                 var command = connection.CreateCommand();
                 command.CommandText = @"SELECT o.Id, o.ClientId, o.Total, o.DateToPick, c.Name
                         FROM Orders as o JOIN Clients as c Where o.ClientId = c.Id AND o.UserId = $userId";
+                var userId = Preferences.Get("UserId", 0);
 
-                command.Parameters.AddWithValue("$userId", Preferences.Get("UserId", 0));
+                command.Parameters.AddWithValue("$userId", userId);
 
                 using var reader = await command.ExecuteReaderAsync();
                 // add all the orders to the order collection to see them in the view
@@ -127,7 +128,7 @@ namespace OrderApp.Services
             }
         }
 
-        public async Task CreateOrder(int clientId, DateTime dateToPick)
+        public async Task<Order> CreateOrder(int clientId, DateTime dateToPick)
         {
             var connection = AdoDatabaseService.GetConnection();
             try
@@ -138,13 +139,17 @@ namespace OrderApp.Services
                 command.CommandText = @"INSERT INTO Orders (ClientId, Total, DateToPick, UserId)
                                         VALUES ($clientId, 0, $dateToPick, $userId);";
 
+                var userId = Preferences.Get("UserId", 0);
+
                 command.Parameters.AddWithValue("$clientId", clientId);
                 command.Parameters.AddWithValue("$dateToPick", dateToPick.ToString("yyyy-MM-dd"));
-                command.Parameters.AddWithValue("$userId", Preferences.Get("UserId", 0));
+                command.Parameters.AddWithValue("$userId", userId);
 
                 await command.ExecuteNonQueryAsync();
 
                 await connection.CloseAsync();
+
+                return new Order { ClientId = clientId, DateToPick = dateToPick, Total = 0  };
             }
             catch (Exception ex)
             {

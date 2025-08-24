@@ -12,9 +12,23 @@ namespace OrderApp.ViewModel
     {
         private readonly PopupService _popupService;
         private readonly ProductsServices _productsServices;
+        
+        private bool _isDataLoaded = false;
+        private bool _isSearchMode = false;
+        private int _currentPage = 1;
+        private const int PageSize = 7;
+        private bool _hasMore = true;
 
         [ObservableProperty]
         ObservableCollection<Product> products;
+
+        [ObservableProperty]
+        ObservableCollection<string> suggestions = new();
+
+        [ObservableProperty]
+        string searchText;
+        [ObservableProperty]
+        bool suggestionsVisible;
 
         public ProductsViewModel()
         {
@@ -123,25 +137,118 @@ namespace OrderApp.ViewModel
         [RelayCommand]
         public async Task InitAsync()
         {
+            if (_isDataLoaded) return;
             try
             {
                 await Task.Yield();
-                if (Products.Count > 0)
-                    return;
                 IsBusy = true;
+                _isDataLoaded = true;
+                await Task.Delay(500);
+                List<Product> productsres;
 
-                var res = await _productsServices.GetProducts();
-                Products = new ObservableCollection<Product>(res);
+                productsres = await _productsServices.GetProductsPagination(_currentPage, PageSize);
+                
+
+                foreach (var item in productsres)
+                    Products.Add(item);
+
+
+                if (productsres.Count < PageSize)
+                    _hasMore = false;
             }
             catch (Exception)
             {
-                await Shell.Current.DisplayAlert("Error", "An unexpected error occurred while loading products. Please try again.", "OK");
+                await Shell.Current.DisplayAlert("Error", "An unexpected error occurred while loading products of the order. Please try again.", "OK");
             }
             finally
             {
                 IsBusy = false;
             }
         }
+        public async Task LoadProductsAsync()
+        {
+            try
+            {
+                //await Task.Yield();
+                IsBusy = true;
+                //await Task.Delay(500);
+                List<Product> productsres;
 
+                productsres = await _productsServices.GetProductsPagination(_currentPage, PageSize);
+
+                Products.Clear();
+                foreach (var item in productsres)
+                    Products.Add(item);
+
+
+                if (productsres.Count < PageSize)
+                    _hasMore = false;
+            }
+            catch (Exception)
+            {
+                await Shell.Current.DisplayAlert("Error", "An unexpected error occurred while loading products of the order. Please try again.", "OK");
+            }
+            finally
+            {
+                IsBusy = false;
+            }
+        }
+        [RelayCommand]
+        public async Task LoadMoreProductsAsync()
+        {
+            if (IsBusy || !_hasMore) return;
+            IsBusy = true;
+
+            _currentPage++;
+            List<Product> items;
+
+            items = await _productsServices.GetProductsPagination(_currentPage, PageSize);
+            
+            foreach (var item in items)
+                Products.Add(item);
+
+            if (items.Count < PageSize)
+                _hasMore = false;
+
+            IsBusy = false;
+        }
+
+
+        [RelayCommand]
+        public async Task SelectSuggestionAsync(string suggestion)
+        {
+            SuggestionsVisible = false;
+            var items = await _productsServices.SearchProductsPagination(suggestion, 1, PageSize);
+
+            Products = new ObservableCollection<Product>(items);
+
+            // reset pagination state
+            _currentPage = 1;
+            _hasMore = items.Count >= PageSize;
+        }
+
+        partial void OnSearchTextChanged(string value)
+        {
+            _ = LoadSuggestionsAsync(value);
+        }
+
+        private async Task LoadSuggestionsAsync(string prefix)
+        {
+            await Task.Yield();
+            if (string.IsNullOrWhiteSpace(prefix))
+            {
+                SuggestionsVisible = false;
+                Suggestions.Clear();
+                _currentPage = 1;
+                await LoadProductsAsync();
+                return;
+            }
+            SuggestionsVisible = true;
+            var results = await _productsServices.GetProductSuggestionsAsync(prefix);
+
+            Suggestions.Clear();
+            foreach (var s in results)
+                Suggestions.Add(s);
+        }
     }
 }

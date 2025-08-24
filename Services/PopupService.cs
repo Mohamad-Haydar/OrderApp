@@ -9,13 +9,11 @@ namespace OrderApp.Services
 
     public class PopupService
     {
-        private readonly Page _mainPage;
         private readonly ClientServices _clientServices;
         private readonly ProductsServices _productServices;
 
         public PopupService(ClientServices clientServices, ProductsServices productServices)
         {
-            _mainPage = Application.Current.MainPage;
             _clientServices = clientServices;
             _productServices = productServices;
         }
@@ -23,37 +21,37 @@ namespace OrderApp.Services
         public async Task ShowAddClientPopupAsync(ObservableCollection<Client> clients)
         {
             var popup = new AddClientPopup(clients);
-            await _mainPage.ShowPopupAsync(popup);
+            await Application.Current.Windows[0].Page.ShowPopupAsync(popup);
         }
 
         public async Task ShowAddProductPopupAsync(ObservableCollection<Product> products)
         {
             var popup = new AddProductPopup(products, null, 0);
-            await _mainPage.ShowPopupAsync(popup);
+            await Application.Current.Windows[0].Page.ShowPopupAsync(popup);
         }
 
         public async Task ShowEditProductPopupAsync(ObservableCollection<Product> products, Product product)
         {
             var popup = new AddProductPopup(products, product, 1);
-            await _mainPage.ShowPopupAsync(popup);
+            await Application.Current.Windows[0].Page.ShowPopupAsync(popup);
         }
 
-        public async Task ShowAddOrderPopupAsync()
+        public async Task ShowAddOrderPopupAsync(ObservableCollection<Order> orders)
         {
             var clients = await _clientServices.GetClientsForPopup();
-            var popup = new AddOrderPopup(clients);
-            await _mainPage.ShowPopupAsync(popup);
+            var popup = new AddOrderPopup(clients, orders);
+            await Application.Current.Windows[0].Page.ShowPopupAsync(popup);
         }
 
         public async Task ShowAddEventPopupAsync()
         {
             var popup = new AddEventPopUp();
-            await _mainPage.ShowPopupAsync(popup);
+            await Application.Current.Windows[0].Page.ShowPopupAsync(popup);
         }
         public async Task ShowEditEventPopupAsync(EventModel oldEvent)
         {
             var popup = new EditEventPopup( oldEvent);
-            await _mainPage.ShowPopupAsync(popup);
+            await Application.Current.Windows[0].Page.ShowPopupAsync(popup);
         }
 
     }

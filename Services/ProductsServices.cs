@@ -48,6 +48,97 @@ namespace OrderApp.Services
             }
         }
 
+        public async Task<List<Product>> GetProductsPagination(int page, int pageSize)
+        {
+            var products = new List<Product>();
+
+            using var conn = AdoDatabaseService.GetConnection();
+            await conn.OpenAsync();
+
+            using var command = conn.CreateCommand();
+
+            command.CommandText = "SELECT * FROM Products LIMIT @PageSize OFFSET @Offset";
+
+            command.Parameters.AddWithValue("@PageSize", pageSize);
+            command.Parameters.AddWithValue("@Offset", (page - 1) * pageSize);
+
+            using var reader = await command.ExecuteReaderAsync();
+            while (await reader.ReadAsync())
+            {
+                products.Add(new Product
+                {
+                    Id = reader.GetInt32(0),
+                    Name = reader.GetString(1),
+                    Description = reader.GetString(2),
+                    Price = reader.GetFloat(3),
+                    Quantity = reader.GetInt32(4),
+                    Stock = reader.GetInt32(4),
+                    ImageUrl = reader.GetString(5)
+                });
+            }
+
+            return products;
+        }
+
+        public async Task<List<Product>> SearchProductsPagination(string searchText, int page, int pageSize)
+        {
+
+            var products = new List<Product>();
+
+            using var conn = AdoDatabaseService.GetConnection();
+            await conn.OpenAsync();
+
+            using var command = conn.CreateCommand();
+
+            command.CommandText = @"SELECT *  FROM Products
+                     WHERE Name LIKE @Search
+                     LIMIT @PageSize OFFSET @Offset";
+
+            command.Parameters.AddWithValue("@Search", searchText + "%");
+            command.Parameters.AddWithValue("@PageSize", pageSize);
+            command.Parameters.AddWithValue("@Offset", (page - 1) * pageSize);
+
+            using var reader = await command.ExecuteReaderAsync();
+            while (await reader.ReadAsync())
+            {
+                products.Add(new Product
+                {
+                    Id = reader.GetInt32(0),
+                    Name = reader.GetString(1),
+                    Description = reader.GetString(2),
+                    Price = reader.GetFloat(3),
+                    Quantity = reader.GetInt32(4),
+                    Stock = reader.GetInt32(4),
+                    ImageUrl = reader.GetString(5)
+                });
+            }
+
+            return products;
+        }
+        public async Task<List<string>> GetProductSuggestionsAsync(string prefix, int limit = 10)
+        {
+            var suggestions = new List<string>();
+
+            using var conn = AdoDatabaseService.GetConnection();
+            await conn.OpenAsync();
+
+            using var command = conn.CreateCommand();
+            command.CommandText = @"  SELECT Name 
+                                    FROM Products
+                                    WHERE Name LIKE @Prefix
+                                    LIMIT @Limit";
+
+            command.Parameters.AddWithValue("@Prefix", prefix + "%");
+            command.Parameters.AddWithValue("@Limit", limit);
+
+            using var reader = await command.ExecuteReaderAsync();
+            while (await reader.ReadAsync())
+            {
+                suggestions.Add(reader.GetString(0));
+            }
+
+            return suggestions;
+        }
         public async Task<int> GetStuckQuantity(int productId)
         {
             var connection = AdoDatabaseService.GetConnection();

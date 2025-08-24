@@ -24,12 +24,14 @@ namespace OrderApp.ViewModel
         DateTime today = DateTime.Today;
 
         private OrderServices _orderServices;
+        ObservableCollection<Order> _ordersInPage;
 
-        public AddOrderPopupViewModel(ObservableCollection<Client> clients)
+        public AddOrderPopupViewModel(ObservableCollection<Client> clients, ObservableCollection<Order> orders)
         {
             order = new();
             _orderServices = ServiceHelper.Resolve<OrderServices>();
             Clients = clients;
+            _ordersInPage = orders;
         }
 
        
@@ -45,9 +47,10 @@ namespace OrderApp.ViewModel
             try
             {
                 // Add validation for date
-                if (Order.IsValid(out var error))
+                if (!Order.IsValid(out var error))
                     throw new ValidationException(error);
-                await _orderServices.CreateOrder(Client.Id, Order.DateToPick);
+                var orderCreated = await _orderServices.CreateOrder(Client.Id, Order.DateToPick);
+                _ordersInPage.Add(orderCreated);
                 // Signal to close the popup
                 WeakReferenceMessenger.Default.Send(new ClosePopupMessage());
             }

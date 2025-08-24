@@ -30,7 +30,7 @@ namespace OrderApp.ViewModel
         {
             try
             {
-                await _popupService.ShowAddOrderPopupAsync();
+                await _popupService.ShowAddOrderPopupAsync(orders);
             }
             catch (Exception)
             {
@@ -97,7 +97,8 @@ namespace OrderApp.ViewModel
                 await Task.Yield();
                 if (Orders.Count > 0) return;
                 IsBusy = true;
-                
+                await Task.Delay(500);
+
                 var res = await _orderServices.GetOrders();
                 Orders = new ObservableCollection<Order>(res);
             }

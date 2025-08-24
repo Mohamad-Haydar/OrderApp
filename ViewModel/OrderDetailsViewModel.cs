@@ -10,7 +10,10 @@ namespace OrderApp.ViewModel
     [QueryProperty(nameof(Order), nameof(Order))]
     public partial class OrderDetailsViewModel : BaseViewModel
     {
-        public IEnumerable<Product> Products { get; set; } = [];
+        private int _currentPage = 1;
+        private const int PageSize = 3;
+        private bool _hasMore = true;
+        private bool _isSearchMode = false;
 
         [ObservableProperty]
         ObservableCollection<Product> filteredProducts =[];
@@ -96,26 +99,38 @@ namespace OrderApp.ViewModel
             }
         }
 
+
         [RelayCommand]
         public async Task InitAsync()
         {
-            await Task.Yield();
             if (Order == null || _isDataLoaded) return;
-
             try
             {
+                await Task.Yield();
                 IsBusy = true;
                 _isDataLoaded = true;
-                await Task.Delay(700);
+                await Task.Delay(500);
+                
+                List<Product> productsres;
 
-                var productsres = await _productService.GetProducts();
+                if (_isSearchMode)
+                {
+                    productsres = await _productService.SearchProductsPagination(SearchText, _currentPage, PageSize);
+                }
+                else
+                {
+                    productsres = await _productService.GetProductsPagination(_currentPage, PageSize);
+                }
+
                 var productsIOres = await _productService.GetProductsInOrders(Order);
+                foreach (var item in productsres)
+                    FilteredProducts.Add(item);
 
-                // Always clear and replace to avoid showing old values
-                Products = productsres;
-                FilteredProducts = new ObservableCollection<Product>(productsres);
-                if(!Order.IsLoaded)
+                if (!Order.IsLoaded)
                     Order.Products = new ObservableCollection<ProductsInOrders>(productsIOres);
+
+                if (productsres.Count < PageSize)
+                    _hasMore = false;
 
                 Title = $"Order #{Order.Id}" +
                         (string.IsNullOrEmpty(Order.ClientName) ? "" : $" - {Order.ClientName}");
@@ -131,18 +146,116 @@ namespace OrderApp.ViewModel
             }
         }
 
-        partial void OnSearchTextChanged(string value)
+        public async Task LoadProductsAsync()
         {
-            if (string.IsNullOrWhiteSpace(searchText))
+            if (IsBusy) return;
+            //IsBusy = true;
+
+            List<Product> items;
+
+            if (_isSearchMode)
             {
-                FilteredProducts = new ObservableCollection<Product>(Products);
+                items = await _productService.SearchProductsPagination(SearchText, _currentPage, PageSize);
             }
             else
             {
-                var results = Products.Where(p => p.Name.ToLower().Contains(value));
-                FilteredProducts = new ObservableCollection<Product>(results);
+                items = await _productService.GetProductsPagination(_currentPage, PageSize);
             }
+
+            FilteredProducts = new ObservableCollection<Product>(items);
+            await Task.Yield();
+
+            if (items.Count < PageSize)
+                _hasMore = false;
+
+            //IsBusy = false;
         }
+
+        [RelayCommand]
+        public async Task LoadMoreProductsAsync()
+        {
+            if (IsBusy || !_hasMore) return;
+            //IsBusy = true;
+
+            _currentPage++;
+            List<Product> items;
+
+            if (_isSearchMode)
+            {
+                items = await _productService.SearchProductsPagination(SearchText, _currentPage, PageSize);
+            }
+            else
+            {
+                items = await _productService.GetProductsPagination(_currentPage, PageSize);
+            }
+            foreach (var item in items)
+                FilteredProducts.Add(item);
+
+            if (items.Count < PageSize)
+                _hasMore = false;
+
+            //IsBusy = false;
+        }
+
+        partial void OnSearchTextChanged(string value)
+        {
+            // Whenever SearchText changes, reset and reload
+            _isSearchMode = !string.IsNullOrWhiteSpace(value);
+            _currentPage = 1;
+            _hasMore = true;
+
+            _ = LoadProductsAsync();
+        }
+
+        //void OnSearchTextChanged2(string value)
+        //{
+        //    if (string.IsNullOrWhiteSpace(searchText))
+        //    {
+        //        FilteredProducts = new ObservableCollection<Product>(_productSearchService.Search(null));
+        //    }
+        //    else
+        //    {
+        //        // Use the generic search service
+        //        var results = _productSearchService.Search(value);
+        //        FilteredProducts = new ObservableCollection<Product>(results);
+        //    }
+        //}
+
+        //[RelayCommand]
+        //public async Task InitAsync2()
+        //{
+        //    if (Order == null || _isDataLoaded) return;
+        //    await Task.Delay(200);
+        //    try
+        //    {
+        //        IsBusy = true;
+        //        _isDataLoaded = true;
+        //        await Task.Delay(500); 
+
+        //        var productsres = await _productService.GetProducts();
+        //        var productsIOres = await _productService.GetProductsInOrders(Order);
+
+        //        // Always clear and replace to avoid showing old values
+        //        // Build the Trie for fast search
+        //        _productSearchService.Build(productsres);
+
+        //        FilteredProducts = new ObservableCollection<Product>(productsres);
+        //        if(!Order.IsLoaded)
+        //            Order.Products = new ObservableCollection<ProductsInOrders>(productsIOres);
+
+        //        Title = $"Order #{Order.Id}" +
+        //                (string.IsNullOrEmpty(Order.ClientName) ? "" : $" - {Order.ClientName}");
+        //    }
+        //    catch (Exception)
+        //    {
+        //        await Shell.Current.DisplayAlert("Error", "An unexpected error occurred while loading products of the order. Please try again.", "OK");
+        //    }
+        //    finally
+        //    {
+        //        IsBusy = false;
+        //        Order.IsLoaded = true;
+        //    }
+        //}
 
         [RelayCommand]
         void IncrementQuantity(ProductsInOrders item)

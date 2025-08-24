@@ -8,11 +8,9 @@ namespace OrderApp
         public AppShell()
         {
             InitializeComponent();
-
-            Routing.RegisterRoute(nameof(Orders), typeof(Orders));
             Routing.RegisterRoute(nameof(OrderDetails), typeof(OrderDetails));
-            Routing.RegisterRoute(nameof(Clients), typeof(Clients));
-            Routing.RegisterRoute(nameof(Products), typeof(Products));
+
+            SetTabBarIsVisible(this, false);
         }
 
         protected override void OnAppearing()

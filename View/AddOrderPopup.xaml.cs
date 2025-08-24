@@ -10,10 +10,10 @@ namespace OrderApp.View;
 
 public partial class AddOrderPopup : Popup
 {
-    public AddOrderPopup(ObservableCollection<Client> clients)
+    public AddOrderPopup(ObservableCollection<Client> clients, ObservableCollection<Order> orders)
     {
         InitializeComponent();
-        this.BindingContext = new AddOrderPopupViewModel(clients);
+        this.BindingContext = new AddOrderPopupViewModel(clients, orders);
         // Prevent the popup from closing when tapping outside
         CanBeDismissedByTappingOutsideOfPopup = false;
 

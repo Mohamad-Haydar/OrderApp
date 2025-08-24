@@ -52,7 +52,8 @@
                     Grid.ColumnSpan="2"
                     Grid.Row="1"
                     HorizontalScrollBarVisibility="Never"
-                    RemainingItemsThreshold="1">
+                     RemainingItemsThreshold="3"
+                    RemainingItemsThresholdReachedCommand="{Binding LoadMoreProductsCommand}">
 
                 <CollectionView.ItemsLayout>
                     <LinearItemsLayout Orientation="Horizontal" ItemSpacing="10"/>
